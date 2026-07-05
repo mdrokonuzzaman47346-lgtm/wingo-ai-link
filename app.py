@@ -1,64 +1,92 @@
 import streamlit as st
 
 # পেজ কনফিগারেশন
-st.set_page_config(page_title="Wingo Analyzer", page_icon="🤖", layout="centered")
+st.set_page_config(page_title="Smart Wingo Analyzer", page_icon="🤖", layout="centered")
 
-st.title("🤖 WINGO ১-মিনিট অ্যালগরিদম অ্যানালাইজার")
-st.write("তোমার ওল্ড এবং নিউ নম্বর দুটি বসিয়ে নিচের অ্যানালাইসিস বাটনে ক্লিক করো।")
+st.title("🤖 WINGO প্রফেশনাল ট্রেন্ড ও মেমরি অ্যানালাইজার")
+st.write("এই অ্যাপটি শেষ কয়েকটি পিরিয়ডের ট্রেন্ড মনে রেখে লজিক্যাল অ্যানালাইসিস তৈরি করে।")
 
-def analyze_wingo(old_num, new_num):
-    old_type = "Even" if old_num % 2 == 0 else "Odd"
-    new_type = "Even" if new_num % 2 == 0 else "Odd"
+# স্ট্রিমলিট সেশন স্টেট ব্যবহার করে ব্যাকএন্ড মেমরি তৈরি
+if 'history' not in st.session_state:
+    st.session_state.history = []
+
+# ইনপুট সেকশন
+st.subheader("📝 লাইভ রেজাল্ট ইনপুট দিন")
+new_num_input = st.number_input("এইমাত্র আসা শেষ রেজাল্ট নম্বরটি দিন (০-৯):", min_value=0, max_value=9, value=0, step=1)
+
+if st.button("➕ হিস্টোরিতে নম্বর যোগ করুন"):
+    if len(st.session_state.history) >= 6:
+        st.session_state.history.pop(0)  # সর্বোচ্চ ৬টি নম্বর মনে রাখবে
+    st.session_state.history.append(new_num_input)
+    st.success(f"নম্বর {new_num_input} হিস্টোরিতে সফলভাবে যোগ হয়েছে!")
+
+# কারেন্ট হিস্টোরি প্রদর্শন
+if st.session_state.history:
+    st.write(f"📁 **তোমার ওয়াচ-লিস্ট হিস্টোরি (পুরাতন থেকে নতুন):** {st.session_state.history}")
+else:
+    st.info("হিস্টোরি বর্তমানে খালি। অন্তত ২টি বা তার বেশি নম্বর যোগ করো।")
+
+if st.button("🗑️ হিস্টোরি সাফ করুন"):
+    st.session_state.history = []
+    st.experimental_rerun()
+
+# মূল অ্যানালাইসিস লজিক
+def advanced_analysis(history):
+    if len(history) < 2:
+        return "⚠️ অ্যানালাইসিস শুরু করতে অন্তত ২টি নম্বর হিস্টোরিতে যোগ করো।", "", "", ""
+        
+    old_num = history[-2]
+    new_num = history[-1]
     diff = abs(old_num - new_num)
     
-    analysis_details = f"""
-    📊 **কারেন্ট ম্যাট্রিক্স লগ:**
-    * ওল্ড নম্বর: **{old_num}** ({old_type})
-    * নিউ নম্বর: **{new_num}** ({new_type})
-    * গাণিতিক পার্থক্য: **{diff}**
-    """
+    # সাইজ ডিটেকশন
+    sizes = ["SMALL" if n <= 4 else "BIG" for n in history]
     
-    # ১. সিমেট্রিক মিরর লুপ (ডাবল রিপিট রুল)
-    if diff == 0:
-        if new_num == 5 or new_num == 6 or new_num == 7 or new_num == 8 or new_num == 9:
-            return analysis_details, "🎯 পরবর্তী শট: BIG", "💡 লজিক: জিরো-ডিফারেন্স ব্রেকআউট (Trend Flip)।", "🔢 টার্গেট সংখ্যা: ৬, ৭ অথবা ৮"
-        else:
-            return analysis_details, "🎯 পরবর্তী শট: SMALL", "💡 লজিক: সিমেট্রিক মিরর ট্রেন্ড ফ্লিপ (Trend Flip)।", "🔢 টার্গেট সংখ্যা: ১, ২ অথবা ৪"
-            
-    # ২. ০ এবং ৫-এর স্পেশাল টার্নিং পয়েন্ট রুল
+    # ১. ড্রাগন ট্রেন্ড ট্র্যাকার (টানা একই সাইড আসলে)
+    if len(sizes) >= 4 and len(set(sizes[-4:])) == 1:
+        current_dragon = sizes[-1]
+        opposite_dragon = "BIG" if current_dragon == "SMALL" else "SMALL"
+        return (
+            f"🚨 **ড্রাগন ট্রেন্ড অ্যালার্ট!** টানা ৪ বা তার বেশি পিরিয়ড ধরে মার্কেট {current_dragon} জোনে লক হয়ে আছে।",
+            f"🎯 পরবর্তী শর্ট: {current_dragon} (ট্রেন্ড ফলো)",
+            "💡 লজিক: ড্রাগন মোড সচল থাকা অবস্থায় বিপরীত দিকে যাওয়া ঝুঁকিপূর্ণ। ট্রেন্ডের গতি ফলো করাই নিরাপদ।",
+            "🔢 টার্গেট সংখ্যা: ট্রেন্ডের ভেতরের যেকোনো ৩টি স্ট্রং নম্বর।"
+        )
+
+    # ২. ০ এবং ৫ স্পেশাল বর্ডারলাইন রুল
     if new_num == 0:
-        return analysis_details, "🎯 পরবর্তী শট: BIG", "💡 লজিক: আলটিমেট ০-রুল বর্ডার রিবাউন্ড।", "🔢 টার্গেট সংখ্যা: ৫, ৭ অথবা ৯"
+        return "📌 বর্ডারলাইন ডিটেক্টেড।", "🎯 পরবর্তী শর্ট: BIG", "💡 লজিক: আলটিমেট ০-রুল বর্ডার রিবাউন্ড জোন।", "🔢 টার্গেট সংখ্যা: ৫, ৭ অথবা ৯"
     if new_num == 5:
-        return analysis_details, "🎯 পরবর্তী শট: SMALL", "💡 লজিক: ৫-রুল আলটিমেট ফ্লিপিং পয়েন্ট।", "🔢 টার্গেট সংখ্যা: ০, ২ অথবা ৪"
+        return "📌 টার্নিং পয়েন্ট ডিটেক্টেড।", "🎯 পরবর্তী শর্ট: SMALL", "💡 লজিক: ৫-রুল আলটিমেট ফ্লিপিং ব্যালেন্সার।", "🔢 টার্গেট সংখ্যা: ০, ২ অথবা ৪"
 
-    # ৩. হাই পার্থক্য লুপ (৬, ৭, ৮, ৯) -> ফ্লিপ/রিভার্সাল ট্রেন্ড
+    # ৩. সিমেট্রিক মিরর (ডাবল রিপিট)
+    if diff == 0:
+        next_shot = "BIG" if new_num <= 4 else "SMALL"
+        logic_text = "জিরো-ডিফারেন্স ব্রেকআউট (Trend Flip)।"
+        target_text = "৬, ۷ অথবা ৮" if next_shot == "BIG" else "১, ২ অথবা ৪"
+        return "📌 ডাবল রিপিট লুপ ডিটেক্টেড।", f"🎯 পরবর্তী শর্ট: {next_shot}", f"💡 লজিক: {logic_text}", f"🔢 টার্গেট সংখ্যা: {target_text}"
+
+    # ৪. হাই পার্থক্য লুপ (৬ থেকে ৯) -> রিভার্সাল
     if diff >= 6:
-        if new_num == 0 or new_num == 1 or new_num == 2 or new_num == 3 or new_num == 4:
-            return analysis_details, "🎯 পরবর্তী শট: BIG", "💡 লজিক: হাই পার্থক্য রিভার্সাল সাইকেল।", "🔢 টার্গেট সংখ্যা: ৫, ৬ অথবা ৮"
-        else:
-            return analysis_details, "🎯 পরবর্তী শট: SMALL", "💡 লজিক: হাই পার্থক্য ভোলটাইল জোন ফ্লিপ।", "🔢 টার্গেট সংখ্যা: ০, ২ অথবা ৪"
+        next_shot = "BIG" if new_num <= 4 else "SMALL"
+        target_text = "৫, ৬ অথবা ৮" if next_shot == "BIG" else "০, ২ अथवा ৪"
+        return "📌 হাই পার্থক্য ভোলটাইল জอน।", f"🎯 পরবর্তী শর্ট: {next_shot}", "💡 লজিক: বড় ব্যবধানের পর মার্কেট বিপরীত জোনে রিবাউন্ড করে।", f"🔢 টার্গেট সংখ্যা: {target_text}"
 
-    # ৪. কম পার্থক্য লুপ (১, ২, ৩, ৪) -> কন্টিনিউয়েশন ট্রেন্ড
+    # ৫. কম পার্থক্য লুপ (১ থেকে ৪) -> কন্টিনিউয়েশন
     if diff <= 4:
-        if new_num == 0 or new_num == 1 or new_num == 2 or new_num == 3 or new_num == 4:
-            if old_type == "Even" and new_type == "Even":
-                return analysis_details, "🎯 পরবর্তী শট: SMALL", "💡 লজিক: [Even + Even] লুপে বিজোড় স্মল কন্টিনিউয়েশন।", "🔢 টার্গেট সংখ্যা: ১ অথবা ৩"
-            return analysis_details, "🎯 পরবর্তী শট: SMALL", "💡 লজিক: কম পার্থক্য স্মল জোন ধারাবাহিকতা (Continuation)।", "🔢 টার্গেট সংখ্যা: ০, ১ অথবা ২"
-        else:
-            if old_type == "Even" and new_type == "Even":
-                return analysis_details, "🎯 পরবর্তী শট: BIG", "💡 লজিক: [Even + Even] লুপে বিজোড় বিগ কন্টিনিউয়েশন।", "🔢 টার্গেট সংখ্যা: ৭ অথবা ৯"
-            return analysis_details, "🎯 পরবর্তী শট: BIG", "💡 লজিক: কম পার্থক্য বিগ জোন ধারাবাহিকতা (Continuation)।", "🔢 টার্গেট সংখ্যা: ৬, ৭ অথবা ৯"
+        next_shot = "SMALL" if new_num <= 4 else "BIG"
+        target_text = "০, ১ অথবা ২" if next_shot == "SMALL" else "৬, ৭ अथवा ৯"
+        return "📌 শান্ত ও স্টেবল মার্কেট জোন।", f"🎯 পরবর্তী শর্ট: {next_shot}", "💡 লজিক: কম পার্থক্যের কারণে মার্কেট আগের ধারাবাহিকতা বজায় রাখছে।", f"🔢 টার্গেট সংখ্যা: {target_text}"
 
-    return analysis_details, "⚠️ অ্যালগরিদম রিফ্রেশ মোড।", "অবজারভেশনে রাখুন।", ""
+    return "⚠️ অ্যালগরিদম রিফ্রেশ মোড।", "অবজারভেশনে রাখুন।", "", ""
 
-# ইউজার ইনপুট ইন্টারফেস
-old_input = st.number_input("➡️ ওল্ড নম্বরটি দাও (০-৯):", min_value=0, max_value=9, value=0, step=1)
-new_input = st.number_input("➡️ নিউ নম্বরটি দাও (০-৯):", min_value=0, max_value=9, value=0, step=1)
-
-if st.button("🔍 রান অ্যানালাইসিস"):
-    log_data, shot, logic, targets = analyze_wingo(old_input, new_input)
+# ফলাফল প্রদর্শন
+if len(st.session_state.history) >= 2:
+    st.subheader("🔍 লাইভ অ্যানালাইসিস ফলাফল")
+    status, shot, logic, targets = advanced_analysis(st.session_state.history)
     
-    st.info(log_data)
-    st.success(f"### {shot}")
-    st.warning(logic)
-    st.code(targets)
+    st.info(status)
+    if shot:
+        st.success(f"### {shot}")
+        st.warning(logic)
+        st.code(targets)
