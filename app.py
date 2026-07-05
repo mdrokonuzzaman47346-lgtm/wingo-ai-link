@@ -1,20 +1,10 @@
 import streamlit as st
 
-# পেজ কনফিগারেশন - ক্লিন এবং সহজ ডিজাইন
+# পেজ কনফিগারেশন - সহজ ও ক্লিন ডিজাইন
 st.set_page_config(page_title="Advanced Wingo Analyzer", page_icon="📈", layout="centered")
 
-st.markdown("""
-    <style>
-    .block-container { padding-top: 1.5rem !important; padding-bottom: 1.5rem !important; }
-    h1 { font-size: 24px !important; color: #1E88E5 !important; }
-    h3 { font-size: 18px !important; }
-    .stAlert { padding: 0.6rem !important; margin-bottom: 0.6rem !important; }
-    code { font-size: 14px !important; color: #E91E63 !important; }
-    </style>
-    """, unsafe_style=True)
-
 st.title("🤖 WINGO প্রফেশনাল ১০-ডিজিট ম্যাট্রিক্স ড্যাশবোর্ড")
-st.write("এই অ্যাপটি শেষ ১০টি পিরিয়ডের ওয়েভ মোমেন্টাম এবং এক্সট্রিম রিভার্সাল থিওরি ট্র্যাক করে।")
+st.write("এই অ্যাপটি শেষ ১০টি পিরিয়ডের ওয়েভ মোメントাম এবং এক্সট্রিম রিভার্সাল থিওরি ট্র্যাক করে।")
 
 # সেশন স্টেট মেমরি সেটআপ
 if 'history' not in st.session_state:
@@ -40,7 +30,7 @@ if st.button("🗑️ হিস্টোরি সাফ করুন"):
     st.session_state.history = []
     st.rerun()
 
-# অ্যাডভান্সড থিওরি ইঞ্জিন (পার্সেন্টেজ ছাড়া)
+# অ্যাডভান্সড থিওরি ইঞ্জিন
 def advanced_wingo_engine(history):
     if len(history) < 2:
         return None
@@ -49,7 +39,6 @@ def advanced_wingo_engine(history):
     new_num = history[-1]
     diff = abs(old_num - new_num)
     
-    # কাইনেটিক ওয়েভ থিওরি (Wave Theory)
     sizes = ["SMALL" if n <= 4 else "BIG" for n in history]
     
     # ১. ১০-পিরিয়ড ড্রাগন মোড চেক
@@ -78,10 +67,10 @@ def advanced_wingo_engine(history):
             "targets": "🔢 টার্গেট সংখ্যা: ০, ২ অথবা ৪"
         }
 
-    # ৩. হাই পার্থক্য লুপ (৬ থেকে ৯) -> রিভার্সাল (জিগ-জ্যাগ ওয়েভ)
+    # ৩. হাই পার্থক্য লুপ (৬ থেকে ৯) -> রিভার্সাল
     if diff >= 6:
         next_shot = "BIG" if new_num <= 4 else "SMALL"
-        target_text = "৫, ৬ অথবা ৮" if next_shot == "BIG" else "০, ২ অথবা ৪"
+        target_text = "৫, 六 অথবা ৮" if next_shot == "BIG" else "০, ২ অথবা ৪"
         return {
             "log": f"📌 **হাই পার্থক্য ভোলটাইল জোন:** গ্যাপ {diff} (জিগ-জ্যাগ ওয়েভ)।",
             "shot": f"🎯 পরবর্তী শর্ট: {next_shot}",
@@ -89,7 +78,7 @@ def advanced_wingo_engine(history):
             "targets": f"🔢 টার্গেট সংখ্যা: {target_text}"
         }
 
-    # ৪. কম পার্থক্য লুপ (১ থেকে ৪) -> কন্টিনিউয়েশন (কমপ্যাক্ট ওয়েভ)
+    # ৪. কম পার্থক্য লুপ (১ থেকে ৪) -> কন্টিনিউয়েশন
     if diff <= 4:
         next_shot = "SMALL" if new_num <= 4 else "BIG"
         target_text = "০, ১ অথবা ২" if next_shot == "SMALL" else "৬, ৭ অথবা ৯"
