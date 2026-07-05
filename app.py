@@ -20,7 +20,7 @@ def analyze_wingo(old_num, new_num):
     
     # ১. সিমেট্রিক মিরর লুপ (ডাবল রিপিট রুল)
     if diff == 0:
-        if new_num in:
+        if new_num == 5 or new_num == 6 or new_num == 7 or new_num == 8 or new_num == 9:
             return analysis_details, "🎯 পরবর্তী শট: BIG", "💡 লজিক: জিরো-ডিফারেন্স ব্রেকআউট (Trend Flip)।", "🔢 টার্গেট সংখ্যা: ৬, ৭ অথবা ৮"
         else:
             return analysis_details, "🎯 পরবর্তী শট: SMALL", "💡 লজিক: সিমেট্রিক মিরর ট্রেন্ড ফ্লিপ (Trend Flip)।", "🔢 টার্গেট সংখ্যা: ১, ২ অথবা ৪"
@@ -31,16 +31,16 @@ def analyze_wingo(old_num, new_num):
     if new_num == 5:
         return analysis_details, "🎯 পরবর্তী শট: SMALL", "💡 লজিক: ৫-রুল আলটিমেট ফ্লিপিং পয়েন্ট।", "🔢 টার্গেট সংখ্যা: ০, ২ অথবা ৪"
 
-    # ৩. হাই পার্থক্য লুপ (৬, ۷, ৮, ৯) -> ফ্লিপ/রিভার্সাল ট্রেন্ড
+    # ৩. হাই পার্থক্য লুপ (৬, ৭, ৮, ৯) -> ফ্লিপ/রিভার্সাল ট্রেন্ড
     if diff >= 6:
-        if new_num in:
+        if new_num == 0 or new_num == 1 or new_num == 2 or new_num == 3 or new_num == 4:
             return analysis_details, "🎯 পরবর্তী শট: BIG", "💡 লজিক: হাই পার্থক্য রিভার্সাল সাইকেল।", "🔢 টার্গেট সংখ্যা: ৫, ৬ অথবা ৮"
         else:
             return analysis_details, "🎯 পরবর্তী শট: SMALL", "💡 লজিক: হাই পার্থক্য ভোলটাইল জোন ফ্লিপ।", "🔢 টার্গেট সংখ্যা: ০, ২ অথবা ৪"
 
     # ৪. কম পার্থক্য লুপ (১, ২, ৩, ৪) -> কন্টিনিউয়েশন ট্রেন্ড
     if diff <= 4:
-        if new_num in:
+        if new_num == 0 or new_num == 1 or new_num == 2 or new_num == 3 or new_num == 4:
             if old_type == "Even" and new_type == "Even":
                 return analysis_details, "🎯 পরবর্তী শট: SMALL", "💡 লজিক: [Even + Even] লুপে বিজোড় স্মল কন্টিনিউয়েশন।", "🔢 টার্গেট সংখ্যা: ১ অথবা ৩"
             return analysis_details, "🎯 পরবর্তী শট: SMALL", "💡 লজিক: কম পার্থক্য স্মল জোন ধারাবাহিকতা (Continuation)।", "🔢 টার্গেট সংখ্যা: ০, ১ অথবা ২"
@@ -62,4 +62,3 @@ if st.button("🔍 রান অ্যানালাইসিস"):
     st.success(f"### {shot}")
     st.warning(logic)
     st.code(targets)
-    
