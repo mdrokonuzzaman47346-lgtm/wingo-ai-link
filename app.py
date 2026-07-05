@@ -1,6 +1,6 @@
 import streamlit as st
 
-# স্ট্রিমলিট পেজ কনফিগারেশন
+# পেজ কনফিগারেশন
 st.set_page_config(page_title="Wingo Analyzer", page_icon="🤖", layout="centered")
 
 st.title("🤖 WINGO ১-মিনিট অ্যালগরিদম অ্যানালাইজার")
@@ -23,7 +23,7 @@ def analyze_wingo(old_num, new_num):
         if new_num in:
             return analysis_details, "🎯 পরবর্তী শট: BIG", "💡 লজিক: জিরো-ডিফারেন্স ব্রেকআউট (Trend Flip)।", "🔢 টার্গেট সংখ্যা: ৬, ৭ অথবা ৮"
         else:
-            return analysis_details, "🎯 পরবর্তী শট: SMALL", "💡 লজিক: সিমেট্রিক মিরর ট্রেন্ড ফ্লিপ (Trend Flip)।", "🔢 টার্げて সংখ্যা: ১, ২ অথবা ৪"
+            return analysis_details, "🎯 পরবর্তী শট: SMALL", "💡 লজিক: সিমেট্রিক মিরর ট্রেন্ড ফ্লিপ (Trend Flip)।", "🔢 টার্গেট সংখ্যা: ১, ২ অথবা ৪"
             
     # ২. ০ এবং ৫-এর স্পেশাল টার্নিং পয়েন্ট রুল
     if new_num == 0:
@@ -34,7 +34,7 @@ def analyze_wingo(old_num, new_num):
     # ৩. হাই পার্থক্য লুপ (৬, ৭, ৮, ৯) -> ফ্লিপ/রিভার্সাল ট্রেন্ড
     if diff >= 6:
         if new_num in:
-            return analysis_details, "🎯 পরবর্তী শট: BIG", "💡 লজিক: হাই পার্থক্য রিভার্সাল সাইকেল।", "🔢 টার্গেট সংখ্যা: ৫, 六 অথবা ৮"
+            return analysis_details, "🎯 পরবর্তী শট: BIG", "💡 লজিক: হাই পার্থক্য রিভার্সাল সাইকেল।", "🔢 টার্গেট সংখ্যা: ৫, ৬ অথবা ৮"
         else:
             return analysis_details, "🎯 পরবর্তী শট: SMALL", "💡 লজিক: হাই পার্থক্য ভোলটাইল জোন ফ্লিপ।", "🔢 টার্গেট সংখ্যা: ০, ২ অথবা ৪"
 
@@ -46,12 +46,12 @@ def analyze_wingo(old_num, new_num):
             return analysis_details, "🎯 পরবর্তী শট: SMALL", "💡 লজিক: কম পার্থক্য স্মল জোন ধারাবাহিকতা (Continuation)।", "🔢 টার্গেট সংখ্যা: ০, ১ অথবা ২"
         else:
             if old_type == "Even" and new_type == "Even":
-                return analysis_details, "🎯 পরবর্তী শট: BIG", "💡 লজিক: [Even + Even] লুপে বিজোড় বিগ কন্টিনিউয়েশন।", "🔢 টার্গেট সংখ্যা: ৭ অথবা ৯"
+                return analysis_details, "🎯 পরবর্তী শট: BIG", "💡 লজিক: [Even + Even] লুপে বিজোড় বিগ কন্টিনিউয়েশন।", "🔢 টার্গেট সংখ্যা: ۷ অথবা ৯"
             return analysis_details, "🎯 পরবর্তী শট: BIG", "💡 লজিক: কম পার্থক্য বিগ জোন ধারাবাহিকতা (Continuation)।", "🔢 টার্গেট সংখ্যা: ৬, ৭ অথবা ৯"
 
     return analysis_details, "⚠️ অ্যালগরিদম রিফ্রেশ মোড।", "অবজারভেশনে রাখুন।", ""
 
-# স্ট্রিমলিট ইউজার ইনপুট ইন্টারফেস
+# ইউজার ইনপুট ইন্টারফেস
 old_input = st.number_input("➡️ ওল্ড নম্বরটি দাও (০-৯):", min_value=0, max_value=9, value=0, step=1)
 new_input = st.number_input("➡️ নিউ নম্বরটি দাও (০-৯):", min_value=0, max_value=9, value=0, step=1)
 
