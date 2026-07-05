@@ -3,8 +3,8 @@ import streamlit as st
 # পেজ কনফিগারেশন - সহজ ও ক্লিন ডিজাইন
 st.set_page_config(page_title="Advanced Wingo Analyzer", page_icon="📈", layout="centered")
 
-st.title("🤖 WINGO প্রফেশনাল ১০-ডিজিট ম্যাট্রিক্স ড্যাশবোর্ড")
-st.write("এই অ্যাপটি শেষ ১০টি পিরিয়ডের ওয়েভ মোメントাম এবং এক্সট্রিম রিভার্সাল থিওরি ট্র্যাক করে।")
+st.title("🤖 WINGO প্রফেশনাল ১০-ডিজিট ড্যাশবোর্ড")
+st.write("এই অ্যাপটি শেষ ১০টি রেজাল্টের গতি এবং রিভার্সাল থিওরি ট্র্যাক করে।")
 
 # সেশন স্টেট মেমরি সেটআপ
 if 'history' not in st.session_state:
@@ -70,20 +70,20 @@ def advanced_wingo_engine(history):
     # ৩. হাই পার্থক্য লুপ (৬ থেকে ৯) -> রিভার্সাল
     if diff >= 6:
         next_shot = "BIG" if new_num <= 4 else "SMALL"
-        target_text = "৫, 六 অথবা ৮" if next_shot == "BIG" else "০, ২ অথবা ৪"
+        target_text = "৫, ৬ অথবা ৮" if next_shot == "BIG" else "০, ২ অথবা ৪"
         return {
-            "log": f"📌 **হাই পার্থক্য ভোলটাইল জোন:** গ্যাপ {diff} (জিগ-জ্যাগ ওয়েভ)।",
+            "log": f"📌 **হাই পার্থক্য ভোলটাইল জোন:** গ্যাপ {diff}।",
             "shot": f"🎯 পরবর্তী শর্ট: {next_shot}",
-            "logic": "💡 প্রফেশনাল থিওরি: বড় ব্যবধান বা তরঙ্গের পর মার্কেট কন্টিনিউ না করে বিপরীত জোনে দ্রুত রিবাউন্ড করে (Trend Flip)।",
+            "logic": "💡 প্রফেশনাল থিওরি: বড় ব্যবধানের পর মার্কেট কন্টিনিউ না করে বিপরীত জোনে দ্রুত রিবাউন্ড করে (Trend Flip)।",
             "targets": f"🔢 টার্গেট সংখ্যা: {target_text}"
         }
 
-    # ৪. কম পার্থক্য লুপ (১ থেকে ৪) -> কন্টিনিউয়েশন
+    # ৪. কম পার্থক্য লুপ (১ করা ৪) -> কন্টিনিউয়েশন
     if diff <= 4:
         next_shot = "SMALL" if new_num <= 4 else "BIG"
         target_text = "০, ১ অথবা ২" if next_shot == "SMALL" else "৬, ৭ অথবা ৯"
         return {
-            "log": f"📌 **শান্ত ও স্টেবল জোন:** গ্যাপ {diff} (কমপ্যাক্ট ওয়েভ)।",
+            "log": f"📌 **শান্ত ও স্টেবল জোন:** গ্যাপ {diff}।",
             "shot": f"🎯 পরবর্তী শর্ট: {next_shot}",
             "logic": "💡 প্রফেশনাল থিওরি: পার্থক্য কম থাকায় মার্কেট স্টেবিলিটি মেইনটেইন করছে এবং আগের সাইজের ধারাবাহিকতা ধরে রাখছে (Continuation)।",
             "targets": f"🔢 টার্গেট সংখ্যা: {target_text}"
