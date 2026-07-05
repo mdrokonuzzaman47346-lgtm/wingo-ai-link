@@ -18,7 +18,7 @@ def analyze_wingo(old_num, new_num):
     * গাণিতিক পার্থক্য: **{diff}**
     """
     
-    # ১. সিমেট্রিক মিরর লুপ (ডাবলর রিপিট রুল)
+    # ১. সিমেট্রিক মিরর লুপ (ডাবল রিপিট রুল)
     if diff == 0:
         if new_num in:
             return analysis_details, "🎯 পরবর্তী শট: BIG", "💡 লজিক: জিরো-ডিফারেন্স ব্রেকআউট (Trend Flip)।", "🔢 টার্গেট সংখ্যা: ৬, ৭ অথবা ৮"
@@ -31,7 +31,7 @@ def analyze_wingo(old_num, new_num):
     if new_num == 5:
         return analysis_details, "🎯 পরবর্তী শট: SMALL", "💡 লজিক: ৫-রুল আলটিমেট ফ্লিপিং পয়েন্ট।", "🔢 টার্গেট সংখ্যা: ০, ২ অথবা ৪"
 
-    # ৩. হাই পার্থক্য লুপ (৬, ৭, ৮, ৯) -> ফ্লিপ/রিভার্সাল ট্রেন্ড
+    # ৩. হাই পার্থক্য লুপ (৬, ۷, ৮, ৯) -> ফ্লিপ/রিভার্সাল ট্রেন্ড
     if diff >= 6:
         if new_num in:
             return analysis_details, "🎯 পরবর্তী শট: BIG", "💡 লজিক: হাই পার্থক্য রিভার্সাল সাইকেল।", "🔢 টার্গেট সংখ্যা: ৫, ৬ অথবা ৮"
@@ -62,3 +62,4 @@ if st.button("🔍 রান অ্যানালাইসিস"):
     st.success(f"### {shot}")
     st.warning(logic)
     st.code(targets)
+    
