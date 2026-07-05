@@ -28,7 +28,7 @@ else:
 
 if st.button("🗑️ হিস্টোরি সাফ করুন"):
     st.session_state.history = []
-    st.experimental_rerun()
+    st.rerun()  # নতুন আপডেট অনুযায়ী ফাংশন পরিবর্তন করা হয়েছে
 
 # মূল অ্যানালাইসিস লজিক
 def advanced_analysis(history):
@@ -45,7 +45,6 @@ def advanced_analysis(history):
     # ১. ড্রাগন ট্রেন্ড ট্র্যাকার (টানা একই সাইড আসলে)
     if len(sizes) >= 4 and len(set(sizes[-4:])) == 1:
         current_dragon = sizes[-1]
-        opposite_dragon = "BIG" if current_dragon == "SMALL" else "SMALL"
         return (
             f"🚨 **ড্রাগন ট্রেন্ড অ্যালার্ট!** টানা ৪ বা তার বেশি পিরিয়ড ধরে মার্কেট {current_dragon} জোনে লক হয়ে আছে।",
             f"🎯 পরবর্তী শর্ট: {current_dragon} (ট্রেন্ড ফলো)",
@@ -63,19 +62,19 @@ def advanced_analysis(history):
     if diff == 0:
         next_shot = "BIG" if new_num <= 4 else "SMALL"
         logic_text = "জিরো-ডিফারেন্স ব্রেকআউট (Trend Flip)।"
-        target_text = "৬, ۷ অথবা ৮" if next_shot == "BIG" else "১, ২ অথবা ৪"
+        target_text = "৬, ৭ অথবা ৮" if next_shot == "BIG" else "১, ২ অথবা ৪"
         return "📌 ডাবল রিপিট লুপ ডিটেক্টেড।", f"🎯 পরবর্তী শর্ট: {next_shot}", f"💡 লজিক: {logic_text}", f"🔢 টার্গেট সংখ্যা: {target_text}"
 
     # ৪. হাই পার্থক্য লুপ (৬ থেকে ৯) -> রিভার্সাল
     if diff >= 6:
         next_shot = "BIG" if new_num <= 4 else "SMALL"
-        target_text = "৫, ৬ অথবা ৮" if next_shot == "BIG" else "০, ২ अथवा ৪"
-        return "📌 হাই পার্থক্য ভোলটাইল জอน।", f"🎯 পরবর্তী শর্ট: {next_shot}", "💡 লজিক: বড় ব্যবধানের পর মার্কেট বিপরীত জোনে রিবাউন্ড করে।", f"🔢 টার্গেট সংখ্যা: {target_text}"
+        target_text = "৫, 六 অথবা ৮" if next_shot == "BIG" else "০, ২ অথবা ৪"
+        return "📌 হাই পার্থক্য ভোলটাইল জোন।", f"🎯 পরবর্তী শর্ট: {next_shot}", "💡 লজিক: বড় ব্যবধানের পর মার্কেট বিপরীত জোনে রিবাউন্ড করে।", f"🔢 টার্গেট সংখ্যা: {target_text}"
 
     # ৫. কম পার্থক্য লুপ (১ থেকে ৪) -> কন্টিনিউয়েশন
     if diff <= 4:
         next_shot = "SMALL" if new_num <= 4 else "BIG"
-        target_text = "০, ১ অথবা ২" if next_shot == "SMALL" else "৬, ৭ अथवा ৯"
+        target_text = "০, ১ অথবা ২" if next_shot == "SMALL" else "৬, ৭ অথবা ৯"
         return "📌 শান্ত ও স্টেবল মার্কেট জোন।", f"🎯 পরবর্তী শর্ট: {next_shot}", "💡 লজিক: কম পার্থক্যের কারণে মার্কেট আগের ধারাবাহিকতা বজায় রাখছে।", f"🔢 টার্গেট সংখ্যা: {target_text}"
 
     return "⚠️ অ্যালগরিদম রিফ্রেশ মোড।", "অবজারভেশনে রাখুন।", "", ""
