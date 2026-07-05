@@ -46,8 +46,8 @@ def analyze_wingo(old_num, new_num):
             return analysis_details, "🎯 পরবর্তী শট: SMALL", "💡 লজিক: কম পার্থক্য স্মল জোন ধারাবাহিকতা (Continuation)।", "🔢 টার্গেট সংখ্যা: ০, ১ অথবা ২"
         else:
             if old_type == "Even" and new_type == "Even":
-                return analysis_details, "🎯 পরবর্তী শট: BIG", "💡 লজিক: [Even + Even] লুপে বিজোড় বিগ কন্টিনিউয়েশন।", "🔢 টার্গেট সংখ্যা: ۷ অথবা ৯"
-            return analysis_details, "🎯 পরবর্তী শট: BIG", "💡 লজিক: কম পার্থক্য বিগ জোন ধারাবাহিকতা (Continuation)।", "🔢 টার্গেট সংখ্যা: ৬, ৭ অথবা ৯"
+                return analysis_details, "🎯 পরবর্তী শট: BIG", "💡 লজিক: [Even + Even] লুপে বিজোড় বিগ কন্টিনিউয়েশন।", "🔢 টার্গেট সংখ্যা: ৭ অথবা ৯"
+            return analysis_details, "🎯 পরবর্তী শট: BIG", "💡 লজিক: কম পার্থক্য বিগ জোন ধারাবাহিকতা (Continuation)।", "🔢 টার্গেট সংখ্যা: 六, ৭ অথবা ৯"
 
     return analysis_details, "⚠️ অ্যালগরিদম রিফ্রেশ মোড।", "অবজারভেশনে রাখুন।", ""
 
