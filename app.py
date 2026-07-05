@@ -18,7 +18,7 @@ def analyze_wingo(old_num, new_num):
     * গাণিতিক পার্থক্য: **{diff}**
     """
     
-    # ১. সিমেট্রিক মিরর লুপ (ডাবল রিপিট রুল)
+    # ১. সিমেট্রিক মিরর লুপ (ডাবলর রিপিট রুল)
     if diff == 0:
         if new_num in:
             return analysis_details, "🎯 পরবর্তী শট: BIG", "💡 লজিক: জিরো-ডিফারেন্স ব্রেকআউট (Trend Flip)।", "🔢 টার্গেট সংখ্যা: ৬, ৭ অথবা ৮"
@@ -47,7 +47,7 @@ def analyze_wingo(old_num, new_num):
         else:
             if old_type == "Even" and new_type == "Even":
                 return analysis_details, "🎯 পরবর্তী শট: BIG", "💡 লজিক: [Even + Even] লুপে বিজোড় বিগ কন্টিনিউয়েশন।", "🔢 টার্গেট সংখ্যা: ৭ অথবা ৯"
-            return analysis_details, "🎯 পরবর্তী শট: BIG", "💡 লজিক: কম পার্থক্য বিগ জোন ধারাবাহিকতা (Continuation)।", "🔢 টার্গেট সংখ্যা: 六, ৭ অথবা ৯"
+            return analysis_details, "🎯 পরবর্তী শট: BIG", "💡 লজিক: কম পার্থক্য বিগ জোন ধারাবাহিকতা (Continuation)।", "🔢 টার্গেট সংখ্যা: ৬, ৭ অথবা ৯"
 
     return analysis_details, "⚠️ অ্যালগরিদম রিফ্রেশ মোড।", "অবজারভেশনে রাখুন।", ""
 
