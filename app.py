@@ -5,7 +5,7 @@ import numpy as np
 # ১. প্রাতিষ্ঠানিক আল্ট্রা-হাই কোয়ালিটি ড্যাশবোর্ড সেটআপ
 st.set_page_config(page_title="Wingo Matrix Omni-Engine v8.5", page_icon="⚡", layout="wide")
 st.title("⚡ Wingo 1m Matrix Omni-Engine Global Dashboard")
-st.subheader("Developed for my Best Friend | Version 8.5 Master Engine Active 🚀")
+st.subheader("Developed for my Best Friend | Version 8.5 Bulletproof Active 🚀")
 
 # ২. ৩৩ লাখ (3,300,000) অ্যাডভান্সড কোয়ান্টাম ডাটাবেস জেনারেটর
 @st.cache_data
@@ -67,7 +67,7 @@ with col2:
     st.markdown("### 📊 MX-Server Real-Time Double-Chain Analysis")
     if st.session_state.result_history and st.session_state.period_history:
         st.write(f"**📝 শেষ ১০টি লাইভ রেজাল্ট ট্র্যাকিং চেইন:** `{st.session_state.result_history}`")
-        st.write(f"**⏳ শেষ ১০টি লাইভ ৩-ডিজিট পিরিয়ড ট্র্যাকিং চেইন:** `{st.session_state.period_history}`")
+        st.write(f"**⏳ শেষ ১০টি লাইভ ৩-ডিজিট পিয়ড ট্র্যাকিং চেইন:** `{st.session_state.period_history}`")
         
         res_list = st.session_state.result_history
         freq_dict = {i: res_list.count(i) for i in range(10)}
@@ -95,7 +95,6 @@ if len(st.session_state.result_history) >= 10 and len(st.session_state.period_hi
     
     current_period_last_digit = per_hist[-1] % 10
     
-    # 🧠 [১০০% ফিক্সড ডাইনামিক লিস্ট]: এখানে সংখ্যাগুলো কাটায় কাটায় লক করা হলো
     all_bigs = [5, 6, 7, 8, 9]
     all_smalls = [0, 1, 2, 3, 4]
     
@@ -131,12 +130,11 @@ if len(st.session_state.result_history) >= 10 and len(st.session_state.period_hi
         st.code("🎯 লাইভ ডাইনামিক টার্গেট সংখ্যা: 5, 8, 9")
         
     # [সিক্রেট রুল ৪]: সংখ্যার মধ্যম গ্রিড আয়না 🔄
-    elif (old_num == 4 and new_num == 5) or (old_num == 5 and n == 4):
+    elif (old_num == 4 and new_num == 5) or (old_num == 5 and new_num == 4):
         st.markdown("### 🔥 STRATEGY SIGNAL: <span style='color:red; font-size:26px; font-weight:bold;'>[ SMALL ]</span> | CONFIDENCE: <span style='color:green; font-weight:bold;'>98.00% (MODULAR DELTA DEVIATION)</span>", unsafe_allow_html=True)
         st.warning("💡 **MX-SERVER MATRIX AUDIT:** বর্ডার লাইনের ১-গ্যাপের মধ্যম গ্রিড দর্পণ জোন সনাক্ত। কোম্পানির পাতা রানিং ট্র্যাপ নিষ্ক্রিয় করে ছোট জোন লক করা হয়েছে।")
         st.code("🎯 লাইভ ডাইনামিক টার্গেট সংখ্যা: 1, 2, 4")
         
-    # ------------------ আগের সংস্করণের বেসিক রুলস নিচে অক্ষত রাখা হলো ------------------
     # [রুল ১]: ড্রাগন ট্রেন্ড ব্রেকার লজিক 🐉
     elif len(sizes) >= 4 and len(set(sizes[-4:])) == 1:
         current_dragon = sizes[-1]
@@ -147,7 +145,7 @@ if len(st.session_state.result_history) >= 10 and len(st.session_state.period_hi
         st.warning("💡 **MX-SERVER MATRIX AUDIT:** শেষ ১০টি রেজাল্ট ও ৩-ডিজিট পিরিয়ড এবং অটো-স্ট্যাটিস্টিক ম্যাক্স কনসিকিউティブ লিমিট বিশ্লেষণ করে ড্রাগন ট্র্যাপ সনাক্ত করা হয়েছে।")
         st.code(f"🎯 লাইভ ডাইনামিক টার্গেট সংখ্যা: {target_nums}")
         
-    # [রুল ২]: ০ এবং ৫ এর স্পেশাল ভলিউম ফ্লিপ গার্ড 🚫
+    # [রুল ২]: ০ এবং ৫ এর স্পেশাল ভলিউম ফ্লিপガード 🚫
     elif new_num == 0:
         st.markdown(f"### 🔥 STRATEGY SIGNAL: <span style='color:blue; font-size:26px; font-weight:bold;'>[ BIG ]</span> | CONFIDENCE: <span style='color:green; font-weight:bold;'>91.20% (ZERO TRAP GUARD)</span>", unsafe_allow_html=True)
         st.warning("💡 **MX-SERVER MATRIX AUDIT:** চার্টে ০ এসেছে। বিপরীত বড় জোনে মার্কেট ফেরার শক্তিশালী রেকর্ড লক করা হয়েছে।")
@@ -172,3 +170,7 @@ if len(st.session_state.result_history) >= 10 and len(st.session_state.period_hi
             next_shot = "BIG"
             target_nums = dynamic_big_text
         else:
+            next_shot = "SMALL"
+            target_nums = dynamic_small_text
+            
+        color = "blue" if next_shot == "BIG" else "red"
