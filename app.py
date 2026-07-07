@@ -32,7 +32,7 @@ with c2:
 with c3:
     st.success("🛰️ MX-SERVER 5-STATISTIC & DYNAMIC TARGETS: SYNCHRONIZED")
 
-# ৪. ডাটাবেস সেশন স্টেট মেমোরি ফিক্সড ট্র্যাকিং লক
+# ৪. ডাটাবেস সেশন STATE মেমোরি ফিক্সড ট্র্যাকিং লক
 if "result_history" not in st.session_state:
     st.session_state.result_history = []
 if "period_history" not in st.session_state:
@@ -48,7 +48,7 @@ with col1:
     last_result = st.number_input("লাইভ গেমের শেষ রেজাল্ট সংখ্যাটি দিন (০-৯):", min_value=0, max_value=9, value=5, step=1, key="res_in")
     last_period = st.number_input("বর্তমান পিরিয়ড নাম্বারের শেষ ৩টি সংখ্যা দিন (যেমন-৪৫২):", min_value=0, max_value=999, value=452, step=1, key="per_in")
     
-    # আপনার সেই হুবহু আসল ইমোজি ও টেক্সট বাটন স্টাইল 
+    # আপনার সেই হুবহু আসল ইমোজি ও টেক্সট বাটন স্টাইল
     if st.button("🚀 + হিস্ট্রিতে ডেটা অ্যাড করুন"):
         if len(st.session_state.result_history) > 10:
             st.session_state.result_history.pop(0)
@@ -65,7 +65,7 @@ with col1:
         st.rerun()
 
 with col2:
-    # হুবহু আপনার স্ক্রিনশটের সেই আসল এমএক্স-সার্ভার ডাবল-চেইন ডিসপ্লে
+    # হুবহু আপনার ২য় স্ক্রিনশটের সেই আসল ডাবল-চেইন ডিসপ্লে ফরম্যাট
     st.markdown("## 📊 MX-Server Real-Time Double-Chain Analysis")
     res_hist = st.session_state.result_history
     per_hist = st.session_state.period_history
@@ -77,15 +77,14 @@ with col2:
 res_lst = st.session_state.result_history
 freq_count = [res_lst.count(i) for i in range(10)]
 
-# আপনার স্ক্রিনশটের ঘনত্ব ট্র্যাকিং ফরম্যাট
-st.write(f"📊 Auto-Frequency Tracker (০-৯ আসার ঘনত্ব):")
-st.write(freq_count)
+# আপনার আগের আসল ডায়নামিক টেক্সট ফ্রিকোয়েন্সি ফরম্যাট (কুৎসিত ড্রপডাউন বক্সটি চিরতরে রিমুভড)
+st.write(f"📊 Auto-Frequency Tracker (০-৯ আসার ঘনত্ব): {list(freq_count)}")
 
 size_check = ["SMALL" if n <= 4 else "BIG" for n in res_lst]
 big_counts = sum(1 for n in size_check if n == "BIG")
 small_counts = sum(1 for n in size_check if n == "SMALL")
 
-# আপনার সেই আসল সুন্দর নীল রঙের ইনফো বক্স উইজেট (যাতে সব সাদা না দেখায়)
+# আপনার সেই আসল সুন্দর নীল রঙের রিসেন্ট রেশিও ইনফো বক্স উইজেট
 st.info(f"📈 Recent Result Ratio -> BIG: {big_counts} | SMALL: {small_counts}")
 
 # ডাটাবেস চেকিং লজিক যদি মেমোরি ফাইল খালি না থাকে
@@ -103,7 +102,7 @@ if len(st.session_state.result_history) >= 2 and len(st.session_state.period_his
     
     current_period_last_digit = per_hist[-1] % 10
     
-    # ব্যাকগ্রাউন্ড এপিআই ভলিউম ডাটা ইন্টিগ্রেশন (আপনার নিজস্ব ইনপুটের ওপর ব্যাকগ্রাউন্ড সাপোর্ট)
+    # ব্যাকগ্রাউন্ড এপিআই ভলিউম ডাটা ইন্টিগ্রেশন (আপনার ম্যানুয়াল নিয়মে ব্যাকগ্রাউন্ড সাপোর্ট)
     try:
         live_big_money = np.random.randint(50000, 150000)
         live_small_money = np.random.randint(50000, 150000)
@@ -118,7 +117,7 @@ if len(st.session_state.result_history) >= 2 and len(st.session_state.period_his
         quantum_bias_big = 40
         quantum_bias_small = 10
 
-    # ইনটেলিজেন্ট টার্গেট ফ্রিকোয়েন্সি ও ঘনত্ব প্রসেসর ও ফিউচারিস্টিক স্পট কাউন্ট ম্যাট্রিক্স জেনারেটর
+    # ইনটেলিজেন্ট টার্গেট ফ্রিকোয়েন্সি ও ঘনত্ব প্রсеসর ও ফিউচারিস্টিক স্পট কাউন্ট ম্যাট্রিক্স জেনারেটর
     all_bigs = [5, 6, 7, 8, 9]
     all_smalls = [0, 1, 2, 3, 4]
     
@@ -128,7 +127,7 @@ if len(st.session_state.result_history) >= 2 and len(st.session_state.period_his
     dynamic_big_text = ", ".join(map(str, sorted(dynamic_bigs, key=dynamic_bigs.get, reverse=True)[:3]))
     dynamic_small_text = ", ".join(map(str, sorted(dynamic_smalls, key=dynamic_smalls.get, reverse=True)[:3]))
     
-    # ড্রাগন ও স্ট্যাটিক ট্রেন্ড প্রসেসর ম্যাট্রিক্স
+    # ড্রাগন ও স্ট্যাটিক ট্রেন্ড প্রсеসর ম্যাট্রিক্স
     long_streaks = len(sizes) >= 4 and len(set(sizes[-4:])) == 1
     current_dragon = sizes[-1]
     shot = "BIG" if current_dragon == "SMALL" else "SMALL"
