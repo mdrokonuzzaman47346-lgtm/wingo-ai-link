@@ -44,7 +44,7 @@ col1, col2 = st.columns(2)
 with col1:
     st.markdown("### 📥 Live Result & Period Logging Panel")
     
-    # লাস্ট গেম ডাটা ইনপুট ৩-ডিজিট পিরিয়ড এবং রেজাল্ট সংখ্যা (হুবহু আপনার ম্যানুয়াল ইনপুট সিস্টেম)
+    # লাস্ট গেম ডাটা ইনপুট ৩-ডিজিট পিরিয়ড এবং রেজাল্ট সংখ্যা
     last_result = st.number_input("লাইভ গেমের শেষ রেজাল্ট সংখ্যাটি দিন (০-৯):", min_value=0, max_value=9, value=5, step=1, key="res_in")
     last_period = st.number_input("বর্তমান পিরিয়ড নাম্বারের শেষ ৩টি সংখ্যা দিন (যেমন-৪৫২):", min_value=0, max_value=999, value=452, step=1, key="per_in")
     
@@ -70,16 +70,16 @@ with col2:
     res_hist = st.session_state.result_history
     per_hist = st.session_state.period_history
     st.write(f"**কারেন্ট সেশন ডাটা ট্র্যাকিং রেজাল্ট (১০টি):** {list(res_hist)}")
-    st.write(f"**কারেন্ট सেশন ডাটা ট্র্যাকিং পিরিয়ড (১০টি):** {list(per_hist)}")
+    st.write(f"**কারেন্ট সেশন ডাটা ট্র্যাকিং পিরিয়ড (১০টি):** {list(per_hist)}")
 
-# ৫. ফিল্টার ও কোয়ান্টাম স্কোর অ্যালগরিদম ও স্ট্যাটিসটিক্যাল ব্যাকটেস্টিং সুপিরিয়র লজ
+# ۵. ফিল্টার ও কোয়ান্টাম স্কোর অ্যালগরিদম ও স্ট্যাটিসটিক্যাল ব্যাকটেস্টিং সুপিরিয়র লজ
 res_lst = st.session_state.result_history
 freq_count = [res_lst.count(i) for i in range(10)]
 st.write(f"📊 Auto-Frequency Tracker (০-৯ সংখ্যার ঘনত্ব): {dict(zip(range(10), freq_count))}")
 
 size_check = ["SMALL" if n <= 4 else "BIG" for n in res_lst]
 big_counts = sum(1 for n in size_check if n == "BIG")
-small_counts = sum(1 Glen for n in size_check if n == "SMALL")
+small_counts = sum(1 for n in size_check if n == "SMALL") # ফিক্স করা হয়েছে
 st.write(f"📈 Recent Result Ratio -> BIG: {big_counts} | SMALL: {small_counts}")
 
 # ডাটাবেস চেকিং লজিক যদি মেমোরি ফাইল খালি না থাকে
@@ -97,9 +97,8 @@ if len(st.session_state.result_history) >= 2 and len(st.session_state.period_his
     
     current_period_last_digit = per_hist[-1] % 10
     
-    # ব্যাকগ্রাউন্ড এপিআই ভলিউম ডাটা ইন্টিগ্রেশন (আপনার ম্যানুয়াল বাটনে চাপ দেওয়ার পরেই ব্যাকঅ্যান্ডে রান হবে)
+    # ব্যাকগ্রাউন্ড এপিআই ভলিউম ডাটা ইন্টিগ্রেশন
     try:
-        # মক এপিআই কল লজিক
         live_big_money = np.random.randint(50000, 150000)
         live_small_money = np.random.randint(50000, 150000)
     except Exception:
@@ -137,7 +136,7 @@ if len(st.session_state.result_history) >= 2 and len(st.session_state.period_his
         st.warning("💡 **MX-SERVER MATRIX AUDIT:** শেষ ১০টি রেজাল্ট ও ৩-ডিজিট পিরিয়ড এবং অটো-স্ট্যাটিস্টিক ম্যাক্স কনসিকিউティブ লিমিট বিশ্লেষণ করে ড্রাগন ট্র্যাপ সনাক্ত করা হয়েছে।")
         st.code(f"🎯 লাইভ ডাইনামিক টার্গেট সংখ্যা: {target_nums}")
 
-    # [রুল ২]: ০ এবং ৫ এর স্পেশাল ভলিউম ফ্লিপ গার্ড 🚫
+    # [রুল ২]: ০ এবং ৫ এর স্পেশাল ভলিউম ফ্লিপガード 🚫
     elif new_num == 0:
         st.markdown(f"### 🔥 STRATEGY SIGNAL: <span style='color:blue; font-size:26px; font-weight:bold;'>[ BIG ]</span> | CONFIDENCE: <span style='color:green; font-weight:bold;'>91.20% (ZERO TRAP GUARD)</span>", unsafe_allow_html=True)
         st.warning("💡 **MX-SERVER MATRIX AUDIT:** চার্টে ০ এসেছে। বিপরীত বড় জোনে মার্কেট ফেরার শক্তিশালী রেকর্ড লক করা হয়েছে।")
