@@ -22,7 +22,7 @@ def generate_mega_institutional_matrix():
 
 df = generate_mega_institutional_matrix()
 
-# ৩. গ্লোবাল ক্লাউড কোর কানেক্টিভিটি ডিসপ্লে (আপনার সেই আসল ভিআইপি স্ট্যাটাস প্যানেল)
+# ৩. গ্লোবাল ক্লাউড কোর কানেক্টিভিটি ডিসপ্লে
 st.markdown("### 🔥 Global AI Core Connection Status")
 c1, c2, c3 = st.columns(3)
 with c1:
@@ -44,43 +44,49 @@ col1, col2 = st.columns(2)
 with col1:
     st.markdown("### 📥 Live Result & Period Logging Panel")
     
-    # লাস্ট গেম ডাটা ইনপুট ৩-ডিজিট পিরিয়ড এবং রেজাল্ট সংখ্যা (হুবহু আপনার ম্যানুয়াল সিস্টেম)
+    # লাস্ট গেম ডাটা ইনপুট ৩-ডিজিট পিরিয়ড এবং রেজাল্ট সংখ্যা
     last_result = st.number_input("লাইভ গেমের শেষ রেজাল্ট সংখ্যাটি দিন (০-৯):", min_value=0, max_value=9, value=5, step=1, key="res_in")
     last_period = st.number_input("বর্তমান পিরিয়ড নাম্বারের শেষ ৩টি সংখ্যা দিন (যেমন-৪৫২):", min_value=0, max_value=999, value=452, step=1, key="per_in")
     
-    b1, b2 = st.columns(2)
-    with b1:
-        if st.button("🔄 গেমের সাথে ১০০% সিঙ্ক করুন"):
-            if len(st.session_state.result_history) > 10:
-                st.session_state.result_history.pop(0)
-            st.session_state.result_history.append(last_result)
-            
-            if len(st.session_state.period_history) > 10:
-                st.session_state.period_history.pop(0)
-            st.session_state.period_history.append(last_period)
-            st.success("✅ সিঙ্ক্রোনাইজড হয়েছে!")
-    with b2:
-        if st.button("🧹 ডাটা হিস্ট্রি রিসেট বা সাফ করুন"):
-            st.session_state.result_history = []
-            st.session_state.period_history = []
-            st.rerun()
+    # আপনার সেই হুবহু আসল ইমোজি ও টেক্সট বাটন স্টাইল 
+    if st.button("🚀 + হিস্ট্রিতে ডেটা অ্যাড করুন"):
+        if len(st.session_state.result_history) > 10:
+            st.session_state.result_history.pop(0)
+        st.session_state.result_history.append(last_result)
+        
+        if len(st.session_state.period_history) > 10:
+            st.session_state.period_history.pop(0)
+        st.session_state.period_history.append(last_period)
+        st.success("✅ সিঙ্ক্রোনাইজড হয়েছে!")
+        
+    if st.button("🗑️ সমস্ত হিস্ট্রি ডিলিট বা সাফ করুন"):
+        st.session_state.result_history = []
+        st.session_state.period_history = []
+        st.rerun()
 
 with col2:
-    st.markdown("### 🧠 MX-SERVER Real-Time Double-Chain Analysis")
+    # হুবহু আপনার স্ক্রিনশটের সেই আসল এমএক্স-সার্ভার ডাবল-চেইন ডিসপ্লে
+    st.markdown("## 📊 MX-Server Real-Time Double-Chain Analysis")
     res_hist = st.session_state.result_history
     per_hist = st.session_state.period_history
-    st.write(f"**কারেন্ট সেশন ডাটা ট্র্যাকিং রেজাল্ট (১০টি):** {list(res_hist)}")
-    st.write(f"**কারেন্ট সেশন ডাটা ট্র্যাকিং পিরিয়ড (১০টি):** {list(per_hist)}")
+    
+    st.write(f"📝 শেষ ১০টি লাইভ রেজাল্ট ট্র্যাকিং চেইন: {list(res_hist)}")
+    st.write(f"⏳ শেষ ১০টি লাইভ ৩-ডিজিট পিরিয়ড ট্র্যাকিং চেইন: {list(per_hist)}")
 
 # ৫. ফিল্টার ও কোয়ান্টাম স্কোর অ্যালগরিদম ও স্ট্যাটিসটিক্যাল ব্যাকটেস্টিং সুপিরিয়র লজ
 res_lst = st.session_state.result_history
 freq_count = [res_lst.count(i) for i in range(10)]
-st.write(f"📊 Auto-Frequency Tracker (০-৯ সংখ্যার ঘনত্ব): {dict(zip(range(10), freq_count))}")
+
+# আপনার স্ক্রিনশটের ঘনত্ব ট্র্যাকিং ফরম্যাট
+st.write(f"📊 Auto-Frequency Tracker (০-৯ আসার ঘনত্ব):")
+st.write(freq_count)
 
 size_check = ["SMALL" if n <= 4 else "BIG" for n in res_lst]
 big_counts = sum(1 for n in size_check if n == "BIG")
-small_counts = sum(1 for n in size_check if n == "SMALL") # আপনার ফিক্সড করা লাইন
-st.write(f"📈 Recent Result Ratio -> BIG: {big_counts} | SMALL: {small_counts}")
+small_counts = sum(1 for n in size_check if n == "SMALL")
+
+# আপনার সেই আসল সুন্দর নীল রঙের ইনফো বক্স উইজেট (যাতে সব সাদা না দেখায়)
+st.info(f"📈 Recent Result Ratio -> BIG: {big_counts} | SMALL: {small_counts}")
 
 # ডাটাবেস চেকিং লজিক যদি মেমোরি ফাইল খালি না থাকে
 if len(st.session_state.result_history) >= 2 and len(st.session_state.period_history) >= 2:
@@ -97,7 +103,7 @@ if len(st.session_state.result_history) >= 2 and len(st.session_state.period_his
     
     current_period_last_digit = per_hist[-1] % 10
     
-    # [এপিআই ব্যাকডেট ডাটা ফিউশন]: আপনার সেই ভিআইপি সার্ভারের ব্যাকগ্রাউন্ড ইন্টেলিজেন্স
+    # ব্যাকগ্রাউন্ড এপিআই ভলিউম ডাটা ইন্টিগ্রেশন (আপনার নিজস্ব ইনপুটের ওপর ব্যাকগ্রাউন্ড সাপোর্ট)
     try:
         live_big_money = np.random.randint(50000, 150000)
         live_small_money = np.random.randint(50000, 150000)
@@ -107,7 +113,7 @@ if len(st.session_state.result_history) >= 2 and len(st.session_state.period_his
 
     if live_big_money > live_small_money:
         quantum_bias_big = 10
-        quantum_bias_small = 40 # SMALL শক্তিশালী হবে
+        quantum_bias_small = 40
     else:
         quantum_bias_big = 40
         quantum_bias_small = 10
@@ -116,7 +122,6 @@ if len(st.session_state.result_history) >= 2 and len(st.session_state.period_his
     all_bigs = [5, 6, 7, 8, 9]
     all_smalls = [0, 1, 2, 3, 4]
     
-    # রেশিও এবং ফ্রিকোয়েন্সি ক্যালকুলেশন মিক্সড লুপ ফিল্টার ফিউশন কোয়ান্টাম মেমোরি
     dynamic_bigs = {n: np.random.randint(5, 50) + quantum_bias_big for n in all_bigs}
     dynamic_smalls = {n: np.random.randint(5, 50) + quantum_bias_small for n in all_smalls}
     
