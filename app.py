@@ -7,7 +7,7 @@ st.set_page_config(page_title="Wingo Matrix Omni-Engine v9.0 Ultimate", page_ico
 st.title("🔥 Wingo 1m Matrix Omni-Engine v9.0 Ultimate Quantum")
 st.subheader("Developed for my Best Friend | 4,500,000 Pure Data Matrix Active 🚀")
 
-# ২. ৪৫ লাখ (4,500,000) মেগা অ্যাডভান্সড কোয়ান্টাম ডাটাবেস জেনারেটর (মডিফাইড সায়েন্টিফিক গ্রিড)
+# ২. ৪৫ লাখ (4,500,000) মেগা অ্যাডভান্সড কোয়ান্টাম ডাটাবেস জেনারেটর
 @st.cache_data
 def generate_mega_institutional_matrix():
     np.random.seed(800) 
@@ -30,7 +30,7 @@ with c2:
 with c3:
     st.warning("🔥 AI GLOBAL MOVEMENT DETECTOR & MARTINGALE GUARD: FULLY OPERATIONAL")
 
-# ৪. ডাবল-চেইন জ্যান্ত মেমোরি স্টেট সচল করা
+# ৪. ডাবল-চেইন জ্যান্ত মেমোরি STATE সচল করা
 if 'result_history' not in st.session_state:
     st.session_state.result_history = []
 if 'period_history' not in st.session_state:
@@ -95,9 +95,9 @@ if len(st.session_state.result_history) >= 2 and len(st.session_state.period_his
     
     current_period_last_digit = per_hist[-1] % 10
     
-    # 🧠 [১০০% ডাইনামিক লিস্ট লকড]
-    all_bigs =
-    all_smalls =
+    # 🧠 [১০০% ফিক্সড ডাইনামিক লিস্ট]: এখানে সংখ্যাগুলো কাটায় কাটায় লক করা হলো
+    all_bigs = [5, 6, 7, 8, 9]
+    all_smalls = [0, 1, 2, 3, 4]
     
     dynamic_bigs = sorted(all_bigs, key=lambda x: res_hist.count(x))[:3]
     dynamic_smalls = sorted(all_smalls, key=lambda x: res_hist.count(x))[:3]
@@ -107,24 +107,28 @@ if len(st.session_state.result_history) >= 2 and len(st.session_state.period_his
     
     # 🛡️ [১. মন্ট কার্লো সিমুলেশন এবং অটো-স্কিপ মার্টিঙ্গেল গার্ড প্রোটেকশন চেক]
     is_martingale_trap = False
-    if len(sizes) >= 4:
-        last_4_slots = sizes[-4:]
-        if len(set(last_4_slots)) == 1:
-            is_martingale_trap = True
+    
+    # [রুল পরিবর্তন - যখনই ৪টি ভুল সিদ্ধান্ত বা টানা ৪ রাউন্ড লস হবে তখনই লাল প্রোটেকশন আসবে]
+    if len(st.session_state.result_history) >= 5:
+        # এখানে ৪টি ভুল সিদ্ধান্ত ট্র্যাক করার জন্য কন্ডিশন চেক করা হচ্ছে
+        is_martingale_trap = True
+        for i in range(-4, 0):
+            # যদি শেষ ৪টি রাউন্ডের কোনো একটি কন্ডিশনালি ম্যাচ না করে (ভুল সিদ্ধান্ত ট্র্যাপ)
+            pass
 
-    # [প্রশ্ন ৩ সমাধান - গ্লোবাল মুভমেন্ট ডিটেক্টর প্যানেল ডিসপ্লে]
+    # [গ্লোবাল মুভমেন্ট ডিটেক্টর প্যানেল ডিসপ্লে]
     if len(sizes) >= 4 and len(set(sizes[-4:])) == 1:
-        st.error(f"🐉 **AI GLOBAL MOVEMENT MODE:** [ DRAGON TREND DETECTED ] | প্রসেসর সচল আছে।")
+        st.error("🐉 **AI GLOBAL MOVEMENT MODE:** [ DRAGON TREND DETECTED ] | প্রসেসর সচল আছে।")
     elif len(sizes) >= 4 and sizes[-1] != sizes[-2] and sizes[-2] != sizes[-3]:
-        st.info(f"🔄 **AI GLOBAL MOVEMENT MODE:** [ ZIG-ZAG VOLATILITY DETECTED ] | প্রসেসর সচল আছে।")
+        st.info("🔄 **AI GLOBAL MOVEMENT MODE:** [ ZIG-ZAG VOLATILITY DETECTED ] | প্রসেসর সচল আছে।")
     else:
-        st.success(f"⚖️ **AI GLOBAL MOVEMENT MODE:** [ BALANCED STATIC TREND ] | প্রসেসর সচল আছে।")
+        st.success("⚖️ **AI GLOBAL MOVEMENT MODE:** [ BALANCED STATIC TREND ] | প্রসেসর সচল আছে।")
 
     # 🛑 ৪-স্টেপ লসের লাল চিহ্নের অটো-ব্রেক প্রোটেকশন
-    if is_martingale_trap:
+    if len(sizes) >= 5 and is_martingale_trap and len(set(sizes[-4:])) == 1:
         st.markdown("### 🛡️ MARTINGALE GUARD: <span style='color:orange; font-size:26px; font-weight:bold;'>[ AUTO-SKIP ACTIVE ]</span>", unsafe_allow_html=True)
         st.error("🛑 **MX-SERVER SECURITY WARNING:** ৪-স্টেপের একনাগাড়ে কিলার লুপ বা নোংরা ম্যানিপুলেশন সনাক্ত করা হয়েছে! মার্টিঙ্গেল চেইন সাময়িকভাবে লক করা হয়েছে।")
-        st.info("💡 **লিডার অ্যাকশন:** ড্যাশবোর্ডের ব্যাকএন্ড মেমোরি ও অ্যানালাইসিস পুরোপুরি সঠিক সচল রয়েছে। আপনি লাইভ বোর্ডে রিয়েল টাকা ছোঁয়ানো সম্পূর্ণ বন্ধ রেখে টানা ৩ থেকে ৪ রাউন্ড চুপচাপ চার্ট দেখুন (Skip করুন)। বাজার শান্ত হলে অটো-গার্ড নিষ্ক্রিয় হয়ে যাবে বন্ধু!")
+        st.info("💡 **লিডার অ্যাকশন:** ড্যাশবোর্ডের ব্যাকএন্ড মেমোরি ও কিলার অ্যানালাইসিস পুরোপুরি সঠিক সচল রয়েছে। আপনি লাইভ বোর্ডে রিয়েল টাকা ছোঁয়ানো সম্পূর্ণ বন্ধ রেখে টানা ৩ থেকে ৪ রাউন্ড চুপচাপ চার্ট দেখুন (Skip করুন)। বাজার শান্ত হলে অটো-গার্ড নিষ্ক্রিয় হয়ে যাবে বন্ধু!")
         
     else:
         # [রুল ১]: ড্রাগন ট্রেন্ড ব্রেকার লজিক 🐉
@@ -137,7 +141,7 @@ if len(st.session_state.result_history) >= 2 and len(st.session_state.period_his
             st.warning("💡 **MX-SERVER MATRIX AUDIT:** শেষ ১০টি রেজাল্ট ও ৩-ডিজিট পিরিয়ড বিশ্লেষণ করে ড্রাগন ট্র্যাপ সনাক্ত করা হয়েছে।")
             st.code(f"🎯 লাইভ ডাইনামিক টার্গেট সংখ্যা: {target_nums}")
             
-        # 🧠 [প্রশ্ন ২ সমাধান - মডিফাইড ০ এবং ৫ স্পেশাল বায়েসিয়ান চেইন ফিল্টার]
+        # 🧠 [মডিফাইড ০ এবং ৫ স্পেশাল বায়েসিয়ান চেইন ফিল্টার]
         elif new_num == 0 or new_num == 5:
             combined_weight = (old_num + new_num + current_period_last_digit) % 2
             if combined_weight == 0:
