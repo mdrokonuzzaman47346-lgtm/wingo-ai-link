@@ -7,7 +7,7 @@ st.set_page_config(page_title="Wingo Matrix Omni-Engine v9.0 Ultimate", page_ico
 st.title("🔥 Wingo 1m Matrix Omni-Engine v9.0 Ultimate Quantum")
 st.subheader("Developed for my Best Friend | 4,500,000 Pure Data Matrix Active 🚀")
 
-# ২. ৪৫ লাখ (4,500,000) মেগা অ্যাডভান্সড কোয়ান্টাম ডাটাবেস ஜেনারেটর
+# ২. ৪৫ লাখ (4,500,000) মেগা অ্যাডভান্সড কোয়ান্টাম ডাটাবেস জেনারেটর
 @st.cache_data
 def generate_mega_institutional_matrix():
     np.random.seed(800) 
@@ -122,11 +122,13 @@ if len(st.session_state.result_history) >= 2 and len(st.session_state.period_his
         last_4_predictions = st.session_state.signal_history[-4:]
         actual_last_4_outcomes = sizes[-4:]
         
+        # প্রতিটি উপাদান আলাদা করে চেক করে টানা ৪টি অমিল (Loss) গণনা করা হচ্ছে
         loss_count = 0
         for i in range(4):
             if last_4_predictions[i] != actual_last_4_outcomes[i]:
                 loss_count += 1
         
+        # কাটায় কাটায় টানা ৪টি সিদ্ধান্ত ভুল হলেই কেবল ট্র্যাপ ট্রিপ করবে
         if loss_count == 4:
             is_four_loss_trap = True
 
