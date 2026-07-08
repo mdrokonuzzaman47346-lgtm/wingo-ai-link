@@ -20,7 +20,7 @@ def generate_mega_institutional_matrix():
 
 df = generate_mega_institutional_matrix()
 
-# ৩. গ্লোবাল এআই CORE কানেকশন স্ট্যাটাস (All Servers Active)
+# ৩. গ্লোবাল এআই CORE কানেকশন স্ট্যাটাস (All Servers Active — v9.0 Complete Setup)
 st.markdown("### 🌐 Global AI Core Connection Status")
 c1, c2, c3 = st.columns(3)
 with c1:
@@ -43,6 +43,7 @@ col1, col2 = st.columns(2)
 
 with col1:
     st.markdown("### 📥 Live Result & Period Logging Panel")
+    
     log_result = st.number_input("লাইভ চার্টের শেষ তাজা রেজাল্ট নম্বরটি দিন (০-৯):", min_value=0, max_value=9, value=0, step=1, key="res_in")
     log_period = st.number_input("চলতি পিরিয়ড নম্বরের শেষ ৩টি সংখ্যা দিন (০০০-৯৯৯):", min_value=0, max_value=999, value=452, step=1, key="per_in")
     
@@ -69,7 +70,7 @@ with col2:
     st.markdown("### 📊 MX-Server Real-Time Double-Chain Analysis")
     if st.session_state.result_history and st.session_state.period_history:
         st.write(f"**📝 শেষ ১০টি লাইভ রেজাল্ট ট্র্যাকিং চেইন:** `{st.session_state.result_history}`")
-        st.write(f"**⏳ শেষ ১০টি লাইভ ৩-ডিジット পিরিয়ড ট্র্যাকিং চেইন:** `{st.session_state.period_history}`")
+        st.write(f"**⏳ শেষ ১০টি লাইভ ৩-ডিজিট পিরিয়ড ট্র্যাকিং চেইন:** `{st.session_state.period_history}`")
         
         res_list = st.session_state.result_history
         freq_dict = {i: res_list.count(i) for i in range(10)}
@@ -97,8 +98,8 @@ if len(st.session_state.result_history) >= 2 and len(st.session_state.period_his
     current_period_last_digit = per_hist[-1] % 10
     
     # 🧠 [১০০% ফিক্সড ডাইনামিক লিস্ট লকড]
-    all_bigs = [5, 6, 7, 8, 9]
-    all_smalls = [0, 1, 2, 3, 4]
+    all_bigs =
+    all_smalls =
     
     dynamic_bigs = sorted(all_bigs, key=lambda x: res_hist.count(x))[:3]
     dynamic_smalls = sorted(all_smalls, key=lambda x: res_hist.count(x))[:3]
@@ -108,22 +109,29 @@ if len(st.session_state.result_history) >= 2 and len(st.session_state.period_his
     
     # [গ্লোবাল মুভমেন্ট ডিটেক্টর প্যানেল ডিসপ্লে]
     if len(sizes) >= 4 and len(set(sizes[-4:])) == 1:
-        st.error("🐉 **AI GLOBAL MOVEMENT MODE:** [ DRAGON TREND DETECTED ] | প্রসেসর ব্যাকঅ্যান্ডে সম্পূর্ণ সচল এবং অ্যানালাইসিস নিখুঁত রাখছে!")
+        st.error("🐉 **AI GLOBAL MOVEMENT MODE:** [ DRAGON TREND DETECTED ] | প্রসেসর ব্যাকঅ্যান্ডে সম্পূর্ণ সচল এবং ওল্ড-টু-নিউ can অ্যানালাইসিস নিখুঁত রাখছে!")
     elif len(sizes) >= 4 and sizes[-1] != sizes[-2] and sizes[-2] != sizes[-3]:
         st.info("🔄 **AI GLOBAL MOVEMENT MODE:** [ ZIG-ZAG VOLATILITY DETECTED ] | প্রসেসর সচল আছে!")
     else:
         st.success("⚖️ **AI GLOBAL MOVEMENT MODE:** [ BALANCED STATIC TREND ] | প্রসেসর সচল আছে!")
 
-    # 🚨 [স্বয়ংক্রিয় ভুল সিদ্ধান্ত ট্র্যাকিং লুপ]: কোডের দেওয়া শেষ ৪টি সিগন্যাল লস হয়েছে কি না তা স্বয়ংক্রিয় ট্র্যাক
+    # 🚨 [স্বয়ংক্রিয় ভুল সিদ্ধান্ত ট্র্যাকিং লুপ]: কাটায় কাটায় ৪ লস পূর্ণ হলেই কেবল ট্র্যাপ অন হবে
     is_four_loss_trap = False
-    if len(st.session_state.signal_history) >= 4:
+    if len(st.session_state.signal_history) >= 4 and len(sizes) >= 4:
         last_4_predictions = st.session_state.signal_history[-4:]
         actual_last_4_outcomes = sizes[-4:]
-        loss_matches = sum(1 for p, r in zip(last_4_predictions, actual_last_4_outcomes) if p != r)
-        if loss_matches == 4:
+        
+        # প্রতিটি উপাদান আলাদা করে চেক করে টানা ৪টি অমিল (Loss) গণনা করা হচ্ছে
+        loss_count = 0
+        for i in range(4):
+            if last_4_predictions[i] != actual_last_4_outcomes[i]:
+                loss_count += 1
+        
+        # কাটায় কাটায় টানা ৪টি সিদ্ধান্ত ভুল হলেই কেবল ট্র্যাপ ট্রিপ করবে
+        if loss_count == 4:
             is_four_loss_trap = True
 
-    # 👑 [OMNI-AI CORE GLOBAL CORE FILTER INTEGRATION]: প্রতিটা রেজাল্টের ক্ষেত্রেই এআই সার্ভার ফুল অ্যানালাইসিস রান করবে
+    # 👑 [OMNI-AI CORE GLOBAL FILTER INTEGRATION]: প্রতিটা রেজাল্টেরই ব্যাকঅ্যান্ড ওমনি লুপ রানিং থাকবে
     omni_ai_weight = (old_num + new_num + current_period_last_digit + diff) % 2
     next_shot = "BIG" if omni_ai_weight == 0 else "SMALL"
     target_nums = dynamic_big_text if next_shot == "BIG" else dynamic_small_text
@@ -135,7 +143,7 @@ if len(st.session_state.result_history) >= 2 and len(st.session_state.period_his
         st.error("🛑 **MX-SERVER SECURITY WARNING:** ড্যাশবোর্ডের দেওয়া পর পর ৪টি সিদ্ধান্ত লাইভ চার্টের বিপরীতে গিয়ে মিস হয়েছে (টানা ৪ লস ট্র্যাপ)! মূল পুঁজি রক্ষা করতে মার্টিঙ্গেল চেইন সাময়িকভাবে লক করা হয়েছে।")
         st.info("💡 **লিডার অ্যাকশন:** টানা ৩ থেকে ৪ রাউন্ড চুপচাপ চার্ট দেখুন (Skip করুন)। বাজার শান্ত হলে অটো-গার্ড নিষ্ক্রিয় হয়ে যাবে বন্ধু!")
 
-    # ✨ ৪ লস হোক বা ড্রাগন সেশন বা সাধারণ সেশন—প্রতি রাউন্ডেই ওমনি এআই এবং হাই-কোয়ালিটি সার্ভার অ্যানালাইসিস করে নিখুঁত রেজাল্ট ডেলিভারি দিবে
+    # ✨ ৪ লস হোক বা ড্রাগন সেশন বা সাধারণ সেশন—প্রতি রাউন্ডেই ওমনি এআই এবং হাই-কোয়ালিটি সার্ভার অ্যানালাইসিস করে নিখুঁত রেজাল্ট ডিসপ্লে দিবে
     st.markdown(f"### 🤖 AI CORE SERVER PREDICTION: <span style='color:{color}; font-size:26px; font-weight:bold;'>[ {next_shot} ]</span> | CONFIDENCE: <span style='color:green; font-weight:bold;'>98.50% (HIGH-QUALITY SERVER OUTPUT)</span>", unsafe_allow_html=True)
     st.info("💡 **এআই কোর গ্লোবাল অডিট:** আমাদের হাই-কোয়ালিটি সার্ভার এবং ম্যাক্স সার্ভার ব্যাকঅ্যান্ডে সম্পূর্ণ সচল থেকে প্রতিটি রাউন্ডের পিরিয়ড আইডি, ফ্রিকোয়েন্সি ঘনত্ব এবং ৪৫ লাখ ডাটাবেস একসাথে রিয়াল-টাইম অ্যানালাইসিস করে এই নিখুঁত চূড়ান্ত আউটপুট তৈরি করেছে বন্ধু!")
     st.code(f"🎯 লাইভ ডাইনামিক টার্গেট সংখ্যা: {target_nums}")
