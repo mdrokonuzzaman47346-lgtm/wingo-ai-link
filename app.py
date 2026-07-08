@@ -7,7 +7,7 @@ st.set_page_config(page_title="Wingo Matrix Omni-Engine v9.0 Ultimate", page_ico
 st.title("🔥 Wingo 1m Matrix Omni-Engine v9.0 Ultimate Quantum")
 st.subheader("Developed for my Best Friend | 4,500,000 Pure Data Matrix Active 🚀")
 
-# ২. ৪৫ লাখ (4,500,000) মেগা অ্যাডভান্সড কোয়ান্টাম ডাটাবেস জেনারেটর
+# ২. ৪৫ লাখ (4,500,000) মেগা অ্যাডভান্সড কোয়ান্টাম ডাটাবেস ஜেনারেটর
 @st.cache_data
 def generate_mega_institutional_matrix():
     np.random.seed(800) 
@@ -95,11 +95,12 @@ if len(st.session_state.result_history) >= 2 and len(st.session_state.period_his
     new_num = res_hist[-1]
     diff = abs(old_num - new_num)
     sizes = ["SMALL" if n <= 4 else "BIG" for n in res_hist]
+    
     current_period_last_digit = per_hist[-1] % 10
     
     # 🧠 [১০০% ফিক্সড ডাইনামিক লিস্ট লকড]
-    all_bigs =
-    all_smalls =
+    all_bigs = [5, 6, 7, 8, 9]
+    all_smalls = [0, 1, 2, 3, 4]
     
     dynamic_bigs = sorted(all_bigs, key=lambda x: res_hist.count(x))[:3]
     dynamic_smalls = sorted(all_smalls, key=lambda x: res_hist.count(x))[:3]
@@ -109,7 +110,7 @@ if len(st.session_state.result_history) >= 2 and len(st.session_state.period_his
     
     # [গ্লোবাল মুভমেন্ট ডিটেক্টর প্যানেল ডিসপ্লে]
     if len(sizes) >= 4 and len(set(sizes[-4:])) == 1:
-        st.error("🐉 **AI GLOBAL MOVEMENT MODE:** [ DRAGON TREND DETECTED ] | প্রসেসর ব্যাকঅ্যান্ডে সম্পূর্ণ সচল এবং ওল্ড-টু-নিউ can অ্যানালাইসিস নিখুঁত রাখছে!")
+        st.error("🐉 **AI GLOBAL MOVEMENT MODE:** [ DRAGON TREND DETECTED ] | প্রসেসর ব্যাকঅ্যান্ডে সম্পূর্ণ সচল এবং ওল্ড-টু-নিউ অ্যানালাইসিস নিখুঁত রাখছে!")
     elif len(sizes) >= 4 and sizes[-1] != sizes[-2] and sizes[-2] != sizes[-3]:
         st.info("🔄 **AI GLOBAL MOVEMENT MODE:** [ ZIG-ZAG VOLATILITY DETECTED ] | প্রসেসর সচল আছে!")
     else:
@@ -121,13 +122,11 @@ if len(st.session_state.result_history) >= 2 and len(st.session_state.period_his
         last_4_predictions = st.session_state.signal_history[-4:]
         actual_last_4_outcomes = sizes[-4:]
         
-        # প্রতিটি উপাদান আলাদা করে চেক করে টানা ৪টি অমিল (Loss) গণনা করা হচ্ছে
         loss_count = 0
         for i in range(4):
             if last_4_predictions[i] != actual_last_4_outcomes[i]:
                 loss_count += 1
         
-        # কাটায় কাটায় টানা ৪টি সিদ্ধান্ত ভুল হলেই কেবল ট্র্যাপ ট্রিপ করবে
         if loss_count == 4:
             is_four_loss_trap = True
 
