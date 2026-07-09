@@ -83,7 +83,7 @@ with col2:
     else:
         st.info("ডাবল-চেইন মেমোরি খালি। লাইভ চার্ট দেখে এক এক করে ডেটা অ্যাড করুন।")
 
-# ৫. কোয়ান্টাম এআই ইঞ্জিন ফিল্টার ও আউটপুট জেনারেটর
+# ৫. কোয়ান্টাম এআই ইঞ্জিন ফিল্টার ও আউটপুট ஜেনারেটর
 if len(st.session_state.result_history) >= 2 and len(st.session_state.period_history) >= 2:
     st.write("---")
     st.markdown("### 🎯 FINAL STRATEGY REPORT & MX-SERVER ANALYSIS")
@@ -99,9 +99,10 @@ if len(st.session_state.result_history) >= 2 and len(st.session_state.period_his
     current_period_last_digit = per_hist[-1] % 10
     
     # 🧠 [১০০% ফিক্সড ওল্ড-টু-নিউ ডাইনামিক লিস্ট লকড]
-    all_bigs =
-    all_smalls =
+    all_bigs = [5, 6, 7, 8, 9]
+    all_smalls = [0, 1, 2, 3, 4]
     
+    # শেষ ১৫ রাউন্ডের কারেন্ট ফ্রিকোয়েন্সি তীব্রতা বা ঘনত্ব মেমরিতে নেওয়া হচ্ছে
     dynamic_bigs = sorted(all_bigs, key=lambda x: res_hist.count(x))[:3]
     dynamic_smalls = sorted(all_smalls, key=lambda x: res_hist.count(x))[:3]
     
@@ -127,16 +128,15 @@ if len(st.session_state.result_history) >= 2 and len(st.session_state.period_his
     else:
         st.success("⚖️ **AI GLOBAL MOVEMENT MODE:** [ BALANCED STATIC TREND ] | অল সার্ভার ভারসাম্যপূর্ণ শান্ত ক্যাটাগরি অ্যানালাইসিস করছে!")
 
-    # 👑 [মেইন কোয়ান্টাম ওমনি কোর ডিসিশন লুপ - ১০০% ফিক্সড বিপরীত লজিক]
+    # 👑 [مেইন কোয়ান্টাম ওমনি কোর ডিসিশন লুপ - ১০০% ফিক্সড বিপরীত লজিক]
     omni_ai_weight = (old_num + new_num + current_period_last_digit + diff) % 2
     
-    # সাধারণ শান্ত বাজারের জন্য বেসিক সিগন্যাল ওিয়েন্টেশন
     if omni_ai_weight == 0:
         next_shot = "BIG"
     else:
         next_shot = "SMALL"
         
-    # 🎯 [১০০% মেগা কিলার ফিক্সড]: জিজ-জ্যাগ মোড অ্যাক্টিভ হলে কোড ১০০০% বাধ্যতামূলক চার্টের শেষ জোনের বিপরীত সিগন্যাল পুশ করবে!
+    # 🎯 জিজ-জ্যাগ মোড অ্যাক্টিভ হলে কোড চার্টের শেষ জোনের বিপরীত সিগন্যাল পুশ করবে
     if is_zigzag_active:
         last_real_size = sizes[-1]
         if last_real_size == "BIG":
@@ -144,7 +144,7 @@ if len(st.session_state.result_history) >= 2 and len(st.session_state.period_his
         else:
             next_shot = "BIG"
 
-    # 🚨 [স্বয়ংক্রিয় ১০০% নিখুঁত ভুল সিদ্ধান্ত ট্র্যাকিং লুপ]: মেমরির জ্যাম মুক্ত করে কাটায় কাটায় ৪ লস কাউন্টার সচল
+    # 🚨 [স্বয়ংক্রিয় ১০০% নিখুঁত ভুল সিদ্ধান্ত ট্র্যাকিং লুপ]
     is_four_loss_trap = False
     loss_count = 0
     if len(st.session_state.signal_history) >= 4 and len(sizes) >= 4:
@@ -156,7 +156,7 @@ if len(st.session_state.result_history) >= 2 and len(st.session_state.period_his
         if loss_count == 4:
             is_four_loss_trap = True
 
-    # 🎯 [জোন ভিত্তিক সুনির্দিষ্ট সংখ্যা বরাদ্দকরণ মেকানিজম - মিক্সড এরর খতম]
+    # 🎯 [জোন ভিত্তিক সুনির্দিষ্ট সংখ্যা বরাদ্দকরণ মেকানিজম]
     target_nums = dynamic_big_text if next_shot == "BIG" else dynamic_small_text
     color = "blue" if next_shot == "BIG" else "red"
     
@@ -173,7 +173,7 @@ if len(st.session_state.result_history) >= 2 and len(st.session_state.period_his
         confidence_display = f"{min(round(base_calc, 2), 99.99)}%"
         server_status_text = "2.5 BILLION QUANTUM CLOUD OMNI CORE ACTIVE"
 
-    # 🛑 [ডাবল-সুরক্ষাকবচ লুপ]: ড্যাশবোর্ডের ৪টি সিদ্ধান্ত ভুল হলে অথবা চার্টে ড্রাগন মার্কেট আসলে—দুই কন্ডিশনেই লাল বক্স ফায়ার করবে!
+    # 🛑 [ডাবল-সুরক্ষাকবচ লুপ]
     if is_four_loss_trap or is_dragon_active:
         st.markdown("### 🛡️ MARTINGALE GUARD: <span style='color:orange; font-size:26px; font-weight:bold;'>[ AUTO-SKIP ACTIVE ]</span>", unsafe_allow_html=True)
         if is_dragon_active:
@@ -190,3 +190,4 @@ if len(st.session_state.result_history) >= 2 and len(st.session_state.period_his
     # [স্বয়ংক্রিয় সেশন চেইন সংরক্ষণ ট্র্যাক লুপ]
     if len(st.session_state.signal_history) >= 15:
         st.session_state.signal_history.pop(0)
+    st.session_state.signal_history.append(next_shot)
