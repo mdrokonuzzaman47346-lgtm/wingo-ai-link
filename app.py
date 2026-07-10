@@ -104,7 +104,6 @@ if len(st.session_state.result_history) >= 2 and len(st.session_state.period_his
     sizes = ["SMALL" if n <= 4 else "BIG" for n in res_hist]
     current_period_last_digit = per_hist[-1] % 10
     
-    # [১০০% ফিক্সড ডাটা অ্যারে গ্রিড - ব্র্যাকেটের ফাঁকা এরর চিরতরে খতম করা হলো]
     all_bigs = [5, 6, 7, 8, 9]
     all_smalls = [0, 1, 2, 3, 4]
     
@@ -115,43 +114,24 @@ if len(st.session_state.result_history) >= 2 and len(st.session_state.period_his
     dynamic_small_text = ", ".join(map(str, sorted(dynamic_smalls)))
     
     is_dragon_active = False
-    is_double_chain_active = False
-    is_zigzag_active = False
     is_special_movement = False
-    
-    movement_mode_text = "BALANCED STATIC TREND"
-    movement_desc = "সংখ্যার গ্যাপ সংকীর্ণ। শান্ত বাজারে সার্ভার তার চলমান ধারাবাহিকতা এবং আমাদের ওল্ড-টু-নিউ মাস্টার চার্টের আদিম গাণিতিক ছন্দ অক্ষত রাখবে।"
     
     if len(sizes) >= 4 and len(set(sizes[-4:])) == 1:
         is_dragon_active = True
         is_special_movement = True
-        movement_mode_text = "DRAGON TREND DETECTED"
-        movement_desc = "লাইভ চার্টে খতরনাক ড্রাগন লুপ মোমেন্টাম সনাক্ত করা হয়েছে! অল সার্ভার ড্রাগন ক্যাটাগরি অ্যানালাইসিস করে পরবর্তী নির্দিষ্ট রেজাল্ট নির্ভুল রাখছে।"
+        st.error("🐉 **AI GLOBAL MOVEMENT MODE:** [ DRAGON TREND DETECTED ]")
     elif len(sizes) >= 4 and sizes[-1] == sizes[-2] and sizes[-3] == sizes[-4] and sizes[-2] != sizes[-3]:
-        is_double_chain_active = True
         is_special_movement = True
-        movement_mode_text = "DOUBLE-CHAIN LOOP DETECTED"
-        movement_desc = "এআই CORE ও অল সার্ভার ডাবল-চেইন ক্যাটাগরি অ্যানালাইসিস করছে! বাজার তার ট্রেন্ড লক করে ম্যাট্রিক্স গ্রিড ফলো করছে।"
+        st.markdown("### ⛓️ **AI GLOBAL MOVEMENT MODE:** <span style='color:#9b59b6; font-weight:bold;'>[ DOUBLE-CHAIN LOOP DETECTED ]</span>", unsafe_allow_html=True)
     elif len(sizes) >= 4 and sizes[-1] != sizes[-2] and sizes[-2] != sizes[-3]:
-        is_zigzag_active = True
         is_special_movement = True
-        movement_mode_text = "ZIG-ZAG VOLATILITY DETECTED"
-        movement_desc = "এআই অল সার্ভার জিগ-জ্যাগ ভোলাটিলিটি মুভমেন্ট সম্পূর্ণ অ্যানালাইসিস করছে! বাজার প্রতি রাউন্ডে দ্রুত ফ্লিপ বা অল্টারনেট চরিত্র বদল করছে।"
+        st.info("🔄 **AI GLOBAL MOVEMENT MODE:** [ ZIG-ZAG VOLATILITY DETECTED ]")
+    else:
+        st.success("⚖️ **AI GLOBAL MOVEMENT MODE:** [ BALANCED STATIC TREND ]")
 
-    # মেইন কোয়ান্টাম ওমনি কোর ডিসিশন লুপ - ১৮৬ লাইনের অরিজিনাল লজিক
     omni_ai_weight = (old_num + new_num + current_period_last_digit + diff) % 2
     next_shot = "BIG" if omni_ai_weight == 0 else "SMALL"
         
-    # ১০০% মেগা কিলার OVERRIDE নোড অ্যাক্টিভ: চার্টের মোমেন্টাম অনুযায়ী নিচে মেইন রেজাল্ট ১০০০% নিখুঁত সিঙ্ক হবে
-    last_real_size = sizes[-1]
-    if is_zigzag_active:
-        next_shot = "BIG" if last_real_size == "SMALL" else "SMALL"
-    elif is_double_chain_active:
-        next_shot = "SMALL" if last_real_size == "BIG" else "BIG"
-    elif is_dragon_active:
-        next_shot = last_real_size
-
-    # স্বয়ংক্রিয় ১০০% নিখুঁত ভুল সিদ্ধান্ত ট্র্যাকিং লুপ: কাটায় কাটায় ৪ লস কাউন্টার সচল
     is_four_loss_trap = False
     loss_count = 0
     if len(st.session_state.signal_history) >= 4 and len(sizes) >= 4:
@@ -164,13 +144,13 @@ if len(st.session_state.result_history) >= 2 and len(st.session_state.period_his
             is_four_loss_trap = True
 
     target_nums = dynamic_big_text if next_shot == "BIG" else dynamic_small_text
-    display_color = "blue" if next_shot == "BIG" else "red"
+    color = "blue" if next_shot == "BIG" else "red"
     
     recent_freq_count = freq_list_for_tracker.count(new_num)
     base_calc = 91.50 + (diff * 1.0) + (recent_freq_count * 0.4)
     
-    if loss_count >= 1 or is_special_movement:
-        base_calc += 4.2
+    if loss_count >= 2 or is_special_movement:
+        base_calc += 3.8
     confidence_display = f"{min(round(base_calc, 2), 99.99)}%"
     
     if min(round(base_calc, 2), 99.99) >= 99.0:
@@ -182,18 +162,9 @@ if len(st.session_state.result_history) >= 2 and len(st.session_state.period_his
         st.markdown("### 🛡️ MARTINGALE GUARD: <span style='color:orange; font-size:26px; text_transform:uppercase; font-weight:bold;'>[ AUTO-SKIP ACTIVE ]</span>", unsafe_allow_html=True)
         st.error("🛑 **MX-SERVER SECURITY WARNING:** SKIP 2-3 ROUNDS NOW!")
 
-    # স্ক্রিনশটের হুবহু সেই উইনিং প্যানেল дизайн আউটপুট চেইন
-    st.markdown(f"### 🎯 STRATEGY SIGNAL: <span style='color:{display_color}; font-weight:bold;'>[ {next_shot} ]</span> | CONFIDENCE: <span style='color:green; font-weight:bold;'>{confidence_display} ({movement_mode_text})</span>", unsafe_allow_html=True)
-    
-    # লাল বক্সের ভেতরের সেই কাঙ্ক্ষিত ম্যাট্রিক্স অডিট রিপোর্ট মেকানিজম
-    st.markdown(f"""
-    <div style='background-color:#1e293b; padding:16px; border-left:6px solid #e74c3c; border-radius:6px; margin-bottom:15px;'>
-        <h4 style='color:#f1c40f; margin-top:0px; margin-bottom:5px;'>💡 MX-SERVER MATRIX AUDIT:</h4>
-        <p style='color:#ecf0f1; font-size:15px; margin:0px; line-height:1.5;'>{movement_desc}</p>
-    </div>
-    """, unsafe_allow_html=True)
-    
-    st.markdown(f"### 🎯 টার্গেট সংখ্যা: {target_nums}", unsafe_allow_html=True)
+    st.markdown(f"### 🤖 AI CORE SERVER PREDICTION: <span style='color:{color}; font-size:26px; font-weight:bold;'>[ {next_shot} ]</span> | CONFIDENCE: <span style='color:green; font-weight:bold;'>{confidence_display} ({server_status_text})</span>", unsafe_allow_html=True)
+    st.info(f"💡 AI Core Global Audit Tracker Signal System Connection Active: {server_status_text}")
+    st.code(f"🎯 Target Numbers Grid: {target_nums}")
             
     if len(st.session_state.signal_history) >= 15:
         st.session_state.signal_history.pop(0)
