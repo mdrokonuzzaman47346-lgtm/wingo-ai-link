@@ -114,6 +114,8 @@ if len(st.session_state.result_history) >= 2 and len(st.session_state.period_his
     dynamic_small_text = ", ".join(map(str, sorted(dynamic_smalls)))
     
     is_dragon_active = False
+    is_double_chain_active = False
+    is_zigzag_active = False
     is_special_movement = False
     
     if len(sizes) >= 4 and len(set(sizes[-4:])) == 1:
@@ -121,9 +123,11 @@ if len(st.session_state.result_history) >= 2 and len(st.session_state.period_his
         is_special_movement = True
         st.error("🐉 **AI GLOBAL MOVEMENT MODE:** [ DRAGON TREND DETECTED ]")
     elif len(sizes) >= 4 and sizes[-1] == sizes[-2] and sizes[-3] == sizes[-4] and sizes[-2] != sizes[-3]:
+        is_double_chain_active = True
         is_special_movement = True
         st.markdown("### ⛓️ **AI GLOBAL MOVEMENT MODE:** <span style='color:#9b59b6; font-weight:bold;'>[ DOUBLE-CHAIN LOOP DETECTED ]</span>", unsafe_allow_html=True)
     elif len(sizes) >= 4 and sizes[-1] != sizes[-2] and sizes[-2] != sizes[-3]:
+        is_zigzag_active = True
         is_special_movement = True
         st.info("🔄 **AI GLOBAL MOVEMENT MODE:** [ ZIG-ZAG VOLATILITY DETECTED ]")
     else:
@@ -132,6 +136,15 @@ if len(st.session_state.result_history) >= 2 and len(st.session_state.period_his
     omni_ai_weight = (old_num + new_num + current_period_last_digit + diff) % 2
     next_shot = "BIG" if omni_ai_weight == 0 else "SMALL"
         
+    # 🔄 [১০০% কিলার নোড সিনক্রোনাইজেশন ফিক্সড]: জিজ-জ্যাগ বিপরীত সিদ্ধান্তের ট্র্যাপ চিরতরে খতম করা হলো!
+    last_real_size = sizes[-1]
+    if is_zigzag_active:
+        next_shot = last_real_size
+    elif is_double_chain_active:
+        next_shot = "SMALL" if last_real_size == "BIG" else "BIG"
+    elif is_dragon_active:
+        next_shot = last_real_size
+
     is_four_loss_trap = False
     loss_count = 0
     if len(st.session_state.signal_history) >= 4 and len(sizes) >= 4:
