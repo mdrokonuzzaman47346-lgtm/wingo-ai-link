@@ -1,186 +1,260 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
+import plotly.express as px
+import plotly.graph_objects as go
+from io import BytesIO
 
-# ১. প্রাতিষ্ঠানিক আল্ট্রা-হাই কোয়ালিটি ড্যাশবোর্ড সেটআপ (v9.8 Locked & Speed Optimized)
-st.set_page_config(page_title="Wingo Matrix Omni-Engine v9.8 Ultimate", page_icon="🔥", layout="wide")
-st.title("🔥 Wingo 1m Matrix Omni-Engine v9.8 Ultimate Quantum")
-st.subheader("Developed for my Best Friend | 8,000,000 Pure Data Matrix Active 🚀")
+# -----------------------------------------------------------------------------
+# 1. STREAMLIT PAGE CONFIGURATION & THEME
+# -----------------------------------------------------------------------------
+st.set_page_config(
+    page_title="Professional Wingo Analysis Engine",
+    page_icon="🎯",
+    layout="wide",
+    initial_sidebar_state="expanded"
+)
 
-# ২. ৮০ লাখ (8,000,000) মেগা কোয়ান্টাম ডাটাবেস জেনারেটর (আল্ট্রা-ফাস্ট ক্যাশ এরে)
-@st.cache_resource
-def generate_mega_institutional_matrix_v98_transition_fixed():
-    simulated_results = np.random.randint(0, 10, size=8000000)
-    df_simulated = pd.DataFrame({
-        'period': np.arange(1, 8000001),
-        'result_number': simulated_results
-    })
-    return df_simulated
+# Custom CSS styling for visual scannability and structure
+st.markdown("""
+<style>
+    .metric-card {
+        background-color: #1e222b;
+        padding: 15px;
+        border-radius: 8px;
+        border-left: 5px solid #4a90e2;
+        margin-bottom: 10px;
+    }
+    .signal-card {
+        background-color: #14171f;
+        padding: 25px;
+        border-radius: 10px;
+        border: 2px solid #28a745;
+        text-align: center;
+    }
+    .reason-box {
+        background-color: #1a1e24;
+        padding: 15px;
+        border-radius: 8px;
+        border: 1px solid #343a40;
+    }
+</style>
+""", unsafe_allow_html=True)
 
-df = generate_mega_institutional_matrix_v98_transition_fixed()
+# -----------------------------------------------------------------------------
+# 2. CORE MATHEMATICAL ANALYSIS ENGINE
+# -----------------------------------------------------------------------------
+def analyze_wingo_data(df):
+    """
+    Performs pure deterministic calculations across all requested modules.
+    DataFrame must be sorted with Top = Most Recent (Current Period).
+    """
+    if df.empty:
+        return {}
 
-# ৩. গ্লোবাল এআই CORE কানেকশন স্ট্যাটাস (All Servers Active)
-st.markdown("### 🌐 Global AI Core Connection Status")
-c1, c2, c3 = st.columns(3)
-with c1:
-    st.success("🤖 8,000,000 MEGA DATA BASE: ONLINE (FAST CACHE)")
-with c2:
-    st.info("⚡ HIGH-QUALITY AI CORE SERVER v9.8: RUNNING")
-with c3:
-    st.warning("🔥 AI GLOBAL MOVEMENT DETECTOR & 2.5 BILLION QUANTUM CLOUD: SYNCHRONIZED")
-
-# ৪. ডাবল-চেইন জ্যান্ত মেমোরি স্টেট সচল করা (১৫-রাউন্ড মেগা ডেপথ চেইন লকড)
-if 'result_history' not in st.session_state:
-    st.session_state.result_history = []
-if 'period_history' not in st.session_state:
-    st.session_state.period_history = []
-if 'signal_history' not in st.session_state:
-    st.session_state.signal_history = []
-
-st.write("---")
-col1, col2 = st.columns(2)
-
-with col1:
-    st.markdown("### 📥 Live Result & Period Logging Panel")
+    total_records = len(df)
     
-    log_result = st.number_input("লাইভ চার্টের শেষ তাজা রেজাল্ট নম্বরটি দিন (০-৯):", min_value=0, max_value=9, value=0, step=1, key="res_in")
-    log_period = st.number_input("চলতি পিরিয়ড নম্বরের শেষ ৩টি সংখ্যা দিন (০০০-৯৯৯):", min_value=0, max_value=999, value=452, step=1, key="per_in")
+    # Fundamental column mappings
+    df['Size'] = df['Number'].apply(lambda x: 'BIG' if x >= 5 else 'SMALL')
+    df['Parity'] = df['Number'].apply(lambda x: 'ODD' if x % 2 != 0 else 'EVEN')
     
-    b1, b2 = st.columns(2)
-    with b1:
-        if st.button("🚀 ➕ হিস্ট্রিতে ডেটা অ্যাড করুন"):
-            if len(st.session_state.result_history) >= 15:
-                st.session_state.result_history.pop(0)
-            st.session_state.result_history.append(log_result)
+    # Temporal order inversion for sequential tracking (Oldest -> Newest)
+    df_chrono = df.iloc[::-1].copy().reset_index(drop=True)
+    chrono_len = len(df_chrono)
+
+    # MODULE 1 & 2: Transition Matrix & Number-to-Number Probability Table
+    num_transition_matrix = np.zeros((10, 10))
+    for i in range(chrono_len - 1):
+        current_num = df_chrono.loc[i, 'Number']
+        next_num = df_chrono.loc[i + 1, 'Number']
+        if 0 <= current_num <= 9 and 0 <= next_num <= 9:
+            num_transition_matrix[current_num][next_num] += 1
             
-            if len(st.session_state.period_history) >= 15:
-                st.session_state.period_history.pop(0)
-            st.session_state.period_history.append(log_period)
-            st.success("✔️ সংরক্ষিত হয়েছে!")
-            st.rerun()
-    with b2:
-        if st.button("🗑️ সমস্ত হিস্ট্রি ডিলিট বা সাফ করুন"):
-            st.session_state.result_history = []
-            st.session_state.period_history = []
-            st.session_state.signal_history = []
-            st.rerun()
+    num_prob_matrix = np.zeros((10, 10))
+    for r in range(10):
+        row_sum = num_transition_matrix[r].sum()
+        if row_sum > 0:
+            num_prob_matrix[r] = (num_transition_matrix[r] / row_sum) * 100
 
-with col2:
-    st.markdown("### 📊 MX-Server Real-Time Double-Chain Analysis")
-    if st.session_state.result_history and st.session_state.period_history:
-        st.write(f"**📝 শেষ ১৫টি লাইভ রেজাল্ট ট্র্যাকিং চেইন:** `{st.session_state.result_history}`")
-        st.write(f"**⏳ শেষ ১৫টি লাইভ ৩-ডিজিট পিরিয়ড ট্র্যাকিং চেইন:** `{st.session_state.period_history}`")
-        
-        res_list = st.session_state.result_history
-        freq_list_for_tracker = res_list[-10:] if len(res_list) >= 10 else res_list
-        freq_dict = {i: freq_list_for_tracker.count(i) for i in range(10)}
-        st.write(f"**📊 Auto-Frequency Tracker (০-৯ আসার নিখুঁত ঘনত্ব):** `{list(freq_dict.values())}`")
-        
-        sizes_check = ["SMALL" if n <= 4 else "BIG" for n in res_list]
-        big_counts = sum(1 for x in sizes_check if x == "BIG")
-        small_counts = sum(1 for x in sizes_check if x == "SMALL")
-        st.info(f"📈 Recent Result Ratio -> BIG: {big_counts} | SMALL: {small_counts}")
-    else:
-        st.info("ডাবল-চেইন মেমোরি খালি। লাইভ চার্ট দেখে এক এক করে ডেটা অ্যাড করুন।")
-
-# ৫. কোয়ান্টাম এআই ইঞ্জিন ফিল্টার ও আউটপুট জেনারেটর
-if len(st.session_state.result_history) >= 2 and len(st.session_state.period_history) >= 2:
-    st.write("---")
-    st.markdown("### 🎯 FINAL STRATEGY REPORT & MX-SERVER ANALYSIS")
-    
-    res_hist = st.session_state.result_history
-    per_hist = st.session_state.period_history
-    
-    old_num = res_hist[-2]
-    new_num = res_hist[-1]
-    diff = abs(old_num - new_num)
-    sizes = ["SMALL" if n <= 4 else "BIG" for n in res_hist]
-    
-    current_period_last_digit = per_hist[-1] % 10
-    
-    # 🧠 [১০০% ফিক্সড ওল্যান্ড-টু-নিউ ডাইনামিক লিস্ট লকড]
-    all_bigs = [5, 6, 7, 8, 9]
-    all_smalls = [0, 1, 2, 3, 4]
-    
-    # শেষ ১৫ রাউন্ডের কারেন্ট ফ্রিকোয়েন্সি তীব্রতা বা ঘনত্ব মেমরিতে নেওয়া হচ্ছে
-    dynamic_bigs = sorted(all_bigs, key=lambda x: res_hist.count(x))[:3]
-    dynamic_smalls = sorted(all_smalls, key=lambda x: res_hist.count(x))[:3]
-    
-    dynamic_big_text = ", ".join(map(str, sorted(dynamic_bigs)))
-    dynamic_small_text = ", ".join(map(str, sorted(dynamic_smalls)))
-    
-    # 🧬 [৪টি গ্লোবাল মার্কেট ক্যাটাগরি ও মুভমেন্ট রাডার প্যানেল ডিসপ্লে]
-    is_dragon_active = False
-    is_zigzag_active = False
-    is_special_movement = False
-    
-    if len(sizes) >= 4 and len(set(sizes[-4:])) == 1:
-        is_dragon_active = True
-        is_special_movement = True
-        st.error("🐉 **AI GLOBAL MOVEMENT MODE:** [ DRAGON TREND DETECTED ] | অল সার্ভার ড্রাগন ক্যাটাগরি অ্যানালাইসিস করে পরবর্তী নির্দিষ্ট রেজাল্ট নির্ভুল রাখছে!")
-    elif len(sizes) >= 4 and sizes[-1] == sizes[-2] and sizes[-3] == sizes[-4] and sizes[-2] != sizes[-3]:
-        is_special_movement = True
-        st.markdown("### ⛓️ **AI GLOBAL MOVEMENT MODE:** <span style='color:#9b59b6; font-weight:bold;'>[ DOUBLE-CHAIN LOOP DETECTED ]</span> | এআই কোর ও অল সার্ভার ডাবল-চেইন ক্যাটাগরি অ্যানালাইসিস করছে!", unsafe_allow_html=True)
-    elif len(sizes) >= 4 and sizes[-1] != sizes[-2] and sizes[-2] != sizes[-3]:
-        is_zigzag_active = True
-        is_special_movement = True
-        st.info("🔄 **AI GLOBAL MOVEMENT MODE:** [ ZIG-ZAG VOLATILITY DETECTED ] | এআই অল সার্ভার জিগ-জ্যাগ ভোলাটিলিটি মুভমেন্ট সম্পূর্ণ অ্যানালাইসিস করছে!")
-    else:
-        st.success("⚖️ **AI GLOBAL MOVEMENT MODE:** [ BALANCED STATIC TREND ] | অল সার্ভার ভারসাম্যপূর্ণ শান্ত ক্যাটাগরি অ্যানালাইসিস করছে!")
-
-    # 👑 [مেইন কোয়ান্টাম ওমনি কোর ডিসিশন লুপ - ১০০% ফিক্সড মোমেন্টাম ট্রানজিশন চেইন]
-    omni_ai_weight = (old_num + new_num + current_period_last_digit + diff) % 2
-    next_shot = "BIG" if omni_ai_weight == 0 else "SMALL"
-        
-    # 🎯 [১০০% ফিক্সড কিলার ট্রানজিশন রাডার]: চার্ট যখন জিগ-জ্যাগ ক্যারেক্টারে থাকবে তখন বিপরীত দিবে, ক্যারেক্টার বদলানো মাত্রই ওমনি কোরে ব্যাক করবে
-    if is_zigzag_active:
-        last_real_size = sizes[-1]
-        next_shot = "SMALL" if last_real_size == "BIG" else "BIG"
-
-    # 🚨 [স্বয়ংক্রিয় ১০০% নিখুঁত ভুল সিদ্ধান্ত ট্র্যাকিং লুপ]: মেমরির জ্যাম মুক্ত করে কাটায় কাটায় ৪ লস কাউন্টার সচল
-    is_four_loss_trap = False
-    loss_count = 0
-    if len(st.session_state.signal_history) >= 4 and len(sizes) >= 4:
-        last_4_predictions = st.session_state.signal_history[-4:]
-        actual_last_4_outcomes = sizes[-4:]
-        for i in range(4):
-            if last_4_predictions[i] != actual_last_4_outcomes[i]:
-                loss_count += 1
-        if loss_count == 4:
-            is_four_loss_trap = True
-
-    # 🎯 [জোন ভিত্তিক সুনির্দিষ্ট সংখ্যা বরাদ্দকরণ মেকানিজম]
-    target_nums = dynamic_big_text if next_shot == "BIG" else dynamic_small_text
-    color = "blue" if next_shot == "BIG" else "red"
-    
-    # 🧠 [রিয়েল-টাইম লাইভ মার্কেট অ্যানালাইসিস ভাসমান পার্সেন্টেজ ক্যালকুলেটর]
-    recent_freq_count = freq_list_for_tracker.count(new_num)
-    base_calc = 91.50 + (diff * 1.0) + (recent_freq_count * 0.4)
-    
-    # ⚡ [ওয়ান (১) থেকে টু (২) স্টেপ লস যাওয়ার পর অল সার্ভার কোয়ান্টাম বুস্ট অ্যাক্টিভ]
-    if loss_count >= 1 or is_special_movement:
-        base_calc += 4.2
-        confidence_display = f"{min(round(base_calc, 2), 99.99)}%"
-        server_status_text = "ALL AI SERVERS & MAX SERVER HIGH-FREQUENCY BOOST POWER ACTIVE 🚀"
-    else:
-        confidence_display = f"{min(round(base_calc, 2), 99.99)}%"
-        server_status_text = "2.5 BILLION QUANTUM CLOUD OMNI CORE ACTIVE"
-
-    # 🛑 [ডাবল-সুরক্ষাকবচ লুপ]
-    if is_four_loss_trap or is_dragon_active:
-        st.markdown("### 🛡️ MARTINGALE GUARD: <span style='color:orange; font-size:26px; font-weight:bold;'>[ AUTO-SKIP ACTIVE ]</span>", unsafe_allow_html=True)
-        if is_dragon_active:
-            st.error("🛑 **MX-SERVER SECURITY WARNING:** লাইভ চার্টে খতরনাক ড্রাগন লুপ মোমেন্টাম সনাক্ত করা হয়েছে! মূল পুঁজি রক্ষা করতে মার্টিঙ্গেল চেইন সাময়িকভাবে লক করা হয়েছে।")
-        else:
-            st.error("🛑 **MX-SERVER SECURITY WARNING:** ড্যাশবোর্ডের দেওয়া পর পর ৪টি সিদ্ধান্ত লাইভ চার্টের বিপরীতে গিয়ে মিস হয়েছে (টানা ৪ লস ট্র্যাপ)! মূল পুঁজি রক্ষা করতে মার্টিঙ্গেল চেইন সাময়িকভাবে লক করা হয়েছে।")
-        st.info("💡 **লিডার অ্যাকশন:** অটো স্কিপ অ্যাক্টিভ! আপনি লাইভ বোর্ডে রিয়েল টাকা ছোঁয়ানো সম্পূর্ণ বন্ধ রেখে টানা ২ থেকে ৩ রাউন্ড স্কিপ করো। বাজার শান্ত হলে অটো-গার্ড নিষ্ক্রিয় হয়ে যাবে বন্ধু!")
-
-    # ✨ ওমনি এআই এবং হাই-কোয়ালিটি সার্ভার অ্যানালাইসিস করে ৯৯.৯৯% একুরেসিতে রেজাল্ট ডিসপ্লে দিবে
-    st.markdown(f"### 🤖 AI CORE SERVER PREDICTION: <span style='color:{color}; font-size:26px; font-weight:bold;'>[ {next_shot} ]</span> | CONFIDENCE: <span style='color:green; font-weight:bold;'>{confidence_display} ({server_status_text})</span>", unsafe_allow_html=True)
-    st.info("💡 **এআই কোর গ্লোবাল অডিট:** আমাদের হাই-কোয়ালিটি সার্ভার এবং ম্যাক্স সার্ভার ব্যাকঅ্যান্ডে সম্পূর্ণ সচল থেকে প্রতিটি রাউন্ডের পিরিয়ড আইডি, ফ্রিকোয়েন্সি ঘনত্ব এবং ৮০ লাখ ডাটাবেস একসাথে রিয়াল-টাইম অ্যানালাইসিস করে এই নিখুঁত চূড়ান্ত আউটপুট তৈরি করেছে বন্ধু!")
-    st.code(f"🎯 লাইভ ডাইনামিক টার্গেট সংখ্যা: {target_nums}")
+    # MODULE 3: Big-Small Transition Statistics
+    bs_states = ['BIG', 'SMALL']
+    bs_matrix = pd.DataFrame(0, index=bs_states, columns=bs_states)
+    for i in range(chrono_len - 1):
+        curr_state = df_chrono.loc[i, 'Size']
+        next_state = df_chrono.loc[i + 1, 'Size']
+        if curr_state in bs_states and next_state in bs_states:
+            bs_matrix.loc[curr_state, next_state] += 1
             
-    # [স্বয়ংক্রিয় সেশন চেইন সংরক্ষণ ট্র্যাক লুপ]
-    if len(st.session_state.signal_history) >= 15:
-        st.session_state.signal_history.pop(0)
-    st.session_state.signal_history.append(next_shot)
+    bs_prob_matrix = bs_matrix.copy().astype(float)
+    for state in bs_states:
+        r_sum = bs_matrix.loc[state].sum()
+        if r_sum > 0:
+            bs_prob_matrix.loc[state] = (bs_matrix.loc[state] / r_sum) * 100
+
+    # MODULE 6: Last 20 Round Statistics
+    df_last_20 = df.head(20).copy()
+    l20_total = len(df_last_20)
+    l20_big = int((df_last_20['Size'] == 'BIG').sum())
+    l20_small = int((df_last_20['Size'] == 'SMALL').sum())
+    l20_odd = int((df_last_20['Parity'] == 'ODD').sum())
+    l20_even = int((df_last_20['Parity'] == 'EVEN').sum())
+
+    # MODULE 11 & 7: Trend Strength & Trend Score Breakdown
+    recent_15 = df['Size'].head(15)
+    len_r15 = len(recent_15)
+    r15_big_count = (recent_15 == 'BIG').sum()
+    r15_small_count = len_r15 - r15_big_count
+    big_ratio = r15_big_count / len_r15 if len_r15 > 0 else 0.5
+    trend_strength = abs(big_ratio - 0.5) * 200
+    
+    trend_breakdown = {
+        "Micro Window (Size 15) Total": len_r15,
+        "BIG Appearances": r15_big_count,
+        "SMALL Appearances": r15_small_count,
+        "Raw Distribution Deviation": abs(r15_big_count - r15_small_count)
+    }
+
+    # Core Original System Features
+    df['Size_Match'] = df['Size'] == df['Size'].shift(-1)
+    win_rate_size = (df['Size_Match'].sum() / (total_records - 1)) * 100 if total_records > 1 else 50.0
+
+    # Streak Detector
+    current_streak_len = 0
+    current_streak_type = None
+    if total_records > 0:
+        sizes = df['Size'].tolist()
+        current_streak_type = sizes[0]
+        for s in sizes:
+            if s == current_streak_type:
+                current_streak_len += 1
+            else:
+                break
+
+    dragon_active = current_streak_len >= 5
+    
+    # Zig Zag Detector
+    zig_zag_count = 0
+    if total_records > 2:
+        for i in range(min(10, total_records - 2)):
+            if df['Size'].iloc[i] != df['Size'].iloc[i+1] and df['Size'].iloc[i+1] != df['Size'].iloc[i+2]:
+                zig_zag_count += 1
+    zig_zag_active = zig_zag_count >= 3
+
+    # Number Frequencies & Hot/Cold
+    num_counts = df['Number'].value_counts().reindex(range(10), fill_value=0)
+    num_freq_pct = (num_counts / total_records) * 100
+    hot_numbers = num_counts.nlargest(3).index.tolist()
+    cold_numbers = num_counts.nsmallest(3).index.tolist()
+
+    # Volatility
+    recent_10 = df['Number'].head(10)
+    volatility_score = float(np.std(recent_10)) if len(recent_10) > 1 else 0.0
+
+    # Gap Analysis
+    gap_dict = {}
+    for n in range(10):
+        found_indices = df[df['Number'] == n].index
+        gap_dict[n] = int(found_indices[0]) if len(found_indices) > 0 else total_records
+
+    # Odd/Even
+    odd_count = (df['Parity'] == 'ODD').sum()
+    even_count = total_records - odd_count
+    odd_even_ratio = f"{odd_count}:{even_count}"
+
+    # Skip Recommendation
+    should_skip = volatility_score > 3.2 or (45 <= trend_strength <= 55 and current_streak_len < 2)
+
+    return {
+        "win_rate_size": win_rate_size,
+        "current_streak_len": current_streak_len,
+        "current_streak_type": current_streak_type,
+        "dragon_active": dragon_active,
+        "zig_zag_active": zig_zag_active,
+        "num_freq_pct": num_freq_pct,
+        "hot_numbers": hot_numbers,
+        "cold_numbers": cold_numbers,
+        "volatility_score": volatility_score,
+        "gap_dict": gap_dict,
+        "odd_even_ratio": odd_even_ratio,
+        "trend_strength": trend_strength,
+        "should_skip": should_skip,
+        "total_records": total_records,
+        "num_prob_matrix": num_prob_matrix,
+        "bs_prob_matrix": bs_prob_matrix,
+        "l20_stats": {"total": l20_total, "big": l20_big, "small": l20_small, "odd": l20_odd, "even": l20_even},
+        "trend_breakdown": trend_breakdown,
+        "df_chrono": df_chrono
+    }
+
+# -----------------------------------------------------------------------------
+# 3. RULE-BASED TRANSPARENT SIGNAL ENGINE
+# -----------------------------------------------------------------------------
+def generate_logical_signal(metrics, df):
+    """
+    Calculates rule-based signals strictly from properties of the dataset.
+    """
+    if not metrics or df.empty:
+        return "NO SIGNAL", "Weak", ["Insufficient rows."]
+
+    reasons = []
+    scores = 0
+    recent_size = df['Size'].iloc[0]
+    opposing_size = "SMALL" if recent_size == "BIG" else "BIG"
+    
+    # 1. Trend Rule Calculation
+    if metrics['dragon_active']:
+        predicted_size = recent_size
+        reasons.append(f"Trend: Active 'Dragon Pattern' discovered. Riding current streak ({metrics['current_streak_len']}x {recent_size}).")
+        scores += 3
+    elif metrics['zig_zag_active']:
+        predicted_size = opposing_size
+        reasons.append(f"Trend: Clear alternating 'Zig-Zag' sequence flagged. Anticipating structural flip to {opposing_size}.")
+        scores += 2
+    else:
+        predicted_size = recent_size if metrics['trend_strength'] > 60 else opposing_size
+        reasons.append(f"Trend: Distribution strength calculated at {metrics['trend_strength']:.1f}%.")
+        scores += 1
+
+    # 2. Frequency Rule Calculation
+    recent_5 = df['Size'].head(5).tolist()
+    big_freq = recent_5.count('BIG')
+    if big_freq >= 4:
+        if predicted_size == 'BIG': scores += 2
+        reasons.append(f"Frequency: Heavy volume skew towards BIG ({big_freq}/5 periods) in recent micro-window.")
+    elif big_freq <= 1:
+        if predicted_size == 'SMALL': scores += 2
+        reasons.append(f"Frequency: Heavy volume skew towards SMALL ({(5 - big_freq)}/5 periods) in recent micro-window.")
+    else:
+        scores += 1
+        reasons.append("Frequency: Distribution metrics normalized across short-term sample sets.")
+
+    # 3. Volatility Rule Calculation
+    if metrics['volatility_score'] > 3.0:
+        reasons.append(f"Volatility: High variance observed ({metrics['volatility_score']:.2f}). Sequence breaks likely.")
+        scores -= 1
+    else:
+        reasons.append(f"Volatility: Low variance detected ({metrics['volatility_score']:.2f}). Stable conditions persist.")
+        scores += 2
+
+    # 4. Win Rate Rule Calculation
+    if metrics['win_rate_size'] > 54.0:
+        scores += 2
+        reasons.append(f"Win Rate: Local dataset yields historical back-to-back persistence rate of {metrics['win_rate_size']:.1f}%.")
+    else:
+        scores += 1
+        reasons.append(f"Win Rate: Historical baseline trends match standard model thresholds ({metrics['win_rate_size']:.1f}%).")
+
+    # Final Strength Translation Matrix
+    if scores >= 7:
+        strength = "Strong"
+    elif scores >= 4:
+        strength = "Medium"
+    else:
+        strength = "Weak"
+
+    if metrics['should_skip']:
+        return "SKIP RECOMMENDATION", "N/A", ["Skip Engine triggered. Trend ambiguity or high volatility violates safety thresholds."]
+
+    return predicted_size, strength, reasons
+
+# -----------------------------------------------------------------------------
