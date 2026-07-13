@@ -217,7 +217,7 @@ if len(st.session_state.result_history) >= 5:
             margin=dict(l=20, r=20, t=40, b=20),
             height=280
         )
-        st.plotly_chart(hist_fig, use_container_width=True)
+        st.plotly_chart(hist_fig, width='stretch')
 
     with v_col2:
         st.markdown("### 📈 Time-Series Value Deviation Trace Graph")
@@ -236,7 +236,7 @@ if len(st.session_state.result_history) >= 5:
             margin=dict(l=20, r=20, t=40, b=20),
             height=280
         )
-        st.plotly_chart(trend_fig, use_container_width=True)
+        st.plotly_chart(trend_fig, width='stretch')
 
     # 8. Analytical Telemetry Gauge Metrics Rows
     m_col1, m_col2, m_col3, m_col4 = st.columns(4)
@@ -311,8 +311,7 @@ if len(st.session_state.result_history) >= 5:
             accuracy_percentage = (successful_hits / total_verifications) * 100.0 if total_verifications > 0 else 0.0
             st.metric("🎯 Verifiable Evaluation Alignment Ratio Accuracy:", f"{accuracy_percentage:.2f}%")
 
-            audit_df = pd.DataFrame(audit_records)
-            st.dataframe(audit_df.tail(10), use_container_width=True)
+            st.dataframe(pd.DataFrame(audit_records).tail(10), width='stretch')
         else:
             st.info("System validation telemetry requires additional node elements to construct matching comparative loops.")
 
@@ -341,8 +340,7 @@ if len(st.session_state.result_history) >= 5:
                     "Verification Validation": "PROFIT ALIGNED" if mock_prediction == actual_next_size else "DRAWDOWN MAXIMUM"
                 })
 
-            bt_df = pd.DataFrame(backtest_records)
-            st.dataframe(bt_df.tail(10), use_container_width=True)
+            st.dataframe(pd.DataFrame(backtest_records).tail(10), width='stretch')
 
             total_simulations = len(backtest_records)
             profitable_simulations = sum(1 for x in backtest_records if x["Verification Validation"] == "PROFIT ALIGNED")
