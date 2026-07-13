@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 
-# 1. Institutional Setup (v9.9 Pro Max Core Fixed)
+# 1. Institutional Setup (v9.9 Locked & Speed Optimized)
 st.set_page_config(page_title="Wingo Matrix Omni-Engine v9.9 Ultimate", page_icon="🔥", layout="wide")
 st.title("🔥 Wingo 1m Matrix Omni-Engine v9.9 Ultimate Quantum")
 st.subheader("Developed for my Best Friend | 8,000,000 Pure Data Matrix Active 🚀")
@@ -104,8 +104,9 @@ if len(st.session_state.result_history) >= 2 and len(st.session_state.period_his
     sizes = ["SMALL" if n <= 4 else "BIG" for n in res_hist]
     current_period_last_digit = per_hist[-1] % 10
     
-    all_bigs =
-    all_smalls =
+    # 🧠 [১০০% ফিক্সড ডাটা অ্যারে গ্রিড - ব্র্যাকেটের ফাঁকা এরর চিরতরে এক শত কোটি পার্সেন্ট খতম করা হলো]
+    all_bigs = [5, 6, 7, 8, 9]
+    all_smalls = [0, 1, 2, 3, 4]
     
     dynamic_bigs = sorted(all_bigs, key=lambda x: res_hist.count(x))[:3]
     dynamic_smalls = sorted(all_smalls, key=lambda x: res_hist.count(x))[:3]
@@ -149,7 +150,6 @@ if len(st.session_state.result_history) >= 2 and len(st.session_state.period_his
     elif is_dragon_active:
         next_shot = last_real_size
     elif not is_special_movement:
-        # Static Equilibrium Mode Shift Rule
         next_shot = "SMALL" if last_real_size == "BIG" else "BIG"
 
     is_four_loss_trap = False
