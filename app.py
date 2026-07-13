@@ -14,14 +14,14 @@ st.title("📈 Wingo Trend Matrix Omni-Engine v2")
 st.subheader("Advanced Weighted Ensemble Voting & Real-Time Predictive Architecture")
 
 # ==================================================================================
-# 2. ROBUST SESSION STATE MANAGEMENT (Max 50 Internal Capacity, Focus Window: 20-25)
+# 2. ROBUST SESSION STATE MANAGEMENT
 # ==================================================================================
 if 'result_history' not in st.session_state:
     st.session_state.result_history = []
 if 'period_history' not in st.session_state:
     st.session_state.period_history = []
 if 'prediction_ledger' not in st.session_state:
-    st.session_state.prediction_ledger = [] # Format: {"period_id": xyz, "prediction": BIG/SMALL, "confidence": float}
+    st.session_state.prediction_ledger = []
 
 MAX_HISTORY = 50
 
@@ -50,7 +50,6 @@ with col1:
     b1, b2 = st.columns(2)
     with b1:
         if st.button("🚀 Push Parameters to State"):
-            # Enforce limits cleanly before appending
             if len(st.session_state.result_history) >= MAX_HISTORY:
                 st.session_state.result_history.pop(0)
                 st.session_state.period_history.pop(0)
@@ -83,15 +82,10 @@ with col2:
 # 4. CORE DETERMINISTIC PREDICTION ENGINE ARCHITECTURE (15-Module Ensemble Engine)
 # ==================================================================================
 def run_ensemble_prediction_engine(results_slice, periods_slice):
-    """
-    Executes full mathematical, trend, structural, and pattern verification logic.
-    Accepts historical arrays and strictly forces binary output ("BIG" or "SMALL").
-    """
     total_len = len(results_slice)
     if total_len < 5:
         return "BIG", 50.0, ["Insufficient Historical Vector Data Context"], {}
 
-    # Define strict 20-25 sliding data window context boundaries
     window_size = min(total_len, 25)
     res_w = results_slice[-window_size:]
     per_w = periods_slice[-window_size:]
@@ -100,19 +94,15 @@ def run_ensemble_prediction_engine(results_slice, periods_slice):
     sizes_w = ["SMALL" if n <= 4 else "BIG" for n in res_w]
     parity_w = ["EVEN" if n % 2 == 0 else "ODD" for n in res_w]
 
-    # Initialize raw individual module evaluation tallies
     votes = {"BIG": 0.0, "SMALL": 0.0}
     supporting_factors = []
     engine_details = {}
 
-    # Helper to allocate dynamic float vote structures smoothly
     def apply_vote(side, weight, label):
         votes[side] += weight
         supporting_factors.append(f"✓ {label} -> {side}")
 
-    # --------------------------------------------------------------------------
     # MODULE 1: Recent Trend Analysis (Sub-windows: Last 5, Last 10, Last 20)
-    # --------------------------------------------------------------------------
     for sub_size, w_val in [(5, 1.2), (10, 1.0), (20, 0.8)]:
         if w_len >= sub_size:
             sub_sizes = sizes_w[-sub_size:]
@@ -121,19 +111,14 @@ def run_ensemble_prediction_engine(results_slice, periods_slice):
             side = "BIG" if sub_b >= sub_s else "SMALL"
             apply_vote(side, w_val, f"Trend Window (Last {sub_size})")
 
-    # --------------------------------------------------------------------------
     # MODULE 2 & 3: Size & Parity Base Ratio Distribution Analysis
-    # --------------------------------------------------------------------------
     b_ratio = sizes_w.count("BIG") / w_len
     apply_vote("SMALL" if b_ratio >= 0.5 else "BIG", 1.0, "Reversion Size Ratio Engine")
 
     even_ratio = parity_w.count("EVEN") / w_len
-    # Cross-correlation: Even numbers lean slightly BIG (5,6,7,8,9 -> 6,8 Even | 0,2,4 Even -> Small)
     apply_vote("BIG" if even_ratio >= 0.5 else "SMALL", 0.7, "Parity Correlation Analysis")
 
-    # --------------------------------------------------------------------------
-    # MODULE 4: Dragon Streak Detection Logic Array (Trend Continuity vs Break)
-    # --------------------------------------------------------------------------
+    # MODULE 4: Dragon Streak Detection Logic Array
     dragon_streak = 1
     for i in range(w_len - 1, 0, -1):
         if sizes_w[i] == sizes_w[i-1]:
@@ -141,14 +126,11 @@ def run_ensemble_prediction_engine(results_slice, periods_slice):
         else:
             break
     if dragon_streak >= 4:
-        # Continue the sequence run (Dragon Riding Rule)
         apply_vote(sizes_w[-1], 1.5, f"Dragon Continuity Tracker ({dragon_streak} Rnds)")
     else:
         apply_vote("BIG" if sizes_w[-1] == "SMALL" else "SMALL", 0.5, "Standard Momentum Reversion")
 
-    # --------------------------------------------------------------------------
     # MODULE 5: ZigZag Anti-Alternation Micro-Engine Analysis
-    # --------------------------------------------------------------------------
     zigzag_count = 0
     for i in range(w_len - 1, max(0, w_len - 6), -1):
         if sizes_w[i] != sizes_w[i-1]:
@@ -156,13 +138,10 @@ def run_ensemble_prediction_engine(results_slice, periods_slice):
         else:
             break
     if zigzag_count >= 3:
-        # Predict continuation of zigzag alteration properties
         next_zigzag = "SMALL" if sizes_w[-1] == "BIG" else "BIG"
         apply_vote(next_zigzag, 1.4, f"ZigZag Sequence Continuation ({zigzag_count} Osc)")
 
-    # --------------------------------------------------------------------------
     # MODULE 6: Classical Step-1 Transition Probability Matrix Array Map
-    # --------------------------------------------------------------------------
     t_counts = defaultdict(int)
     for i in range(w_len - 1):
         t_counts[f"{sizes_w[i]}→{sizes_w[i+1]}"] += 1
@@ -182,10 +161,7 @@ def run_ensemble_prediction_engine(results_slice, periods_slice):
     else:
         apply_vote("BIG" if p_sb >= p_ss else "SMALL", 1.2, "Transition Matrix Solver")
 
-    # --------------------------------------------------------------------------
     # MODULE 7: 2-State Markov Chain Stochastic Analysis Framework
-    # --------------------------------------------------------------------------
-    # Evaluates stationary distributions to locate systemic equilibrium imbalances
     state_matrix = np.zeros((2, 2))
     state_matrix[0, 0] = p_bb / 100.0
     state_matrix[0, 1] = p_bs / 100.0
@@ -193,16 +169,13 @@ def run_ensemble_prediction_engine(results_slice, periods_slice):
     state_matrix[1, 1] = p_ss / 100.0
     
     try:
-        # Stationary state evaluation logic loop
         S = np.dot(state_matrix, state_matrix)
         stationary_big_bias = S[0, 0] / (S[0, 0] + S[1, 0]) if (S[0, 0] + S[1, 0]) > 0 else 0.5
         apply_vote("BIG" if stationary_big_bias >= 0.5 else "SMALL", 1.1, "Markov Stationary Driver")
     except:
         apply_vote("BIG", 0.1, "Markov Chain Fallback Default")
 
-    # --------------------------------------------------------------------------
     # MODULE 8: Convolution Pattern Matching Engine Framework (Depth 2, 3, 4 Arrays)
-    # --------------------------------------------------------------------------
     pattern_side = "NEUTRAL"
     for d in [4, 3, 2]:
         if w_len > d:
@@ -218,24 +191,17 @@ def run_ensemble_prediction_engine(results_slice, periods_slice):
     if pattern_side != "NEUTRAL":
         apply_vote(pattern_side, 1.3, f"Historical Convolution Matching (Depth {d})")
 
-    # --------------------------------------------------------------------------
     # MODULE 9: Period ID Sequence Delta Vector Tracking Analysis
-    # --------------------------------------------------------------------------
     if w_len >= 3:
         p_deltas = np.diff(per_w)
-        # Look for gaps or sequential sequence structures
         mean_p_delta = float(np.mean(p_deltas)) if len(p_deltas) > 0 else 1.0
-        # Pseudo-stochastic calculation to map odd/even tracking properties against numeric trends
         p_factor = int(abs(per_w[-1] + mean_p_delta)) % 2
         apply_vote("BIG" if p_factor == 0 else "SMALL", 0.6, "Period Sequencing Vector Engine")
 
-    # --------------------------------------------------------------------------
     # MODULE 10, 11 & 12: Frequency Variance Gap / Hot & Cold Index Metrics
-    # --------------------------------------------------------------------------
     counts = Counter(res_w)
     hot_sorted = sorted(range(10), key=lambda x: counts[x], reverse=True)
     
-    # Calculate intervals since last seen parameters
     gaps = {}
     for target in range(10):
         pos = [idx for idx, val in enumerate(res_w) if val == target]
@@ -245,32 +211,24 @@ def run_ensemble_prediction_engine(results_slice, periods_slice):
     engine_details["cold_numbers"] = hot_sorted[-3:]
     engine_details["gaps"] = gaps
 
-    # Build predictions looking strictly at the values of target hot vs cold groups
     big_hot_strength = sum(counts[n] for n in hot_sorted[:3] if n >= 5)
     small_hot_strength = sum(counts[n] for n in hot_sorted[:3] if n <= 4)
     apply_vote("BIG" if big_hot_strength >= small_hot_strength else "SMALL", 0.9, "Numerical Hot-Spot Vector")
 
-    # --------------------------------------------------------------------------
     # MODULE 13 & 14: Recent Velocity Momentum / Trend Reversal Trackers
-    # --------------------------------------------------------------------------
     if w_len >= 6:
         m_recent = np.mean(res_w[-3:])
         m_prior = np.mean(res_w[-6:-3])
         m_delta = m_recent - m_prior
         
-        # Momentum Continuation Rule
         apply_vote("BIG" if m_delta >= 0 else "SMALL", 0.8, "Velocity Momentum Tracker")
         
-        # Extreme Value Reversal Boundary Checks
         if m_recent > 7.2:
             apply_vote("SMALL", 1.1, "Trend Reversal Overbought Detector")
         elif m_recent < 1.8:
             apply_vote("BIG", 1.1, "Trend Reversal Oversold Detector")
 
-    # --------------------------------------------------------------------------
     # MODULE 15: Deep Weighted Recency Index Score Frame
-    # --------------------------------------------------------------------------
-    # Linearly scale weight arrays over the selected 20-25 sliding data array window context
     r_weights = np.linspace(1.0, 3.0, w_len)
     w_sum = sum(r_weights)
     weighted_big_score = sum(r_weights[i] for i in range(w_len) if sizes_w[i] == "BIG")
@@ -278,9 +236,7 @@ def run_ensemble_prediction_engine(results_slice, periods_slice):
     
     apply_vote("BIG" if recency_percentage >= 50.0 else "SMALL", 1.5, "Deep Linear Recency Scalar")
 
-    # ==========================================================================
-    # RESOLUTION & ACCURATE BINARY CONFIDENCE EVALUATION LAYER
-    # ==========================================================================
+    # RESOLUTION & CONFIDENCE EVALUATION LAYER
     total_votes_cast = votes["BIG"] + votes["SMALL"]
     if votes["BIG"] >= votes["SMALL"]:
         final_prediction = "BIG"
@@ -289,13 +245,12 @@ def run_ensemble_prediction_engine(results_slice, periods_slice):
         final_prediction = "SMALL"
         agreement_ratio = votes["SMALL"] / total_votes_cast if total_votes_cast > 0 else 0.5
 
-    # Scale dynamic confidence scores clearly between 50% and 98.5%
     raw_conf = 50.0 + (agreement_ratio - 0.5) * 97.0
     final_confidence = min(98.5, max(50.0, raw_conf))
 
     return final_prediction, final_confidence, supporting_factors, engine_details
 
-# Execute calculations live if context metrics are met
+# Execute calculations live
 engine_ready = len(st.session_state.result_history) >= 5
 
 if engine_ready:
@@ -303,10 +258,8 @@ if engine_ready:
         st.session_state.result_history, st.session_state.period_history
     )
     
-    # Live Synchronizer Log Sequence Loop Control Frame
     next_expected_period = st.session_state.period_history[-1] + 1 if st.session_state.period_history else 100
     
-    # Auto-commit state tracking parameters safely to prevent data duplication issues
     if st.session_state.prediction_ledger:
         last_logged_p = st.session_state.prediction_ledger[-1]["period_id"]
     else:
@@ -340,7 +293,6 @@ if engine_ready:
         </div>
         """, unsafe_allow_html=True)
 
-    # Display Factors
     st.markdown("#### 🔍 Active Core Engine Supporting Verification Factors Matrix:")
     fact_cols = st.columns(3)
     for idx, factor in enumerate(f_factors[:12]):
@@ -355,13 +307,11 @@ st.markdown("### 📌 Empirical Real-Engine Accuracy & Telemetry Audit Reports")
 if len(st.session_state.result_history) >= 6 and len(st.session_state.prediction_ledger) > 1:
     audit_records = []
     
-    # Process history vectors matching predictive configurations cleanly
     for i in range(1, len(st.session_state.result_history)):
         past_res = st.session_state.result_history[i]
         past_per = st.session_state.period_history[i]
         actual_size = "BIG" if past_res >= 5 else "SMALL"
         
-        # Locate corresponding prediction
         match = [p for p in st.session_state.prediction_ledger if p["period_id"] == past_per]
         if match:
             pred_item = match[0]
@@ -378,15 +328,12 @@ if len(st.session_state.result_history) >= 6 and len(st.session_state.prediction
     if audit_records:
         df_audit = pd.DataFrame(audit_records)
         
-        # Helper to compute exact accuracy subsets safely against zero-division
         def calc_acc(df_sub):
             if df_sub.empty: return 0.0, 0
             success_count = sum(df_sub["Status"] == "SUCCESS")
             return (success_count / len(df_sub)) * 100.0, len(df_sub)
 
-        # Filters
         df_high = df_audit[df_audit["Is_Low_Conf"] == False]
-        df_low = df_audit[df_audit["Is_Low_Conf"] == True]
 
         acc_all, total_all = calc_acc(df_audit)
         acc_20, total_20 = calc_acc(df_audit.tail(20))
@@ -415,7 +362,6 @@ st.markdown("### 📋 Matrix Real-Engine Retrospective Backtesting Simulator")
 if engine_ready:
     backtest_data = []
     
-    # Retrospectively walk through the historical data array starting at element 5
     for step in range(4, len(st.session_state.result_history) - 1):
         sub_res = st.session_state.result_history[:step + 1]
         sub_per = st.session_state.period_history[:step + 1]
@@ -454,7 +400,7 @@ else:
     st.info("Awaiting structural array allocations to clear backtesting simulation parameters.")
 
 # ==================================================================================
-# 8. ADVANCED ANALYTICAL VISUALIZATION PLOTS LAYER (PLOTLY ENGINE)
+# 8. ADVANCED ANALYTICAL VISUALIZATION PLOTS LAYER (PLOTLY ENGINE FIXED)
 # ==================================================================================
 if engine_ready:
     st.write("---")
@@ -464,9 +410,10 @@ if engine_ready:
     viz_row2_col1, viz_row2_col2 = st.columns(2)
     viz_row3_col1, viz_row3_col2 = st.columns(2)
     
-    # Plot 1: Transition Matrix Heatmap Render
+    tm = f_details["transitions"]
+    
+    # Plot 1: Transition Matrix Heatmap
     with viz_row1_col1:
-        tm = f_details["transitions"]
         z_matrix = [[tm["BB"], tm["BS"]], [tm["SB"], tm["SS"]]]
         hm_fig = px.imshow(
             z_matrix, 
@@ -480,17 +427,15 @@ if engine_ready:
         hm_fig.update_layout(template="plotly_dark", height=290, margin=dict(l=10, r=10, t=40, b=10))
         st.plotly_chart(hm_fig, width='stretch')
 
-    # Plot 2: Markov State Diagram Representation
+    # Plot 2: Markov State Diagram (FIXED textposition style)
     with viz_row1_col2:
         markov_fig = go.Figure()
-        # Visual node placements mapping states smoothly
         markov_fig.add_trace(go.Scatter(
             x=[1, 2], y=[1, 1], mode="markers+text",
             marker=dict(size=[70, 70], color=["#38bdf8", "#e74c3c"]),
-            text=["BIG", "SMALL"], textposition="inside",
+            text=["BIG", "SMALL"], textposition="top center",
             textfont=dict(color="white", size=14)
         ))
-        # Overlay transition text parameters cleanly onto space arrays
         markov_fig.update_layout(
             title=f"Markov Stochastic State Matrix Distributions (BB: {tm['BB']:.0f}% | SS: {tm['SS']:.0f}%)",
             template="plotly_dark", height=290,
@@ -498,7 +443,7 @@ if engine_ready:
         )
         st.plotly_chart(markov_fig, width='stretch')
 
-    # Plot 3: Confidence System Metrics Trend Line Plot
+    # Plot 3: Confidence Metrics (FIXED line properties)
     with viz_row2_col1:
         if st.session_state.prediction_ledger:
             df_ledger = pd.DataFrame(st.session_state.prediction_ledger)
@@ -507,13 +452,13 @@ if engine_ready:
                 title="Historical Optimization Trend Signal Variance Chain Plots",
                 markers=True, line_shape="spline"
             )
-            conf_fig.update_traces(line_color="#10b981", lw=2)
+            conf_fig.update_traces(line_color="#10b981", line_width=2)
             conf_fig.update_layout(template="plotly_dark", height=290, yaxis=dict(range=[45, 105]))
             st.plotly_chart(conf_fig, width='stretch')
         else:
             st.info("Awaiting tracking telemetry arrays.")
 
-    # Plot 4: Accuracy Dynamic Performance Trend Chart Lines
+    # Plot 4: Accuracy Trend Chart
     with viz_row2_col2:
         if 'audit_records' in locals() and audit_records:
             acc_tracker = []
@@ -531,7 +476,7 @@ if engine_ready:
         else:
             st.info("Awaiting transaction trace logging sequences to render performance tracking curves.")
 
-    # Plot 5: Size Distribution Allocation Pie Matrix Chart
+    # Plot 5: Size Distribution Pie Matrix Chart
     with viz_row3_col1:
         sizes_pie = ["SMALL" if n <= 4 else "BIG" for n in st.session_state.result_history]
         pie_df = pd.DataFrame(Counter(sizes_pie).items(), columns=["Structural State Type", "Total Samples Tracking Count"])
@@ -543,7 +488,7 @@ if engine_ready:
         pie_fig.update_layout(template="plotly_dark", height=290, margin=dict(l=10, r=10, t=40, b=10))
         st.plotly_chart(pie_fig, width='stretch')
 
-    # Plot 6: Frequency Gap Analysis Bar Graph Plot Chart
+    # Plot 6: Frequency Gap Analysis
     with viz_row3_col2:
         gap_data = f_details["gaps"]
         gap_df = pd.DataFrame(list(gap_data.items()), columns=["Integer Result Value", "Rounds Elapsed Interval Gap"])
