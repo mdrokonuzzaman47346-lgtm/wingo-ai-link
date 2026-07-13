@@ -105,8 +105,9 @@ if len(st.session_state.result_history) >= 2 and len(st.session_state.period_his
     sizes = ["SMALL" if n <= 4 else "BIG" for n in res_hist]
     current_period_last_digit = per_hist[-1] % 10
     
-    all_bigs =
-    all_smalls =
+    # অসম্পূর্ণ ভেরিয়েবল ডিফাইন করা হলো (কোনো পরিবর্তন ছাড়া বেসিক ম্যাট্রিক্স ভ্যালু)
+    all_bigs = [5, 6, 7, 8, 9]
+    all_smalls = [0, 1, 2, 3, 4]
     
     dynamic_bigs = sorted(all_bigs, key=lambda x: res_hist.count(x))[:3]
     dynamic_smalls = sorted(all_smalls, key=lambda x: res_hist.count(x))[:3]
@@ -152,8 +153,7 @@ if len(st.session_state.result_history) >= 2 and len(st.session_state.period_his
     elif not is_special_movement:
         next_shot = "SMALL" if last_real_size == "BIG" else "BIG"
 
-    # 🧬 [১০০০% বিশ্বস্ত সেলফ-কারেক্টিং ফিডব্যাক লুপ নোড সচল করা হলো]:
-    # কোড নিজে অতীতে ভুল করলে লাইভ চার্ট দেখে ১ মিলিসেকেন্ডে নিজের সিদ্ধান্ত কারেক্ট করে নিবে!
+    # 🧬 [১০০০% বিশ্বস্ত সেলф-কারেক্টিং ফিডব্যাক লুপ নোড সচল করা হলো]:
     loss_count_tracker = 0
     if len(st.session_state.signal_history) >= 2 and len(sizes) >= 2:
         last_2_predictions = st.session_state.signal_history[-2:]
@@ -162,7 +162,6 @@ if len(st.session_state.result_history) >= 2 and len(st.session_state.period_his
             if last_2_predictions[i] != actual_last_2_outcomes[i]:
                 loss_count_tracker += 1
         
-        # যদি কোম্পানি ২ বার ব্যাক-টু-ব্যাক কারচুপি করে কোডের লজিক লস করায়, কোড সাথে সাথে ডিরেকশন ফ্লিপ করবে!
         if loss_count_tracker == 2:
             next_shot = "SMALL" if next_shot == "BIG" else "BIG"
             movement_mode_text = "DYNAMIC FEEDBACK AUTO-CORRECTION ACTIVE ⚡"
@@ -201,6 +200,17 @@ if len(st.session_state.result_history) >= 2 and len(st.session_state.period_his
     # Complete 100% English Unified Interface Visual Chassis
     st.markdown(f"### 🎯 STRATEGY SIGNAL: <span style='color:{display_color}; font-weight:bold;'>[ {next_shot} ]</span> | CONFIDENCE: <span style='color:green; font-weight:bold;'>{confidence_display} ({movement_mode_text})</span>", unsafe_allow_html=True)
     
+    # আপনার দেওয়া শেষ অংশটি অবিকল নিচে যুক্ত করা হলো (ভাঙা স্ট্রিং কোটেশন ফিক্সড)
     st.markdown(f"""
     <div style='background-color:#1e293b; padding:16px; border-left:6px solid #e74c3c; border-radius:6px; margin-bottom:15px;'>
-💡 MX-SERVER MATRIX AUDIT:{movement_desc}""", unsafe_allow_html=True)st.markdown(f"### 🎯 Target Numbers Grid: {target_nums}", unsafe_allow_html=True)if len(st.session_state.signal_history) >= 15:st.session_state.signal_history.pop(0)st.session_state.signal_history.append(next_shot)
+    💡 MX-SERVER MATRIX AUDIT:{movement_desc}
+    </div>
+    """, unsafe_allow_html=True)
+    
+    st.markdown(f"### 🎯 Target Numbers Grid: {target_nums}", unsafe_allow_html=True)
+    
+    if len(st.session_state.signal_history) >= 15:
+        st.session_state.signal_history.pop(0)
+    st.session_state.signal_history.append(next_shot)
+else:
+    st.info("Log at least 2 real-time results to activate matrix analysis core.")
