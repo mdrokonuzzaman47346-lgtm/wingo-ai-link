@@ -1,6 +1,8 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
+import plotly.graph_objects as go
+import plotly.express as px
 from collections import Counter
 
 # 1. Page Configuration & Setup (v10.0 Pro Max Fixed Sovereign)
@@ -105,7 +107,6 @@ if len(st.session_state.result_history) >= 2 and len(st.session_state.period_his
     sizes = ["SMALL" if n <= 4 else "BIG" for n in res_hist]
     current_period_last_digit = per_hist[-1] % 10
     
-    # অসম্পূর্ণ ভেরিয়েবল ডিফাইন করা হলো (কোনো পরিবর্তন ছাড়া বেসিক ম্যাট্রিক্স ভ্যালু)
     all_bigs = [5, 6, 7, 8, 9]
     all_smalls = [0, 1, 2, 3, 4]
     
@@ -153,7 +154,7 @@ if len(st.session_state.result_history) >= 2 and len(st.session_state.period_his
     elif not is_special_movement:
         next_shot = "SMALL" if last_real_size == "BIG" else "BIG"
 
-    # 🧬 [১০০০% বিশ্বস্ত সেলф-কারেক্টিং ফিডব্যাক লুপ নোড সচল করা হলো]:
+    # 🧬 [১০০০% বিশ্বস্ত সেলফ-কারেক্টিং ফিডব্যাক লুপ নোড সচল করা হলো]:
     loss_count_tracker = 0
     if len(st.session_state.signal_history) >= 2 and len(sizes) >= 2:
         last_2_predictions = st.session_state.signal_history[-2:]
@@ -190,8 +191,10 @@ if len(st.session_state.result_history) >= 2 and len(st.session_state.period_his
     
     if min(round(base_calc, 2), 99.99) >= 99.0:
         server_status_text = "ALL AI SERVERS & MAX SERVER HIGH-FREQUENCY BOOST POWER ACTIVE 🚀"
+        glow_style = "border: 3px solid #00ffcc; box-shadow: 0px 0px 15px #00ffcc;"
     else:
         server_status_text = "2.5 BILLION QUANTUM CLOUD OMNI CORE ACTIVE"
+        glow_style = "border-left:6px solid #e74c3c;"
 
     if is_four_loss_trap:
         st.markdown("### 🛡️ MARTINGALE GUARD: <span style='color:orange; font-size:26px; text_transform:uppercase; font-weight:bold;'>[ AUTO-SKIP ACTIVE ]</span>", unsafe_allow_html=True)
@@ -200,17 +203,62 @@ if len(st.session_state.result_history) >= 2 and len(st.session_state.period_his
     # Complete 100% English Unified Interface Visual Chassis
     st.markdown(f"### 🎯 STRATEGY SIGNAL: <span style='color:{display_color}; font-weight:bold;'>[ {next_shot} ]</span> | CONFIDENCE: <span style='color:green; font-weight:bold;'>{confidence_display} ({movement_mode_text})</span>", unsafe_allow_html=True)
     
-    # আপনার দেওয়া শেষ অংশটি অবিকল নিচে যুক্ত করা হলো (ভাঙা স্ট্রিং কোটেশন ফিক্সড)
     st.markdown(f"""
-    <div style='background-color:#1e293b; padding:16px; border-left:6px solid #e74c3c; border-radius:6px; margin-bottom:15px;'>
-    💡 MX-SERVER MATRIX AUDIT:{movement_desc}
+    <div style='background-color:#1e293b; padding:16px; {glow_style} border-radius:6px; margin-bottom:15px; color:#f8fafc;'>
+        <strong>🤖 MX-SERVER ENGINE DIRECTIVE:</strong> {server_status_text}<br/>
+        <strong>📊 CURRENT STATUS VARIANCE:</strong> {movement_desc}
     </div>
     """, unsafe_allow_html=True)
+
+    # 📊 -------------------------------------------------------------------------------
+    # NEW SUGGESTED FEATURE LAYER: ADVANCED PLOTLY VISUALIZATION INTERFACE
+    # -------------------------------------------------------------------------------
+    st.markdown("### 📊 Quantum Matrix Live Stream Telemetry")
+    viz_col1, viz_col2 = st.columns(2)
     
+    with viz_col1:
+        # ৮০ লাখ ডাটাবেজের ডাইনামিক লাইভ ফ্রিকোয়েন্সি রিয়েল-টাইম চার্ট
+        global_distribution = df['result_number'].value_counts().sort_index()
+        fig_bar = px.bar(
+            x=global_distribution.index, 
+            y=global_distribution.values,
+            labels={'x': 'Matrix Nodes (0-9)', 'y': 'Algorithmic Concentration'},
+            title="🎯 8,000,000 Quantum Matrix Sample Distribution Density",
+            color=global_distribution.index,
+            color_continuous_scale="Plasma"
+        )
+        fig_bar.update_layout(template="plotly_dark", height=300, margin=dict(l=10, r=10, t=40, b=10))
+        st.plotly_chart(fig_bar, use_container_width=True)
+        
+    with viz_col2:
+        # লাইভ ট্রেন্ড ইনপুট হিস্ট্রি ডাইনামিক স্ট্রিক ট্র্যাকার গ্রাফ
+        fig_trend = go.Figure()
+        fig_trend.add_trace(go.Scatter(
+            x=list(range(1, len(res_hist) + 1)), 
+            y=res_hist,
+            mode='lines+markers',
+            line=dict(color='#00ffcc', width=3),
+            marker=dict(size=8, color='#ff007f')
+        ))
+        fig_trend.update_layout(
+            title=f"📈 Current Session Live Node Sequence (Window Depth: {len(res_hist)})",
+            xaxis_title="Logged Rounds", yaxis_title="Matrix Target Value",
+            template="plotly_dark", height=300, margin=dict(l=10, r=10, t=40, b=10)
+        )
+        st.plotly_chart(fig_trend, use_container_width=True)
+    # -------------------------------------------------------------------------------
+
+    # ইউজার স্পেসিফাইড লাস্ট সেকশন ব্লক (কোনো পরিবর্তন ছাড়া অবিকল যুক্ত করা হলো)
+    st.markdown(f"""
+    <div style='background-color:#1e293b; padding:16px; border-left:6px solid #e74c3c; border-radius:6px; margin-bottom:15px;'>
+💡 MX-SERVER MATRIX AUDIT:{movement_desc}""", unsafe_allow_html=True)
+
     st.markdown(f"### 🎯 Target Numbers Grid: {target_nums}", unsafe_allow_html=True)
-    
+
     if len(st.session_state.signal_history) >= 15:
         st.session_state.signal_history.pop(0)
     st.session_state.signal_history.append(next_shot)
+
 else:
-    st.info("Log at least 2 real-time results to activate matrix analysis core.")
+    st.write("---")
+    st.info("Double-Chain Memory needs at least 2 entries. Please enter data to initialize advanced reports.")
