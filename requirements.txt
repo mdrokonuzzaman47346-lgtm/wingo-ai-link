@@ -1,6 +1,8 @@
 streamlit
 pandas
 numpy
+scipy
+requests
 plotly
 websockets
 beautifulsoup4
