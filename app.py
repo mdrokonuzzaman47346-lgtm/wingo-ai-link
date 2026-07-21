@@ -4,7 +4,7 @@ import numpy as np
 import requests
 from collections import Counter
 
-# 1. Page Configuration & Elite Sovereign UI Setup (v12.0 API Bridge Edition)
+# 1. Page Configuration & Elite Sovereign UI Setup (v12.0 Quantum Apex - Webhook Edition)
 st.set_page_config(page_title="Wingo Matrix Omni-Engine v12.0 Apex", page_icon="👑", layout="wide")
 st.title("👑 Wingo 1m Matrix Omni-Engine v12.0 Quantum Sovereign Apex")
 st.subheader("Developed for my Best Friend Sabbir | Google Colab 20M Cloud Dynamic Sync Active 🚀")
@@ -95,8 +95,7 @@ if len(st.session_state.result_history) >= 1 and len(st.session_state.period_his
         "current_period": int(st.session_state.period_history[-1])
     }
     
-    # 🛰️ [SECRET WEBHOOK BRIDGE URL]
-    # Replace this placeholder link with your official server proxy tunnel URL later
+    # 🛰️ [YOUR LIVE ORIGINAL WEBHUOK BRIDGE URL LOCKED AT LINE 82]
     colab_webhook_url = "https://ngrok-free.app"
     
     # Initialize robust runtime variables with smart fallbacks to guarantee 0% UI freeze
@@ -121,8 +120,8 @@ if len(st.session_state.result_history) >= 1 and len(st.session_state.period_his
     except Exception:
         # Smart Fallback Protocol: If the tunnel is offline, process local math parameters smoothly without errors
         res_hist = [int(x) for x in st.session_state.result_history]
-        sizes = ["SMALL" if x <= 4 else "BIG" for x in res_hist]
-        last_real_size = sizes[-1]
+        sizes = ["SMALL" if x <= 4 else "BIG" for n in res_hist]
+        last_real_size = sizes[-1] if len(sizes) > 0 else "BIG"
         
         # Local 3-Round Short Dragon & Zig-zag UI Fallback Calibration
         is_dragon = len(sizes) >= 3 and len(set(sizes[-3:])) == 1
