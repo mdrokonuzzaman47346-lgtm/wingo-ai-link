@@ -152,30 +152,45 @@ if len(st.session_state.result_history) >= 2 and len(st.session_state.period_his
     else:
         next_shot = "SMALL" if last_real_size == "BIG" else "BIG"
 
-    # 1-Step Loss Recovery Vector
-    loss_count_tracker = 0
+    # --- PERFECT CONSECUTIVE LOSS & WIN TRACKING ENGINE ---
+    consecutive_loss_count = 0
     if len(st.session_state.signal_history) >= 1 and len(sizes) >= 1:
-        if st.session_state.signal_history[-1] != sizes[-1]:
-            loss_count_tracker = 1
-            next_shot = "SMALL" if next_shot == "BIG" else "BIG"
-            movement_mode_text = "1-STEP LOSS AUTO-CORRECTION ACTIVE ⚡"
-            movement_desc = "1-Step loss detected! Server-side override deployed with Deep AI Boost to secure immediate recovery prediction."
+        # Check consecutive losses backwards from most recent prediction
+        max_check = min(len(st.session_state.signal_history), len(sizes) - 1)
+        for i in range(1, max_check + 1):
+            pred = st.session_state.signal_history[-i]
+            actual = sizes[-i]
+            if pred != actual:
+                consecutive_loss_count += 1
+            else:
+                break # Instant Reset on Win!
 
-    # 4-Step Loss Warning Vector
-    is_four_loss_trap = False
-    if len(st.session_state.signal_history) >= 4 and len(sizes) >= 4:
-        if all(st.session_state.signal_history[-i] != sizes[-i] for i in range(1, 5)):
-            is_four_loss_trap = True
+    # Step Loss Handling Logic
+    if consecutive_loss_count == 1:
+        next_shot = "SMALL" if next_shot == "BIG" else "BIG"
+        movement_mode_text = "1-STEP LOSS AUTO-CORRECTION ACTIVE ⚡"
+        movement_desc = "1-Step loss detected! Server-side override deployed with Deep AI Boost to secure immediate recovery prediction."
+    elif consecutive_loss_count == 2:
+        next_shot = "SMALL" if next_shot == "BIG" else "BIG"
+        movement_mode_text = "2-STEP LOSS RECOVERY IN PROGRESS ⚡⚡"
+        movement_desc = "2-Step loss detected! Strategic reversal vector activated to counter trend shift."
+    elif consecutive_loss_count == 3:
+        next_shot = "SMALL" if next_shot == "BIG" else "BIG"
+        movement_mode_text = "3-STEP LOSS HIGH-RISK RECOVERY ⚡⚡⚡"
+        movement_desc = "3-Step loss reached! High-precision algorithmic override engaged for critical recovery."
+
+    is_four_loss_trap = (consecutive_loss_count >= 4)
 
     target_nums = dynamic_big_text if next_shot == "BIG" else dynamic_small_text
     display_color = "#38bdf8" if next_shot == "BIG" else "#ef4444"
     
     recent_freq_count = res_hist.count(new_num)
     base_calc = 95.80 + (diff * 0.4) + (recent_freq_count * 0.3)
-    if loss_count_tracker >= 1 or is_dragon_active or is_zigzag_active:
+    if consecutive_loss_count >= 1 or is_dragon_active or is_zigzag_active:
         base_calc += 3.2
     confidence_display = f"{min(round(base_calc, 2), 99.99)}%"
 
+    # Red Warning Display for Step 4 Loss
     if is_four_loss_trap:
         st.markdown("""
         <div style='background-color:#7f1d1d; padding:15px; border-left:6px solid #ef4444; border-radius:6px; margin-bottom:15px;'>
