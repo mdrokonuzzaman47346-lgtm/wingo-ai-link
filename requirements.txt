@@ -6,6 +6,3 @@ requests
 plotly
 websockets
 beautifulsoup4
-flask
-pyngrok
-scikit-learn
