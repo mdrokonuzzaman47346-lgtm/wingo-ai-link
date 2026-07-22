@@ -1,8 +1,5 @@
 streamlit
 pandas
 numpy
-scipy
-requests
-plotly
-websockets
-beautifulsoup4
+lightgbm
+scikit-learn
