@@ -152,20 +152,18 @@ if len(st.session_state.result_history) >= 2 and len(st.session_state.period_his
     else:
         next_shot = "SMALL" if last_real_size == "BIG" else "BIG"
 
-    # --- PERFECT CONSECUTIVE LOSS & WIN TRACKING ENGINE ---
+    # Consecutive Loss Count Engine (BIG/SMALL Only)
     consecutive_loss_count = 0
-    if len(st.session_state.signal_history) >= 1 and len(sizes) >= 1:
-        # Check consecutive losses backwards from most recent prediction
-        max_check = min(len(st.session_state.signal_history), len(sizes) - 1)
-        for i in range(1, max_check + 1):
-            pred = st.session_state.signal_history[-i]
-            actual = sizes[-i]
-            if pred != actual:
+    if len(st.session_state.signal_history) >= 1 and len(sizes) >= 2:
+        check_limit = min(len(st.session_state.signal_history), len(sizes) - 1)
+        for idx in range(1, check_limit + 1):
+            if st.session_state.signal_history[-idx] != sizes[-idx]:
                 consecutive_loss_count += 1
             else:
-                break # Instant Reset on Win!
+                break
 
-    # Step Loss Handling Logic
+    # Dynamic Step Loss Recovery
+    loss_count_tracker = consecutive_loss_count
     if consecutive_loss_count == 1:
         next_shot = "SMALL" if next_shot == "BIG" else "BIG"
         movement_mode_text = "1-STEP LOSS AUTO-CORRECTION ACTIVE ⚡"
@@ -179,6 +177,7 @@ if len(st.session_state.result_history) >= 2 and len(st.session_state.period_his
         movement_mode_text = "3-STEP LOSS HIGH-RISK RECOVERY ⚡⚡⚡"
         movement_desc = "3-Step loss reached! High-precision algorithmic override engaged for critical recovery."
 
+    # 4-Step Loss Warning Vector (Only triggers at Step 4)
     is_four_loss_trap = (consecutive_loss_count >= 4)
 
     target_nums = dynamic_big_text if next_shot == "BIG" else dynamic_small_text
@@ -186,11 +185,10 @@ if len(st.session_state.result_history) >= 2 and len(st.session_state.period_his
     
     recent_freq_count = res_hist.count(new_num)
     base_calc = 95.80 + (diff * 0.4) + (recent_freq_count * 0.3)
-    if consecutive_loss_count >= 1 or is_dragon_active or is_zigzag_active:
+    if loss_count_tracker >= 1 or is_dragon_active or is_zigzag_active:
         base_calc += 3.2
     confidence_display = f"{min(round(base_calc, 2), 99.99)}%"
 
-    # Red Warning Display for Step 4 Loss
     if is_four_loss_trap:
         st.markdown("""
         <div style='background-color:#7f1d1d; padding:15px; border-left:6px solid #ef4444; border-radius:6px; margin-bottom:15px;'>
