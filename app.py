@@ -1,37 +1,13 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
-import os
 
-# 1. Page Configuration & Sovereign Elite Setup (v11.0 Apex Master)
+# 1. Page Configuration
 st.set_page_config(page_title="Wingo Matrix Omni-Engine v11.0 Apex", page_icon="👑", layout="wide")
 st.title("👑 Wingo 1m Matrix Omni-Engine v11.0 Apex Master")
-st.subheader("Institutional Grade Quantum Engine | 20,000,000 Real Matrix + CSV Pipeline Active 🚀")
+st.subheader("Institutional Grade Engine | Instant High-Speed Engine Active 🚀")
 
-# 2. Institutional Mega Quantum Database Generator (Error-Free Fixed Caching)
-@st.cache_data
-def generate_mega_institutional_matrix_v11():
-    # Fast 20M Matrix Vector
-    simulated_results = np.random.randint(0, 10, size=20000000)
-    df_simulated = pd.DataFrame({
-        'period': np.arange(1, 20000001),
-        'result_number': simulated_results
-    })
-    return df_simulated
-
-# Run Database Generator safely
-df = generate_mega_institutional_matrix_v11()
-
-# CSV Pipeline outside caching function to prevent Streamlit UI Cache Replay Error
-csv_file = "wingo_billion_data.csv"
-if os.path.exists(csv_file):
-    try:
-        csv_df = pd.read_csv(csv_file, nrows=100000)
-        st.toast("📁 Live CSV Pipeline Successfully Linked!", icon="✅")
-    except Exception:
-        pass
-
-# 3. Global AI Core Connection Status Panel (Original 5 Golden Boxes Sync)
+# 2. Global AI Core Connection Status Panel
 st.markdown("### 🌐 Global AI Core Connection Status")
 
 c1, c2, c3 = st.columns(3)
@@ -55,7 +31,7 @@ with c5:
     <div style='background-color:#1e293b; padding:10px; border-left:5px solid #e74c3c; border-radius:4px; font-weight:bold; color:#f8fafc; margin-bottom:6px;'>🌐 DUAL-FEEDBACK LOGIC: SYNCHRONIZED</div>
     """, unsafe_allow_html=True)
 
-# 4. Double-Chain Session Memory System (30-Round Locked)
+# 3. Session Memory Setup (30-Round Locked)
 if 'result_history' not in st.session_state:
     st.session_state.result_history = []
 if 'period_history' not in st.session_state:
@@ -83,7 +59,7 @@ with col1:
             st.session_state.period_history.append(log_period)
             st.rerun()
     with b2:
-        if st.button("🗑️ Reset All Memory History", use_container_width=True):
+        if st.button("🗑️ Clear All History Memory", use_container_width=True):
             st.session_state.result_history = []
             st.session_state.period_history = []
             st.session_state.signal_history = []
@@ -95,12 +71,12 @@ with col2:
         res_30 = st.session_state.result_history[-30:]
         per_30 = st.session_state.period_history[-30:]
         
-        # 0-9 Auto-Frequency Density Tracking Array
+        # 0-9 Auto-Frequency Density Tracking
         freq_dict = [res_30.count(i) for i in range(10)]
         big_counts = sum(1 for x in res_30 if x >= 5)
         small_counts = sum(1 for x in res_30 if x <= 4)
         
-        # Original Image Style English Trackers
+        # English Trackers Display
         st.markdown(f"📝 **Last 30 Live Results Tracking Chain:** `{res_30}`")
         st.markdown(f"⏳ **Last 30 Live 3-Digit Period Tracking Chain:** `{per_30}`")
         st.markdown(f"📊 **Auto-Frequency Tracker (0-9 Exact Density):** `{freq_dict}`")
@@ -110,18 +86,12 @@ with col2:
             <span style='font-size:15px; font-weight:bold; color:#7efff5;'>📈 Recent Result Ratio ➔ BIG: {big_counts} | SMALL: {small_counts}</span>
         </div>
         """, unsafe_allow_html=True)
-        
-        # Frequency Bar Chart
-        freq_chart_dict = {i: res_30.count(i) for i in range(10)}
-        st.write("**📊 Auto-Frequency Density Tracker (0-9 Visual Chart):**")
-        st.bar_chart(freq_chart_dict, height=130)
     else:
         st.info("Double-Chain Memory is empty. Please log real-time data to activate server.")
 
-# 5. Apex Sovereign AI Engine & 4-Pillar Movement UI Dashboard Render
+# 4. Strategy & Market Reversal Analysis Core (Silent Backend Processing)
 if len(st.session_state.result_history) >= 2 and len(st.session_state.period_history) >= 2:
     st.write("---")
-    st.markdown("### 🎯 MARKET MOVEMENT & 4-PILLAR DETECTOR UI")
     
     res_hist = st.session_state.result_history
     per_hist = st.session_state.period_history
@@ -135,56 +105,40 @@ if len(st.session_state.result_history) >= 2 and len(st.session_state.period_his
     all_bigs = [5, 6, 7, 8, 9]
     all_smalls = [0, 1, 2, 3, 4]
     
-    # Hot Number Selection
+    # Target Numbers Logic
     dynamic_bigs = sorted(all_bigs, key=lambda x: res_hist.count(x), reverse=True)[:3]
     dynamic_smalls = sorted(all_smalls, key=lambda x: res_hist.count(x), reverse=True)[:3]
     
     dynamic_big_text = ", ".join(map(str, sorted(dynamic_bigs)))
     dynamic_small_text = ", ".join(map(str, sorted(dynamic_smalls)))
     
-    is_dragon_active = False
-    is_double_chain_active = False
-    is_zigzag_active = False
-    is_special_movement = False
+    # Silent Movement Checks
+    is_dragon_active = len(sizes) >= 4 and len(set(sizes[-4:])) == 1
+    is_double_chain_active = len(sizes) >= 4 and sizes[-1] == sizes[-2] and sizes[-3] == sizes[-4] and sizes[-2] != sizes[-3]
+    is_zigzag_active = len(sizes) >= 4 and sizes[-1] != sizes[-2] and sizes[-2] != sizes[-3]
     
     movement_mode_text = "BALANCED STATIC TREND"
     movement_desc = "Numerical variance equilibrium achieved. High-compute server executing structural trend reversal vector."
     
-    # 4 Pillar Detection Logic
-    if len(sizes) >= 4 and len(set(sizes[-4:])) == 1:
-        is_dragon_active = True
-        is_special_movement = True
+    if is_dragon_active:
         movement_mode_text = "DRAGON TREND DETECTED"
         movement_desc = "Continuous momentum sequence locked. Server synchronized with matching trend distribution vectors."
-    elif len(sizes) >= 4 and sizes[-1] == sizes[-2] and sizes[-3] == sizes[-4] and sizes[-2] != sizes[-3]:
-        is_double_chain_active = True
-        is_special_movement = True
+    elif is_double_chain_active:
         movement_mode_text = "DOUBLE-CHAIN LOOP DETECTED"
         movement_desc = "Twin alternation pattern structural loop observed. Mirroring transaction cluster sync arrays."
-    elif len(sizes) >= 4 and sizes[-1] != sizes[-2] and sizes[-2] != sizes[-3]:
-        is_zigzag_active = True
-        is_special_movement = True
+    elif is_zigzag_active:
         movement_mode_text = "ZIG-ZAG VOLATILITY DETECTED"
         movement_desc = "High-frequency alternation oscillation confirmed. Strategy loop adjusted for immediate reversal prediction."
 
-    # 4 Pillar Indicator Grid Status Cards
-    p1, p2, p3, p4 = st.columns(4)
-    p1.metric("🐉 Dragon Pattern", "ACTIVE" if is_dragon_active else "IDLE")
-    p2.metric("🔄 Zig-Zag Oscillations", "ACTIVE" if is_zigzag_active else "IDLE")
-    p3.metric("🔗 Double Loop", "ACTIVE" if is_double_chain_active else "IDLE")
-    p4.metric("📈 Volatility Index", f"{diff * 10}%")
-
-    # 30-Round Market Imbalance Filter
+    # 30-Round Market Imbalance Check
     big_counts_30 = sum(1 for x in sizes if x == "BIG")
     small_counts_30 = sum(1 for x in sizes if x == "SMALL")
     
-    # Reversal Strategy Core
+    # Main Reversal Decision Logic
     omni_ai_weight = (old_num + new_num + current_period_last_digit + diff) % 2
     next_shot = "BIG" if omni_ai_weight == 0 else "SMALL"
-        
     last_real_size = sizes[-1]
     
-    # Apply Pattern Priorities
     if big_counts_30 >= 20:
         next_shot = "SMALL"
     elif small_counts_30 >= 20:
@@ -195,30 +149,22 @@ if len(st.session_state.result_history) >= 2 and len(st.session_state.period_his
         next_shot = "SMALL" if last_real_size == "BIG" else "BIG"
     elif is_dragon_active:
         next_shot = last_real_size
-    elif not is_special_movement:
+    else:
         next_shot = "SMALL" if last_real_size == "BIG" else "BIG"
 
-    # 1-Step Loss Recovery Protocol
+    # 1-Step Loss Recovery Vector
     loss_count_tracker = 0
     if len(st.session_state.signal_history) >= 1 and len(sizes) >= 1:
-        last_prediction = st.session_state.signal_history[-1]
-        actual_last_outcome = sizes[-1]
-        if last_prediction != actual_last_outcome:
+        if st.session_state.signal_history[-1] != sizes[-1]:
             loss_count_tracker = 1
             next_shot = "SMALL" if next_shot == "BIG" else "BIG"
             movement_mode_text = "1-STEP LOSS AUTO-CORRECTION ACTIVE ⚡"
             movement_desc = "1-Step loss detected! Server-side override deployed with Deep AI Boost to secure immediate recovery prediction."
 
-    # 4-Step Loss Red Warning Detector
+    # 4-Step Loss Warning Vector
     is_four_loss_trap = False
-    consecutive_loss_count = 0
     if len(st.session_state.signal_history) >= 4 and len(sizes) >= 4:
-        last_4_preds = st.session_state.signal_history[-4:]
-        actual_last_4 = sizes[-4:]
-        for i in range(4):
-            if last_4_preds[i] != actual_last_4[i]:
-                consecutive_loss_count += 1
-        if consecutive_loss_count == 4:
+        if all(st.session_state.signal_history[-i] != sizes[-i] for i in range(1, 5)):
             is_four_loss_trap = True
 
     target_nums = dynamic_big_text if next_shot == "BIG" else dynamic_small_text
@@ -226,11 +172,10 @@ if len(st.session_state.result_history) >= 2 and len(st.session_state.period_his
     
     recent_freq_count = res_hist.count(new_num)
     base_calc = 95.80 + (diff * 0.4) + (recent_freq_count * 0.3)
-    if loss_count_tracker >= 1 or is_special_movement:
+    if loss_count_tracker >= 1 or is_dragon_active or is_zigzag_active:
         base_calc += 3.2
     confidence_display = f"{min(round(base_calc, 2), 99.99)}%"
 
-    # Red Warning Display
     if is_four_loss_trap:
         st.markdown("""
         <div style='background-color:#7f1d1d; padding:15px; border-left:6px solid #ef4444; border-radius:6px; margin-bottom:15px;'>
@@ -239,7 +184,7 @@ if len(st.session_state.result_history) >= 2 and len(st.session_state.period_his
         </div>
         """, unsafe_allow_html=True)
 
-    st.write("---")
+    # Strategy Output Display
     st.markdown(f"### 🎯 STRATEGY SIGNAL: <span style='color:{display_color}; font-weight:bold;'>[ {next_shot} ]</span> | CONFIDENCE: <span style='color:#2ecc71; font-weight:bold;'>{confidence_display}</span>", unsafe_allow_html=True)
     
     st.markdown(f"""
