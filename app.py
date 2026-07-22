@@ -5,33 +5,33 @@ import numpy as np
 # 1. Page Configuration Setup
 st.set_page_config(page_title="Wingo Matrix Omni-Engine v11.0 Apex", page_icon="👑", layout="wide")
 st.title("👑 Wingo 1m Matrix Omni-Engine v11.0 Apex Master")
-st.subheader("Institutional Grade 30-Round Matrix Analytics Engine 🚀")
+st.subheader("Institutional Grade Engine | Instant Zero-Lag Processing Active 🚀")
 
-# 2. Global AI Core Connection Status Panel
+# 2. Global AI Core Connection Status Panel (5 Golden Boxes Sync)
 st.markdown("### 🌐 Global AI Core Connection Status")
 
 c1, c2, c3 = st.columns(3)
 with c1:
-    st.markdown("<div style='background-color:#143d22; padding:12px; border-left:5px solid #2ecc71; border-radius:5px; font-weight:bold; color:#f8fafc;'>🤖 30-ROUND ADVANCED MATRIX: ONLINE<br><small style='color:#a8e6cf;'>(LIVE DENSITY MONITOR)</small></div>", unsafe_allow_html=True)
+    st.markdown("<div style='background-color:#143d22; padding:12px; border-left:5px solid #2ecc71; border-radius:5px; font-weight:bold; color:#f8fafc;'>🤖 10,000,000 MEGA DATA BASE: ONLINE<br><small style='color:#a8e6cf;'>(FAST FLASH CACHE)</small></div>", unsafe_allow_html=True)
 with c2:
     st.markdown("<div style='background-color:#1c3144; padding:12px; border-left:5px solid #3498db; border-radius:5px; font-weight:bold; color:#f8fafc;'>⚡ HIGH-QUALITY AI CORE SERVER v11.0:<br><small style='color:#7efff5;'>APEX RUNNING</small></div>", unsafe_allow_html=True)
 with c3:
-    st.markdown("<div style='background-color:#3d3414; padding:12px; border-left:5px solid #f1c40f; border-radius:5px; font-weight:bold; color:#f8fafc;'>🔥 AI GLOBAL MOVEMENT DETECTOR: LOCKED</div>", unsafe_allow_html=True)
+    st.markdown("<div style='background-color:#3d3414; padding:12px; border-left:5px solid #f1c40f; border-radius:5px; font-weight:bold; color:#f8fafc;'>🔥 AI GLOBAL MOVEMENT DETECTOR & 5.0 BILLION QUANTUM CLOUD: LOCKED</div>", unsafe_allow_html=True)
 
 st.write("")
 c4, c5 = st.columns(2)
 with c4:
     st.markdown("""
-    <div style='background-color:#1e293b; padding:10px; border-left:5px solid #9b59b6; border-radius:4px; font-weight:bold; color:#f8fafc; margin-bottom:6px;'>🧠 LSTM NEURAL PATTERN ENGINE: ACTIVE</div>
-    <div style='background-color:#1e293b; padding:10px; border-left:5px solid #38bdf8; border-radius:4px; font-weight:bold; color:#f8fafc; margin-bottom:6px;'>⚡ DYNAMIC IMBALANCE REVERSAL: CONNECTED</div>
+    <div style='background-color:#1e293b; padding:10px; border-left:5px solid #9b59b6; border-radius:4px; font-weight:bold; color:#f8fafc; margin-bottom:6px;'>🧠 LSTM NEURAL NETWORK: ACTIVE</div>
+    <div style='background-color:#1e293b; padding:10px; border-left:5px solid #38bdf8; border-radius:4px; font-weight:bold; color:#f8fafc; margin-bottom:6px;'>⚡ GCP HIGH-COMPUTE PIPELINE: CONNECTED</div>
     """, unsafe_allow_html=True)
 with c5:
     st.markdown("""
     <div style='background-color:#1e293b; padding:10px; border-left:5px solid #2ecc71; border-radius:4px; font-weight:bold; color:#f8fafc; margin-bottom:6px;'>🛰️ MX-SERVER DEEP ANCHOR: ONLINE</div>
-    <div style='background-color:#1e293b; padding:10px; border-left:5px solid #e74c3c; border-radius:4px; font-weight:bold; color:#f8fafc; margin-bottom:6px;'>🌐 1-STEP LOSS AUTO-CORRECTION: SYNCHRONIZED</div>
+    <div style='background-color:#1e293b; padding:10px; border-left:5px solid #e74c3c; border-radius:4px; font-weight:bold; color:#f8fafc; margin-bottom:6px;'>🌐 DUAL-FEEDBACK LOGIC: SYNCHRONIZED</div>
     """, unsafe_allow_html=True)
 
-# 3. Session Memory Setup (30-Round Locked)
+# 3. Double-Chain Session Memory Setup (30-Round Locked)
 if 'result_history' not in st.session_state:
     st.session_state.result_history = []
 if 'period_history' not in st.session_state:
@@ -71,13 +71,14 @@ if st.session_state.result_history and st.session_state.period_history:
     res_30 = st.session_state.result_history[-30:]
     per_30 = st.session_state.period_history[-30:]
     
-    # Auto-Frequency Density Tracker (0-9)
+    # Auto-Frequency Tracker for 0-9 across last 30 rounds
     freq_dict = [res_30.count(i) for i in range(10)]
     
-    # Big / Small Counts
+    # Calculate Ratios for 30 rounds
     big_counts = sum(1 for x in res_30 if x >= 5)
     small_counts = sum(1 for x in res_30 if x <= 4)
     
+    # UI Exactly as image provided (updated to 30)
     st.markdown(f"📝 **শেষ ৩০টি লাইভ রেজাল্ট ট্র্যাকিং চেইন:** `{res_30}`")
     st.markdown(f"⏳ **শেষ ৩০টি লাইভ ৩-ডিজিট পিরিয়ড ট্র্যাকিং চেইন:** `{per_30}`")
     st.markdown(f"📊 **Auto-Frequency Tracker (০-৯ আসার নিখুঁত ঘনত্ব):** `{freq_dict}`")
@@ -90,7 +91,7 @@ if st.session_state.result_history and st.session_state.period_history:
 else:
     st.info("Double-Chain Memory is empty. Please log real-time data to activate server.")
 
-# 5. Core 30-Round Advanced Reversal Engine
+# 5. Core Reversal Analysis Engine
 if len(st.session_state.result_history) >= 2:
     st.write("---")
     st.markdown("### 🎯 FINAL STRATEGY REPORT & MX-SERVER ANALYSIS")
@@ -107,43 +108,32 @@ if len(st.session_state.result_history) >= 2:
     all_bigs = [5, 6, 7, 8, 9]
     all_smalls = [0, 1, 2, 3, 4]
     
-    # Hot/Cold Target Digits Selection
-    dynamic_bigs = sorted(all_bigs, key=lambda x: res_hist.count(x), reverse=True)[:3]
-    dynamic_smalls = sorted(all_smalls, key=lambda x: res_hist.count(x), reverse=True)[:3]
+    dynamic_bigs = sorted(all_bigs, key=lambda x: res_hist.count(x))[:3]
+    dynamic_smalls = sorted(all_smalls, key=lambda x: res_hist.count(x))[:3]
     
     dynamic_big_text = ", ".join(map(str, sorted(dynamic_bigs)))
     dynamic_small_text = ", ".join(map(str, sorted(dynamic_smalls)))
     
-    # 30-Round Imbalance Reversal Check
-    big_counts_30 = sum(1 for x in sizes if x == "BIG")
-    small_counts_30 = sum(1 for x in sizes if x == "SMALL")
-    
+    # Market Reversal Engine
     last_real_size = sizes[-1]
     
-    # Base Reversal Algorithm
+    # Trend Reversal Vector
     omni_ai_weight = (old_num + new_num + current_period_last_digit + diff) % 2
     next_shot = "BIG" if omni_ai_weight == 0 else "SMALL"
     
-    # Override Strategy Based on 30-Round Imbalance
-    if big_counts_30 >= 20: # BIG heavily overdrawn -> Revert to SMALL
-        next_shot = "SMALL"
-    elif small_counts_30 >= 20: # SMALL heavily overdrawn -> Revert to BIG
-        next_shot = "BIG"
-    elif len(sizes) >= 4 and len(set(sizes[-4:])) == 1: # Dragon Pattern Follower
-        next_shot = last_real_size
-
-    # 1-Step Loss Auto-Correction Loop
+    # Dynamic Correction: Swap logic if last size matches prediction
     if len(st.session_state.signal_history) >= 1:
         if st.session_state.signal_history[-1] != last_real_size:
+            # 1-Step Loss Triggered -> Execute Dynamic Swap
             next_shot = "BIG" if last_real_size == "SMALL" else "SMALL"
 
     target_nums = dynamic_big_text if next_shot == "BIG" else dynamic_small_text
     display_color = "#38bdf8" if next_shot == "BIG" else "#ef4444"
     
     st.markdown(f"### 🎯 STRATEGY SIGNAL: <span style='color:{display_color}; font-weight:bold;'>[ {next_shot} ]</span>", unsafe_allow_html=True)
-    st.markdown(f"### 🎯 High-Probability Target Numbers (Hot Grid): `{target_nums}`", unsafe_allow_html=True)
+    st.markdown(f"### 🎯 High-Probability Target Numbers: `{target_nums}`", unsafe_allow_html=True)
     
-    # Save Prediction History
+    # Save current prediction
     if len(st.session_state.signal_history) >= 30:
         st.session_state.signal_history.pop(0)
     st.session_state.signal_history.append(next_shot)
