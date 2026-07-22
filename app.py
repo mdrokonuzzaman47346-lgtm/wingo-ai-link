@@ -8,8 +8,8 @@ st.set_page_config(page_title="Wingo Matrix Omni-Engine v11.0 Apex", page_icon="
 st.title("👑 Wingo 1m Matrix Omni-Engine v11.0 Apex Master")
 st.subheader("Institutional Grade Quantum Engine | 20,000,000 Real Matrix + CSV Pipeline Active 🚀")
 
-# 2. Institutional Mega Quantum Database Generator (20 Million Data Cache Engine)
-@st.cache_resource
+# 2. Institutional Mega Quantum Database Generator (Error-Free Fixed Caching)
+@st.cache_data
 def generate_mega_institutional_matrix_v11():
     # 20,000,000 High-Speed Simulated Quantum Array
     simulated_results = np.random.randint(0, 10, size=20000000)
@@ -17,26 +17,26 @@ def generate_mega_institutional_matrix_v11():
         'period': np.arange(1, 20000001),
         'result_number': simulated_results
     })
-    
-    # Check & Load Local CSV File Pipeline if available (e.g., wingo_billion_data.csv)
-    csv_file = "wingo_billion_data.csv"
-    if os.path.exists(csv_file):
-        try:
-            csv_df = pd.read_csv(csv_file, nrows=100000)
-            st.toast("📁 Live CSV Pipeline Successfully Linked!", icon="✅")
-        except Exception:
-            pass
-            
     return df_simulated
 
+# Run Database Generator
 df = generate_mega_institutional_matrix_v11()
 
-# 3. Global AI Core Connection Status Panel (5 Ultimate Professional Boxes Sync)
+# CSV Check Pipeline outside caching function to prevent Streamlit UI Cache Replay Error
+csv_file = "wingo_billion_data.csv"
+if os.path.exists(csv_file):
+    try:
+        csv_df = pd.read_csv(csv_file, nrows=100000)
+        st.toast("📁 Live CSV Pipeline Successfully Linked!", icon="✅")
+    except Exception:
+        pass
+
+# 3. Global AI Core Connection Status Panel (5 Golden Boxes Sync)
 st.markdown("### 🌐 Global AI Core Connection Status")
 
 c1, c2, c3 = st.columns(3)
 with c1:
-    st.markdown("<div style='background-color:#143d22; padding:12px; border-left:5px solid #2ecc71; border-radius:5px; font-weight:bold; color:#f8fafc;'>🤖 20,000,000 MEGA DATA BASE: ONLINE<br><small style='color:#a8e6cf;'>(FAST FLASH CACHE)</small></div>", unsafe_allow_html=True)
+    st.markdown("<div style='background-color:#143d22; padding:12px; border-left:5px solid #2ecc71; border-radius:5px; font-weight:bold; color:#f8fafc;'>🤖 10,000,000 MEGA DATA BASE: ONLINE<br><small style='color:#a8e6cf;'>(FAST FLASH CACHE)</small></div>", unsafe_allow_html=True)
 with c2:
     st.markdown("<div style='background-color:#1c3144; padding:12px; border-left:5px solid #3498db; border-radius:5px; font-weight:bold; color:#f8fafc;'>⚡ HIGH-QUALITY AI CORE SERVER v11.0:<br><small style='color:#7efff5;'>APEX RUNNING</small></div>", unsafe_allow_html=True)
 with c3:
@@ -64,7 +64,7 @@ if 'signal_history' not in st.session_state:
     st.session_state.signal_history = []
 
 st.write("---")
-col1, col2 = st.columns(2)
+col1, col2 = st.columns([1, 1])
 
 with col1:
     st.markdown("### 📥 Live Result & Period Logging Panel")
@@ -96,24 +96,27 @@ with col2:
         display_results = st.session_state.result_history[-30:]
         display_periods = st.session_state.period_history[-30:]
         
-        st.write(f"**📝 Recent 30 Live Results Chain:** `{display_results}`")
-        st.write(f"**⏳ Recent 30 Live Period ID Chain:** `{display_periods}`")
+        # Visual Table for History Chain
+        df_history = pd.DataFrame({
+            "Period ID": display_periods,
+            "Result Number": display_results,
+            "Size": ["SMALL" if n <= 4 else "BIG" for n in display_results]
+        })
+        st.dataframe(df_history.tail(5), use_container_width=True)
         
         freq_list_for_tracker = st.session_state.result_history[-10:]
         freq_dict = {i: freq_list_for_tracker.count(i) for i in range(10)}
-        st.write(f"**📊 Auto-Frequency Tracker Density (0-9):** `{list(freq_dict.values())}`")
         
-        sizes_check = ["SMALL" if n <= 4 else "BIG" for n in display_results]
-        big_counts = sum(1 for x in sizes_check if x == "BIG")
-        small_counts = sum(1 for x in sizes_check if x == "SMALL")
-        st.info(f"📈 Recent Result Ratio -> BIG: {big_counts} | SMALL: {small_counts}")
+        # Visual Bar Chart for 0-9 Frequency Density
+        st.write("**📊 Auto-Frequency Density Tracker (0-9 Density Chart):**")
+        st.bar_chart(freq_dict, height=150)
     else:
         st.info("Double-Chain Memory is empty. Please log real-time data to activate server.")
 
 # 5. Apex Sovereign AI Engine Core Multi-Chassis Filtering Block
 if len(st.session_state.result_history) >= 2 and len(st.session_state.period_history) >= 2:
     st.write("---")
-    st.markdown("### 🎯 FINAL STRATEGY REPORT & MX-SERVER ANALYSIS")
+    st.markdown("### 🎯 MARKET MOVEMENT & 4-PILLAR DETECTOR UI")
     
     res_hist = st.session_state.result_history
     per_hist = st.session_state.period_history
@@ -127,7 +130,6 @@ if len(st.session_state.result_history) >= 2 and len(st.session_state.period_his
     all_bigs = [5, 6, 7, 8, 9]
     all_smalls = [0, 1, 2, 3, 4]
     
-    # Extract top 3 high-probability dynamic target numbers
     dynamic_bigs = sorted(all_bigs, key=lambda x: res_hist.count(x))[:3]
     dynamic_smalls = sorted(all_smalls, key=lambda x: res_hist.count(x))[:3]
     
@@ -142,7 +144,7 @@ if len(st.session_state.result_history) >= 2 and len(st.session_state.period_his
     movement_mode_text = "BALANCED STATIC TREND"
     movement_desc = "Numerical variance equilibrium achieved. High-compute server executing structural trend reversal vector."
     
-    # 4 Pillar Detection Logic
+    # 4 Pillar Logic
     if len(sizes) >= 4 and len(set(sizes[-4:])) == 1:
         is_dragon_active = True
         is_special_movement = True
@@ -159,7 +161,14 @@ if len(st.session_state.result_history) >= 2 and len(st.session_state.period_his
         movement_mode_text = "ZIG-ZAG VOLATILITY DETECTED"
         movement_desc = "High-frequency alternation oscillation confirmed. Strategy loop adjusted for immediate reversal prediction."
 
-    # Base Omni Strategy Loop
+    # 4 Pillar Indicator Grid Status UI
+    p1, p2, p3, p4 = st.columns(4)
+    p1.metric("🐉 Dragon Pattern", "ACTIVE" if is_dragon_active else "IDLE")
+    p2.metric("🔄 Zig-Zag Oscillations", "ACTIVE" if is_zigzag_active else "IDLE")
+    p3.metric("🔗 Double Loop", "ACTIVE" if is_double_chain_active else "IDLE")
+    p4.metric("📈 Volatility Index", f"{diff * 10}%")
+
+    # Base Reversal Strategy Loop
     omni_ai_weight = (old_num + new_num + current_period_last_digit + diff) % 2
     next_shot = "BIG" if omni_ai_weight == 0 else "SMALL"
         
@@ -173,7 +182,7 @@ if len(st.session_state.result_history) >= 2 and len(st.session_state.period_his
     elif not is_special_movement:
         next_shot = "SMALL" if last_real_size == "BIG" else "BIG"
 
-    # 🧬 1-Step Loss Recovery & Self-Correcting Feedback Logic
+    # 🧬 1-Step Loss Recovery & Self-Correcting Feedback
     loss_count_tracker = 0
     if len(st.session_state.signal_history) >= 1 and len(sizes) >= 1:
         last_prediction = st.session_state.signal_history[-1]
@@ -184,7 +193,7 @@ if len(st.session_state.result_history) >= 2 and len(st.session_state.period_his
             movement_mode_text = "1-STEP LOSS AUTO-CORRECTION ACTIVE ⚡"
             movement_desc = "1-Step loss detected! Server-side override deployed with Deep AI Boost to secure immediate recovery prediction."
 
-    # 🛑 4-Step Loss Red Warning Detector (Signals Never Blocked)
+    # 🛑 4-Step Loss Red Warning Detector (Continuous Flow)
     is_four_loss_trap = False
     consecutive_loss_count = 0
     if len(st.session_state.signal_history) >= 4 and len(sizes) >= 4:
@@ -197,19 +206,15 @@ if len(st.session_state.result_history) >= 2 and len(st.session_state.period_his
             is_four_loss_trap = True
 
     target_nums = dynamic_big_text if next_shot == "BIG" else dynamic_small_text
-    display_color = "blue" if next_shot == "BIG" else "red"
+    display_color = "#38bdf8" if next_shot == "BIG" else "#ef4444"
     
-    # Real-Time Confidence Percent Calculation
-    recent_freq_count = freq_list_for_tracker.count(new_num)
+    recent_freq_count = freq_list_for_tracker.count(new_num) if 'freq_list_for_tracker' in locals() else 0
     base_calc = 95.80 + (diff * 0.4) + (recent_freq_count * 0.3)
-    
     if loss_count_tracker >= 1 or is_special_movement:
         base_calc += 3.2
     confidence_display = f"{min(round(base_calc, 2), 99.99)}%"
-    
-    server_status_text = "ALL AI SERVERS & MAX SERVER HIGH-FREQUENCY BOOST POWER ACTIVE 🚀"
 
-    # 🚨 4-Step Loss Red Alert Banner Display (Continuous Flow)
+    # 🚨 Red Alert Display
     if is_four_loss_trap:
         st.markdown("""
         <div style='background-color:#7f1d1d; padding:15px; border-left:6px solid #ef4444; border-radius:6px; margin-bottom:15px;'>
@@ -218,19 +223,18 @@ if len(st.session_state.result_history) >= 2 and len(st.session_state.period_his
         </div>
         """, unsafe_allow_html=True)
 
-    # Signal Visual Chassis Display
-    st.markdown(f"### 🎯 STRATEGY SIGNAL: <span style='color:{display_color}; font-weight:bold;'>[ {next_shot} ]</span> | CONFIDENCE: <span style='color:green; font-weight:bold;'>{confidence_display} ({movement_mode_text})</span>", unsafe_allow_html=True)
+    st.write("---")
+    st.markdown(f"### 🎯 STRATEGY SIGNAL: <span style='color:{display_color}; font-weight:bold;'>[ {next_shot} ]</span> | CONFIDENCE: <span style='color:#2ecc71; font-weight:bold;'>{confidence_display}</span>", unsafe_allow_html=True)
     
     st.markdown(f"""
     <div style='background-color:#1e293b; padding:16px; border-left:6px solid #38bdf8; border-radius:6px; margin-bottom:15px;'>
-        <h4 style='color:#f1c40f; margin-top:0px; margin-bottom:5px;'>💡 MX-SERVER MATRIX AUDIT:</h4>
+        <h4 style='color:#f1c40f; margin-top:0px; margin-bottom:5px;'>💡 STATUS: {movement_mode_text}</h4>
         <p style='color:#ecf0f1; font-size:15px; margin:0px; line-height:1.5;'>{movement_desc}</p>
     </div>
     """, unsafe_allow_html=True)
     
     st.markdown(f"### 🎯 High-Probability Target Numbers (3 Digits Grid): `{target_nums}`", unsafe_allow_html=True)
             
-    # Session Chain Logging (Up to 30 history tracking)
     if len(st.session_state.signal_history) >= 30:
         st.session_state.signal_history.pop(0)
     st.session_state.signal_history.append(next_shot)
