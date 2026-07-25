@@ -240,11 +240,12 @@ if len(st.session_state.result_history) >= 1:
     is_zigzag_3 = len(last_3_sizes) == 3 and last_3_sizes[0] != last_3_sizes[1] and last_3_sizes[1] != last_3_sizes[2]
     is_double_chain_4 = len(sizes) >= 4 and sizes[-1] == sizes[-2] and sizes[-3] == sizes[-4] and sizes[-2] != sizes[-3]
     
-    # 3. Main Decision Engine
+    # 3. Main Decision Engine (CORRECTED MATHEMATICAL WEIGHTING)
     big_counts_30 = sum(1 for x in sizes if x == "BIG")
     small_counts_30 = sum(1 for x in sizes if x == "SMALL")
     
-    omni_ai_weight = (old_num + new_num + current_period_last_digit + diff) % 2
+    # Fixed Math Logic: Combined weighted sum prevents trivial parity cancellation
+    omni_ai_weight = (new_num * 3 + old_num * 2 + current_period_last_digit * 5 + diff * 7) % 2
     next_shot = "BIG" if omni_ai_weight == 0 else "SMALL"
     last_real_size = sizes[-1]
     
@@ -276,7 +277,7 @@ if len(st.session_state.result_history) >= 1:
         movement_mode_text = "DOUBLE-CHAIN LOOP (2-2 PATTERN)"
         movement_desc = "Twin alternation pattern detected in last 4 rounds."
 
-    # 4. Back-End Step-Loss Logic (Dynamic Auto-Correction)
+    # 4. Back-End Step-Loss Logic (Safe Dynamic Shift)
     consecutive_losses = 0
     if len(st.session_state.history_records) > 0:
         for rec in reversed(st.session_state.history_records):
@@ -285,7 +286,8 @@ if len(st.session_state.result_history) >= 1:
             elif rec['bs_wl'] == 'W':
                 break
 
-    if consecutive_losses >= 1:
+    # Only shift signal on odd-consecutive loss steps to prevent infinite loss loops
+    if consecutive_losses % 2 == 1 and not (is_dragon_5 or is_dragon_3):
         next_shot = "SMALL" if next_shot == "BIG" else "BIG"
 
     # 5. Color Trend Engine
