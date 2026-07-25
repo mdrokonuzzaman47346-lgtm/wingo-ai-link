@@ -88,7 +88,7 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# 3. Session Memory Setup (Fixed Data Structures)
+# 3. Session Memory Setup
 if 'result_history' not in st.session_state:
     st.session_state.result_history = []
 if 'period_history' not in st.session_state:
