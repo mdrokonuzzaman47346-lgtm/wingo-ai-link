@@ -61,14 +61,14 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-# --- BACKEND REAL CSV DATA CONNECTION ---
-real_period_count = 2636
+# --- REAL CSV BACKEND INTEGRATION (10 LINES) ---
+csv_count = 2636
 if os.path.exists("historical_data.csv"):
   try:
-    df_raw = pd.read_csv("historical_data.csv", on_bad_lines="skip")
-    df_raw.columns = [c.strip() for c in df_raw.columns]
-    if "Period" in df_raw.columns:
-      real_period_count = len(df_raw["Period"].dropna().unique())
+    df_csv = pd.read_csv("historical_data.csv", on_bad_lines="skip")
+    df_csv.columns = [c.strip() for c in df_csv.columns]
+    if "Period" in df_csv.columns:
+      csv_count = len(df_csv["Period"].dropna().unique())
   except Exception:
     pass
 
@@ -127,7 +127,7 @@ with c5:
 st.markdown(
     f"""
 <div style='background-color:#0f172a; padding:12px; border:1px solid #38bdf8; border-left:6px solid #a855f7; border-radius:6px; margin-top:8px; margin-bottom:12px;'>
-    <span style='color:#e2e8f0; font-size:14px; font-weight:bold;'>📁 REAL CSV DATASET ({real_period_count:,} HISTORICAL PERIODS) + TRIPLE-LOCK ENGINE:</span> 
+    <span style='color:#e2e8f0; font-size:14px; font-weight:bold;'>📁 REAL CSV DATASET ({csv_count:,} HISTORICAL PERIODS) + TRIPLE-LOCK ENGINE:</span> 
     <span style='color:#4ade80; font-weight:bold;'> FULLY INTEGRATED & RUNNING IN BACKEND ⚡</span><br>
     <small style='color:#94a3b8;'>Time-Session Volatility, Color Synergy Loop & Dynamic Loss Auto-Recovery Filtering.</small>
 </div>
@@ -187,6 +187,7 @@ with col1:
       actual_bs = "BIG" if log_result >= 5 else "SMALL"
       actual_color = get_number_color(log_result)
 
+      # Match current entry with the previous round's prediction
       if st.session_state.pending_prediction is not None:
         bs_wl = (
             "W"
@@ -205,6 +206,7 @@ with col1:
       else:
         rg_wl = "-"
 
+      # Permanent record locking
       rec = {
           "period": log_period,
           "num": log_result,
@@ -321,7 +323,7 @@ if len(st.session_state.result_history) >= 1:
   last_real_size = sizes[-1]
 
   movement_mode_text = "BALANCED STATIC TREND"
-  movement_desc = f"{real_period_count:,} Historical cycles synced under [{session_name}]. Market pattern stable."
+  movement_desc = f"{csv_count:,} Historical cycles synced under [{session_name}]. Market pattern stable."
 
   if big_counts_30 >= 20:
     next_shot = "SMALL"
@@ -356,7 +358,7 @@ if len(st.session_state.result_history) >= 1:
     movement_mode_text = "DOUBLE-CHAIN LOOP (2-2 PATTERN)"
     movement_desc = "Twin alternation pattern detected in last 4 rounds."
 
-  # 4. Back-End Step-Loss Logic
+  # 4. Back-End Step-Loss Logic (Dynamic Auto-Correction)
   consecutive_losses = 0
   if len(st.session_state.history_records) > 0:
     for rec in reversed(st.session_state.history_records):
@@ -395,7 +397,7 @@ if len(st.session_state.result_history) >= 1:
       target_nums_list = [5, 7, 9]
     else:
       target_nums_list = [6, 8, 5]
-  else:
+  else:  # SMALL
     if predicted_color_code == "RED":
       target_nums_list = [0, 2, 4]
     else:
@@ -404,7 +406,7 @@ if len(st.session_state.result_history) >= 1:
   dynamic_target_text = ", ".join(map(str, target_nums_list))
   display_color = "#38bdf8" if next_shot == "BIG" else "#ef4444"
 
-  # Confidence Calculation
+  # Confidence Calculation (%)
   recent_freq_count = res_hist.count(new_num)
   base_calc = (
       96.20
@@ -416,6 +418,7 @@ if len(st.session_state.result_history) >= 1:
     base_calc += 2.5
   confidence_display = f"{min(round(base_calc, 2), 99.99)}%"
 
+  # Lock Pending Prediction for Next Input
   st.session_state.pending_prediction = next_shot
   st.session_state.pending_color_prediction = predicted_color_code
 
@@ -460,7 +463,9 @@ if len(st.session_state.result_history) >= 1:
       unsafe_allow_html=True,
   )
 
-  # 7. LIVE RESULT HISTORY CHART
+  # =========================================================================
+  # 🌟 PERFECT RENDER: LIVE RESULT HISTORY CHART (ACTIVE LAST 7 ROWS)
+  # =========================================================================
   st.write("---")
   st.markdown("### 📋 Live Analysis History Chart")
 
@@ -474,6 +479,7 @@ if len(st.session_state.result_history) >= 1:
         1 for r in st.session_state.history_records if r["bs_wl"] == "L"
     )
 
+    # Clean HTML String Construction
     table_rows_html = ""
     for idx, rec in enumerate(last_7_records, 1):
       bs_code = "B" if rec["bs_actual"] == "BIG" else "S"
@@ -516,6 +522,7 @@ if len(st.session_state.result_history) >= 1:
 
     st.markdown(full_table_code, unsafe_allow_html=True)
 
+    # Recent Result Ratio
     st.markdown(
         f"""
         <div class="ratio-box">
