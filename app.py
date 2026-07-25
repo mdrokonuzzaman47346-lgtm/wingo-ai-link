@@ -3,6 +3,7 @@ import pandas as pd
 import numpy as np
 import datetime
 import os
+import pytz
 
 # 1. Page Configuration
 st.set_page_config(page_title="Wingo Matrix Omni-Engine v12.0 Apex", page_icon="👑", layout="wide")
@@ -54,16 +55,31 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# --- REAL CSV BACKEND INTEGRATION ---
-csv_count = 2636
-if os.path.exists("historical_data.csv"):
-    try:
-        df_csv = pd.read_csv("historical_data.csv", on_bad_lines="skip")
-        df_csv.columns = [c.strip() for c in df_csv.columns]
-        if "Period" in df_csv.columns:
-            csv_count = len(df_csv["Period"].dropna().unique())
-    except Exception:
-        pass
+# --- CACHED CSV BACKEND INTEGRATION ---
+@st.cache_data(ttl=600)
+def load_historical_csv():
+    if os.path.exists("historical_data.csv"):
+        try:
+            df = pd.read_csv("historical_data.csv", on_bad_lines="skip")
+            df.columns = [c.strip().capitalize() for c in df.columns]
+            
+            # Column mapping check
+            period_col = next((c for c in df.columns if "period" in c.lower()), None)
+            number_col = next((c for c in df.columns if "num" in c.lower() or "result" in c.lower()), None)
+            
+            if period_col and number_col:
+                df = df[[period_col, number_col]].dropna()
+                df.columns = ["Period", "Number"]
+                df["Number"] = pd.to_numeric(df["Number"], errors='coerce')
+                df = df.dropna()
+                df["Number"] = df["Number"].astype(int)
+                return df
+        except Exception:
+            return None
+    return None
+
+df_csv = load_historical_csv()
+csv_count = len(df_csv["Period"].unique()) if df_csv is not None else 0
 
 st.title("👑 Wingo 1m Matrix Omni-Engine v12.0 Apex Master")
 st.subheader("Institutional Grade Engine | Instant High-Speed Engine Active 🚀")
@@ -207,7 +223,9 @@ with col2:
 if len(st.session_state.result_history) >= 1:
     st.write("---")
     
-    res_hist = st.session_state.result_history
+    # Live User Inputs Combine with Historical CSV if present
+    csv_numbers = df_csv["Number"].tolist() if df_csv is not None else []
+    res_hist = csv_numbers + st.session_state.result_history
     per_hist = st.session_state.period_history
     
     old_num = res_hist[-2] if len(res_hist) >= 2 else res_hist[-1]
@@ -216,8 +234,10 @@ if len(st.session_state.result_history) >= 1:
     sizes = ["SMALL" if n <= 4 else "BIG" for n in res_hist]
     current_period_last_digit = per_hist[-1] % 10 if per_hist else 0
     
-    # 1. Time Session Volatility Engine
-    current_hour = datetime.datetime.now().hour
+    # 1. Time Session Volatility Engine (Bangladesh Time Fixed)
+    tz_bd = pytz.timezone('Asia/Dhaka')
+    current_hour = datetime.datetime.now(tz_bd).hour
+    
     if 0 <= current_hour < 6:
         session_name = "NIGHT STABLE SESSION"
         session_volatility_boost = 1.2
@@ -240,17 +260,18 @@ if len(st.session_state.result_history) >= 1:
     is_zigzag_3 = len(last_3_sizes) == 3 and last_3_sizes[0] != last_3_sizes[1] and last_3_sizes[1] != last_3_sizes[2]
     is_double_chain_4 = len(sizes) >= 4 and sizes[-1] == sizes[-2] and sizes[-3] == sizes[-4] and sizes[-2] != sizes[-3]
     
-    # 3. Main Decision Engine (CORRECTED MATHEMATICAL WEIGHTING)
-    big_counts_30 = sum(1 for x in sizes if x == "BIG")
-    small_counts_30 = sum(1 for x in sizes if x == "SMALL")
+    # 3. Main Decision Engine (CORRECTED MATHEMATICAL WEIGHTING & CSV INTEGRATED)
+    recent_30_sizes = sizes[-30:]
+    big_counts_30 = sum(1 for x in recent_30_sizes if x == "BIG")
+    small_counts_30 = sum(1 for x in recent_30_sizes if x == "SMALL")
     
-    # Fixed Math Logic: Combined weighted sum prevents trivial parity cancellation
+    # Weighted math model incorporating latest live & historical data
     omni_ai_weight = (new_num * 3 + old_num * 2 + current_period_last_digit * 5 + diff * 7) % 2
     next_shot = "BIG" if omni_ai_weight == 0 else "SMALL"
     last_real_size = sizes[-1]
     
     movement_mode_text = "BALANCED STATIC TREND"
-    movement_desc = f"{csv_count:,} Historical cycles synced under [{session_name}]. Market pattern stable."
+    movement_desc = f"{len(res_hist):,} Total periods synced under [{session_name}]. Market pattern stable."
     
     if big_counts_30 >= 20:
         next_shot = "SMALL"
@@ -277,7 +298,7 @@ if len(st.session_state.result_history) >= 1:
         movement_mode_text = "DOUBLE-CHAIN LOOP (2-2 PATTERN)"
         movement_desc = "Twin alternation pattern detected in last 4 rounds."
 
-    # 4. Back-End Step-Loss Logic (Safe Dynamic Shift)
+    # 4. Back-End Step-Loss Logic
     consecutive_losses = 0
     if len(st.session_state.history_records) > 0:
         for rec in reversed(st.session_state.history_records):
@@ -286,7 +307,6 @@ if len(st.session_state.result_history) >= 1:
             elif rec['bs_wl'] == 'W':
                 break
 
-    # Only shift signal on odd-consecutive loss steps to prevent infinite loss loops
     if consecutive_losses % 2 == 1 and not (is_dragon_5 or is_dragon_3):
         next_shot = "SMALL" if next_shot == "BIG" else "BIG"
 
@@ -323,7 +343,7 @@ if len(st.session_state.result_history) >= 1:
     display_color = "#38bdf8" if next_shot == "BIG" else "#ef4444"
     
     # Confidence Calculation (%)
-    recent_freq_count = res_hist.count(new_num)
+    recent_freq_count = res_hist[-30:].count(new_num)
     base_calc = 96.20 + (diff * 0.25) + (recent_freq_count * 0.2) + (session_volatility_boost * 0.4)
     if consecutive_losses > 0 or is_dragon_5 or is_zigzag_3:
         base_calc += 2.5
