@@ -6,51 +6,47 @@ import datetime
 # 1. Page Configuration
 st.set_page_config(page_title="Wingo Matrix Omni-Engine v12.0 Apex", page_icon="👑", layout="wide")
 
-# Custom Glowing CSS for Table and UI
+# Custom Glowing CSS for Table & UI
 st.markdown("""
 <style>
     .glow-table {
         width: 100%;
-        border-collapse: separate;
-        border-spacing: 0;
+        border-collapse: collapse;
         border: 2px solid #38bdf8;
-        border-radius: 12px;
+        border-radius: 10px;
         overflow: hidden;
-        box-shadow: 0 0 15px rgba(56, 189, 248, 0.3);
         margin-top: 15px;
         margin-bottom: 15px;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #0b0f19;
     }
     .glow-table th {
-        background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
-        color: #f8fafc;
+        background-color: #1e293b;
+        color: #ffffff;
         padding: 12px;
         text-align: center;
-        font-weight: 800;
-        font-size: 16px;
-        border-bottom: 2px solid #334155;
+        font-weight: bold;
+        font-size: 15px;
+        border-bottom: 2px solid #38bdf8;
     }
     .glow-table td {
-        background-color: #0b0f19;
         padding: 10px;
         text-align: center;
         font-weight: bold;
-        font-size: 16px;
+        font-size: 15px;
         border-bottom: 1px solid #1e293b;
+        color: #ffffff;
     }
-    /* Dynamic Color Classes */
-    .txt-big { color: #3b82f6; font-weight: 900; }      /* Blue for Big */
-    .txt-small { color: #a855f7; font-weight: 900; }    /* Purple for Small */
-    .txt-green { color: #2ecc71; font-weight: 900; }    /* Green */
-    .txt-red { color: #ef4444; font-weight: 900; }      /* Red */
-    .txt-win { color: #2ecc71; font-weight: 900; }      /* W in Green */
-    .txt-loss { color: #ef4444; font-weight: 900; }     /* L in Red */
+    .txt-big { color: #3b82f6 !important; font-weight: bold; }
+    .txt-small { color: #a855f7 !important; font-weight: bold; }
+    .txt-green { color: #2ecc71 !important; font-weight: bold; }
+    .txt-red { color: #ef4444 !important; font-weight: bold; }
+    .txt-win { color: #2ecc71 !important; font-weight: bold; }
+    .txt-loss { color: #ef4444 !important; font-weight: bold; }
     .ratio-box {
         background-color: #0f172a;
         padding: 14px;
         border-radius: 8px;
         border: 2px solid #38bdf8;
-        box-shadow: 0 0 10px rgba(56, 189, 248, 0.2);
         margin-top: 10px;
         margin-bottom: 20px;
     }
@@ -202,7 +198,7 @@ if len(st.session_state.result_history) >= 2 and len(st.session_state.period_his
         session_name = "EVENING PEAK SESSION"
         session_volatility_boost = 1.3
 
-    # 2. Pattern Recognition (Last 3 to 5 Rounds Focus)
+    # 2. Dynamic Pattern Recognition
     last_3_sizes = sizes[-3:] if len(sizes) >= 3 else sizes
     last_5_sizes = sizes[-5:] if len(sizes) >= 5 else sizes
     
@@ -232,11 +228,11 @@ if len(st.session_state.result_history) >= 2 and len(st.session_state.period_his
         movement_desc = "Reversal probability peak reached. Switching signal to Big."
     elif is_dragon_5:
         next_shot = last_real_size
-        movement_mode_text = "5-ROUND DEEP DRAGON DETECTED 🔥"
+        movement_mode_text = f"5-ROUND DEEP DRAGON DETECTED 🔥 ({last_real_size})"
         movement_desc = "Deep momentum streak active. Following continuous trend vector."
     elif is_dragon_3:
         next_shot = last_real_size
-        movement_mode_text = "3-ROUND DRAGON FORMATION"
+        movement_mode_text = f"3-ROUND DRAGON FORMATION ({last_real_size})"
         movement_desc = "Short-term streak active. Following momentum alignment."
     elif is_zigzag_3:
         next_shot = "BIG" if last_real_size == "SMALL" else "SMALL"
@@ -247,7 +243,7 @@ if len(st.session_state.result_history) >= 2 and len(st.session_state.period_his
         movement_mode_text = "DOUBLE-CHAIN LOOP (2-2 PATTERN)"
         movement_desc = "Twin alternation pattern detected in last 4 rounds."
 
-    # 4. Precise Back-End Step-Loss Tracker (No Red Alarm on UI)
+    # 4. Back-End Step-Loss Logic (Dynamic Auto-Correction)
     consecutive_losses = 0
     if len(st.session_state.signal_history) > 0 and len(sizes) > 1:
         min_check = min(len(st.session_state.signal_history), len(sizes)-1)
@@ -260,7 +256,7 @@ if len(st.session_state.result_history) >= 2 and len(st.session_state.period_his
     if consecutive_losses >= 1:
         next_shot = "SMALL" if next_shot == "BIG" else "BIG"
 
-    # 5. Color Trend & Triple-Lock Synergy Engine
+    # 5. Color Trend Engine
     green_numbers = [1, 3, 7, 9]
     red_numbers = [0, 2, 4, 6, 8]
     
@@ -277,7 +273,7 @@ if len(st.session_state.result_history) >= 2 and len(st.session_state.period_his
         predicted_color_code = "GREEN" if next_shot == "BIG" else "RED"
         predicted_color_text = "GREEN 🟢" if predicted_color_code == "GREEN" else "RED 🔴"
 
-    # Triple-Lock Target Numbers Logic
+    # Target Numbers Logic
     if next_shot == "BIG":
         if predicted_color_code == "GREEN":
             target_nums_list = [5, 7, 9]
@@ -299,7 +295,7 @@ if len(st.session_state.result_history) >= 2 and len(st.session_state.period_his
         base_calc += 2.5
     confidence_display = f"{min(round(base_calc, 2), 99.99)}%"
 
-    # Record Predictions for History Analysis
+    # Record Predictions
     if len(st.session_state.signal_history) >= 100:
         st.session_state.signal_history.pop(0)
     st.session_state.signal_history.append(next_shot)
@@ -336,17 +332,16 @@ if len(st.session_state.result_history) >= 2 and len(st.session_state.period_his
     """, unsafe_allow_html=True)
 
     # =========================================================================
-    # 🌟 NEW ADDITION: LIVE RESULT HISTORY CHART (ACTIVE LAST 7 ROWS)
+    # 🌟 PERFECT RENDER: LIVE RESULT HISTORY CHART (ACTIVE LAST 7 ROWS)
     # =========================================================================
     st.write("---")
     st.markdown("### 📋 Live Analysis History Chart")
 
-    # Evaluate History Data
+    # Build Record List
     history_records = []
     total_bs_wins = 0
     total_bs_losses = 0
 
-    # Match signals with actual results
     n_items = len(res_hist)
     
     for i in range(n_items):
@@ -360,17 +355,16 @@ if len(st.session_state.result_history) >= 2 and len(st.session_state.period_his
         elif num in [2, 4, 6, 8]:
             rg_actual = "RED"
         elif num == 0:
-            rg_actual = "RED"  # Red Violet mapped for comparison
+            rg_actual = "RED"
         elif num == 5:
-            rg_actual = "GREEN"  # Green Violet mapped for comparison
+            rg_actual = "GREEN"
         else:
             rg_actual = "N/A"
 
-        # Signal Comparison (Previous round prediction vs current result)
+        # Signal Match
         if i > 0 and (i - 1) < len(st.session_state.signal_history):
             pred_bs = st.session_state.signal_history[i - 1]
             bs_wl = "W" if pred_bs == bs_actual else "L"
-            
             if bs_wl == "W":
                 total_bs_wins += 1
             else:
@@ -393,11 +387,24 @@ if len(st.session_state.result_history) >= 2 and len(st.session_state.period_his
             'rg_wl': rg_wl
         })
 
-    # Get last 7 active items in reverse order (Latest on top)
+    # Last 7 records (Newest on top)
     last_7_records = history_records[-7:][::-1]
 
-    # Render HTML Table
-    table_html = """
+    # Clean HTML String Construction
+    table_rows_html = ""
+    for idx, rec in enumerate(last_7_records, 1):
+        bs_code = "B" if rec['bs_actual'] == "BIG" else "S"
+        bs_class = "txt-big" if rec['bs_actual'] == "BIG" else "txt-small"
+
+        rg_code = "G" if rec['rg_actual'] == "GREEN" else "R"
+        rg_class = "txt-green" if rec['rg_actual'] == "GREEN" else "txt-red"
+
+        bs_wl_class = "txt-win" if rec['bs_wl'] == "W" else ("txt-loss" if rec['bs_wl'] == "L" else "")
+        rg_wl_class = "txt-win" if rec['rg_wl'] == "W" else ("txt-loss" if rec['rg_wl'] == "L" else "")
+
+        table_rows_html += f"<tr><td>{idx}</td><td>{rec['period']}</td><td>{rec['num']}</td><td class='{bs_class}'>{bs_code}</td><td class='{rg_class}'>{rg_code}</td><td class='{bs_wl_class}'>{rec['bs_wl']}</td><td class='{rg_wl_class}'>{rec['rg_wl']}</td></tr>"
+
+    full_table_code = f"""
     <table class="glow-table">
         <thead>
             <tr>
@@ -411,41 +418,14 @@ if len(st.session_state.result_history) >= 2 and len(st.session_state.period_his
             </tr>
         </thead>
         <tbody>
-    """
-
-    for idx, rec in enumerate(last_7_records, 1):
-        # Format B/S Class
-        bs_code = "B" if rec['bs_actual'] == "BIG" else "S"
-        bs_class = "txt-big" if rec['bs_actual'] == "BIG" else "txt-small"
-
-        # Format R/G Class
-        rg_code = "G" if rec['rg_actual'] == "GREEN" else "R"
-        rg_class = "txt-green" if rec['rg_actual'] == "GREEN" else "txt-red"
-
-        # Format W/L Classes
-        bs_wl_class = "txt-win" if rec['bs_wl'] == "W" else ("txt-loss" if rec['bs_wl'] == "L" else "")
-        rg_wl_class = "txt-win" if rec['rg_wl'] == "W" else ("txt-loss" if rec['rg_wl'] == "L" else "")
-
-        table_html += f"""
-            <tr>
-                <td>{idx}</td>
-                <td>{rec['period']}</td>
-                <td>{rec['num']}</td>
-                <td class="{bs_class}">{bs_code}</td>
-                <td class="{rg_class}">{rg_code}</td>
-                <td class="{bs_wl_class}">{rec['bs_wl']}</td>
-                <td class="{rg_wl_class}">{rec['rg_wl']}</td>
-            </tr>
-        """
-
-    table_html += """
+            {table_rows_html}
         </tbody>
     </table>
     """
 
-    st.markdown(table_html, unsafe_allow_html=True)
+    st.markdown(full_table_code, unsafe_allow_html=True)
 
-    # Recent Result Ratio Below Table
+    # Recent Result Ratio
     st.markdown(f"""
     <div class="ratio-box">
         <span style="font-size:17px; font-weight:bold; color:#7efff5;">
