@@ -78,7 +78,6 @@ def load_google_sheet_data():
 
 live_df = load_google_sheet_data()
 
-# Google Sheet থেকে সম্পূর্ণ ডেটা ফেচ এবং পূর্ণাঙ্গ পিরিয়ড নম্বরসহ হিস্ট্রি লিস্টে রূপান্তর করা
 sheet_results_history = []
 sheet_periods_history = []
 
@@ -100,14 +99,12 @@ if live_df is not None and not live_df.empty:
     )
     per_col = possible_per_cols[0] if possible_per_cols else live_df.columns[0]
 
-    # 🛠️ Safety Filter: সায়েন্টিফিক নোটেশন হ্যান্ডেল করা ও ফাঁকা সেল বাদ দেওয়া
     live_df[num_col] = pd.to_numeric(live_df[num_col], errors="coerce")
-    live_df[per_col] = pd.to_numeric(live_df[per_col], errors="coerce")
-    live_df = live_df.dropna(subset=[num_col, per_col])
+    live_df = live_df.dropna(subset=[num_col])
 
     for _, row in live_df.iterrows():
       val_num = int(row[num_col])
-      val_per = int(row[per_col])
+      val_per = str(row[per_col]).strip()
 
       sheet_results_history.append(val_num)
       sheet_periods_history.append(val_per)
@@ -199,7 +196,6 @@ st.write("---")
 col1, col2 = st.columns([1, 1])
 
 
-# Helper Function to Determine Color from Number
 def get_number_color(n):
   if n in [1, 3, 7, 9]:
     return "GREEN"
@@ -220,14 +216,8 @@ with col1:
       step=1,
       key="res_in",
   )
-  log_period = st.number_input(
-      "Enter Period ID:",
-      min_value=0,
-      max_value=999999999999999999,
-      value=20260723100010051,
-      step=1,
-      key="per_in",
-  )
+  # বড় পিরিয়ড আইডি বা সায়েন্টিফিক নোটেশন সেভ রাখতে text_input ব্যবহার করা হয়েছে
+  log_period = st.text_input("Enter Period ID:", value="20260723100010051", key="per_in")
 
   b1, b2 = st.columns(2)
   with b1:
@@ -338,9 +328,13 @@ if len(combined_res_source) >= 1:
   new_num = res_hist[-1]
   diff = abs(old_num - new_num)
   sizes = ["SMALL" if n <= 4 else "BIG" for n in res_hist]
-  current_period_last_digit = per_hist[-1] % 10 if per_hist else 0
 
-  # 1. Time Session Volatility Engine
+  # সেফটি হ্যান্ডেল পিরিয়ড লাস্ট ডিজিট ক্যালকুলেশন
+  try:
+    current_period_last_digit = int(str(per_hist[-1])[-1])
+  except:
+    current_period_last_digit = 0
+
   current_hour = datetime.datetime.now().hour
   if 0 <= current_hour < 6:
     session_name = "NIGHT STABLE SESSION"
@@ -355,7 +349,6 @@ if len(combined_res_source) >= 1:
     session_name = "EVENING PEAK SESSION"
     session_volatility_boost = 1.3
 
-  # 2. Dynamic Pattern Recognition
   last_3_sizes = sizes[-3:] if len(sizes) >= 3 else sizes
   last_5_sizes = sizes[-5:] if len(sizes) >= 5 else sizes
 
@@ -373,7 +366,6 @@ if len(combined_res_source) >= 1:
       and sizes[-2] != sizes[-3]
   )
 
-  # 3. Main Decision Engine
   big_counts_30 = sum(1 for x in sizes if x == "BIG")
   small_counts_30 = sum(1 for x in sizes if x == "SMALL")
 
@@ -422,7 +414,6 @@ if len(combined_res_source) >= 1:
     movement_mode_text = "DOUBLE-CHAIN LOOP (2-2 PATTERN)"
     movement_desc = "Twin alternation pattern detected in last 4 rounds."
 
-  # 4. Back-End Step-Loss Logic (Dynamic Auto-Correction)
   consecutive_losses = 0
   if len(st.session_state.history_records) > 0:
     for rec in reversed(st.session_state.history_records):
@@ -434,7 +425,6 @@ if len(combined_res_source) >= 1:
   if consecutive_losses >= 1:
     next_shot = "SMALL" if next_shot == "BIG" else "BIG"
 
-  # 5. Color Trend Engine
   green_numbers = [1, 3, 7, 9]
   red_numbers = [0, 2, 4, 6, 8]
 
@@ -455,13 +445,12 @@ if len(combined_res_source) >= 1:
         "GREEN 🟢" if predicted_color_code == "GREEN" else "RED 🔴"
     )
 
-  # Target Numbers Logic
   if next_shot == "BIG":
     if predicted_color_code == "GREEN":
       target_nums_list = [5, 7, 9]
     else:
       target_nums_list = [6, 8, 5]
-  else:  # SMALL
+  else:
     if predicted_color_code == "RED":
       target_nums_list = [0, 2, 4]
     else:
@@ -470,7 +459,6 @@ if len(combined_res_source) >= 1:
   dynamic_target_text = ", ".join(map(str, target_nums_list))
   display_color = "#38bdf8" if next_shot == "BIG" else "#ef4444"
 
-  # Confidence Calculation (%)
   recent_freq_count = res_hist.count(new_num)
   base_calc = (
       96.20
@@ -482,11 +470,9 @@ if len(combined_res_source) >= 1:
     base_calc += 2.5
   confidence_display = f"{min(round(base_calc, 2), 99.99)}%"
 
-  # Lock Pending Prediction for Next Input
   st.session_state.pending_prediction = next_shot
   st.session_state.pending_color_prediction = predicted_color_code
 
-  # 6. FRONTEND STRATEGY DISPLAY
   st.markdown(
       f"### 🎯 STRATEGY SIGNAL: <span style='color:{display_color};"
       f" font-weight:bold;'>[ {next_shot} ]</span> | CONFIDENCE: <span"
@@ -527,9 +513,6 @@ if len(combined_res_source) >= 1:
       unsafe_allow_html=True,
   )
 
-  # =========================================================================
-  # 🌟 PERFECT RENDER: LIVE RESULT HISTORY CHART (ACTIVE LAST 7 ROWS)
-  # =========================================================================
   st.write("---")
   st.markdown("### 📋 Live Analysis History Chart")
 
