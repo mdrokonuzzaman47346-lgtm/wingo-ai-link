@@ -60,7 +60,7 @@ st.markdown(
 st.title("👑 Wingo 1m Matrix Omni-Engine v12.0 Apex Master")
 st.subheader("Institutional Grade Engine | Instant High-Speed Engine Active 🚀")
 
-# 1.1 Google Sheet Live Data Loader Integration
+# 1.1 Google Sheet Live Data Loader Integration (With dtype=str to prevent scientific notation)
 sheet_id = "1OwGoYO76mBvQpD8B5iclV3dfPwn4_sUiCHt8dMNuMqc"
 csv_url = f"https://docs.google.com/spreadsheets/d/{sheet_id}/export?format=csv"
 
@@ -68,7 +68,7 @@ csv_url = f"https://docs.google.com/spreadsheets/d/{sheet_id}/export?format=csv"
 @st.cache_data(ttl=60)
 def load_google_sheet_data():
   try:
-    df_live = pd.read_csv(csv_url)
+    df_live = pd.read_csv(csv_url, dtype=str)
     return df_live
   except Exception as e:
     return None
@@ -78,6 +78,54 @@ live_df = load_google_sheet_data()
 total_records_count = (
     len(live_df) if live_df is not None and not live_df.empty else 3835
 )
+
+# 3. Session Memory Setup
+if "result_history" not in st.session_state:
+  st.session_state.result_history = []
+if "period_history" not in st.session_state:
+  st.session_state.period_history = []
+if "history_records" not in st.session_state:
+  st.session_state.history_records = []
+if "pending_prediction" not in st.session_state:
+  st.session_state.pending_prediction = None
+if "pending_color_prediction" not in st.session_state:
+  st.session_state.pending_color_prediction = None
+
+# Automatically load Google Sheet data into backend session state if empty
+if (
+    live_df is not None
+    and not live_df.empty
+    and not st.session_state.result_history
+):
+  for _, row in live_df.iterrows():
+    try:
+      raw_per = str(row.iloc[0]).strip()
+      if "e" in raw_per.lower() or "." in raw_per:
+        per_val = int(float(raw_per)) % 1000
+      else:
+        per_val = int(raw_per[-3:])
+
+      num_val = int(float(row.iloc[1]))
+      if 0 <= num_val <= 9:
+        st.session_state.result_history.append(num_val)
+        st.session_state.period_history.append(per_val)
+        actual_bs = "BIG" if num_val >= 5 else "SMALL"
+        actual_color = (
+            "GREEN"
+            if (num_val in [1, 3, 7, 9, 5])
+            else ("RED" if num_val in [2, 4, 6, 8, 0] else "UNKNOWN")
+        )
+        rec = {
+            "period": per_val,
+            "num": num_val,
+            "bs_actual": actual_bs,
+            "rg_actual": actual_color,
+            "bs_wl": "-",
+            "rg_wl": "-",
+        }
+        st.session_state.history_records.append(rec)
+    except Exception:
+      continue
 
 # 2. Global AI Core Connection Status Panel
 st.markdown("### 🌐 Global AI Core Connection Status")
@@ -140,18 +188,6 @@ st.markdown(
 """,
     unsafe_allow_html=True,
 )
-
-# 3. Session Memory Setup
-if "result_history" not in st.session_state:
-  st.session_state.result_history = []
-if "period_history" not in st.session_state:
-  st.session_state.period_history = []
-if "history_records" not in st.session_state:
-  st.session_state.history_records = []
-if "pending_prediction" not in st.session_state:
-  st.session_state.pending_prediction = None
-if "pending_color_prediction" not in st.session_state:
-  st.session_state.pending_color_prediction = None
 
 st.write("---")
 col1, col2 = st.columns([1, 1])
