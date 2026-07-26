@@ -76,7 +76,7 @@ def load_google_sheet_data():
 
 live_df = load_google_sheet_data()
 
-# Google Sheet থেকে সম্পূর্ণ ডেটা ফেচ এবং সেফটি ফিল্টারসহ হিস্ট্রি লিস্টে রূপান্তর করা
+# Google Sheet থেকে সম্পূর্ণ ডেটা ফেচ এবং পূর্ণাঙ্গ পিরিয়ড নম্বরসহ হিস্ট্রি লিস্টে রূপান্তর করা
 sheet_results_history = []
 sheet_periods_history = []
 
@@ -98,15 +98,15 @@ if live_df is not None and not live_df.empty:
     )
     per_col = possible_per_cols[0] if possible_per_cols else live_df.columns[0]
 
-    # 🛠️ Safety Filter: সায়েন্টিফিক নোটেশন, ফাঁকা সেল ও ভুল ডেটা হ্যান্ডেল করা
+    # 🛠️ Safety Filter: সায়েন্টিফিক নোটেশন হ্যান্ডেল করা ও ফাঁকা সেল বাদ দেওয়া
     live_df[num_col] = pd.to_numeric(live_df[num_col], errors="coerce")
     live_df[per_col] = pd.to_numeric(live_df[per_col], errors="coerce")
     live_df = live_df.dropna(subset=[num_col, per_col])
 
     for _, row in live_df.iterrows():
       val_num = int(row[num_col])
-      per_str = str(int(row[per_col]))
-      val_per = int(per_str[-3:] if len(per_str) >= 3 else per_str)
+      # পুরো পিরিয়ড নম্বরটি নিখুঁতভাবে সংরক্ষণ করা (কোনো ডিজিট কাটা হবে না)
+      val_per = int(row[per_col])
 
       sheet_results_history.append(val_num)
       sheet_periods_history.append(val_per)
@@ -166,7 +166,7 @@ with c5:
       unsafe_allow_html=True,
   )
 
-# 2.1 HISTORICAL DATA & BACKEND STATUS (Dynamic Google Sheet Count)
+# 2.1 HISTORICAL DATA & BACKEND STATUS
 st.markdown(
     f"""
 <div style='background-color:#0f172a; padding:12px; border:1px solid #38bdf8; border-left:6px solid #a855f7; border-radius:6px; margin-top:8px; margin-bottom:12px;'>
@@ -219,10 +219,10 @@ with col1:
       key="res_in",
   )
   log_period = st.number_input(
-      "Enter Last 3-Digits of Period ID (000-999):",
+      "Enter Period ID:",
       min_value=0,
-      max_value=999,
-      value=452,
+      max_value=999999999999999999,
+      value=20260723100010051,
       step=1,
       key="per_in",
   )
