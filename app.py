@@ -60,7 +60,7 @@ st.markdown(
 st.title("👑 Wingo 1m Matrix Omni-Engine v12.0 Apex Master")
 st.subheader("Institutional Grade Engine | Instant High-Speed Engine Active 🚀")
 
-# 1.1 Google Sheet Live Data Loader Integration (With dtype=str to prevent scientific notation)
+# 1.1 Google Sheet Live Data Loader Integration
 sheet_id = "1OwGoYO76mBvQpD8B5iclV3dfPwn4_sUiCHt8dMNuMqc"
 csv_url = f"https://docs.google.com/spreadsheets/d/{sheet_id}/export?format=csv"
 
@@ -141,7 +141,6 @@ with c5:
       unsafe_allow_html=True,
   )
 
-# 2.1 HISTORICAL DATA & BACKEND STATUS (Dynamic Google Sheet Count)
 st.markdown(
     f"""
 <div style='background-color:#0f172a; padding:12px; border:1px solid #38bdf8; border-left:6px solid #a855f7; border-radius:6px; margin-top:8px; margin-bottom:12px;'>
@@ -157,7 +156,6 @@ st.write("---")
 col1, col2 = st.columns([1, 1])
 
 
-# Helper Function to Determine Color from Number
 def get_number_color(n):
   if n in [1, 3, 7, 9]:
     return "GREEN"
@@ -193,7 +191,6 @@ with col1:
       actual_bs = "BIG" if log_result >= 5 else "SMALL"
       actual_color = get_number_color(log_result)
 
-      # Match current entry with the previous round's prediction
       if st.session_state.pending_prediction is not None:
         bs_wl = (
             "W" if st.session_state.pending_prediction == actual_bs else "L"
@@ -209,7 +206,6 @@ with col1:
       else:
         rg_wl = "-"
 
-      # Permanent record locking
       rec = {
           "period": log_period,
           "num": log_result,
@@ -280,7 +276,6 @@ if len(st.session_state.result_history) >= 1:
   sizes = ["SMALL" if n <= 4 else "BIG" for n in res_hist]
   current_period_last_digit = per_hist[-1] % 10 if per_hist else 0
 
-  # 1. Time Session Volatility Engine
   current_hour = datetime.datetime.now().hour
   if 0 <= current_hour < 6:
     session_name = "NIGHT STABLE SESSION"
@@ -295,7 +290,6 @@ if len(st.session_state.result_history) >= 1:
     session_name = "EVENING PEAK SESSION"
     session_volatility_boost = 1.3
 
-  # 2. Dynamic Pattern Recognition
   last_3_sizes = sizes[-3:] if len(sizes) >= 3 else sizes
   last_5_sizes = sizes[-5:] if len(sizes) >= 5 else sizes
 
@@ -313,7 +307,6 @@ if len(st.session_state.result_history) >= 1:
       and sizes[-2] != sizes[-3]
   )
 
-  # 3. Main Decision Engine & Unified Status Logic
   big_counts_30 = sum(1 for x in sizes if x == "BIG")
   small_counts_30 = sum(1 for x in sizes if x == "SMALL")
 
@@ -328,18 +321,8 @@ if len(st.session_state.result_history) >= 1:
       f"Live cycles synced under [{session_name}]. Market pattern stable."
   )
 
-  # Priority check for patterns to perfectly match Status and Signal
-  if big_counts_30 >= 20:
-    movement_mode_text = "30-ROUND BIG IMBALANCE DETECTED"
-    movement_desc = (
-        "Reversal probability peak reached. Switching signal to Small."
-    )
-    next_shot = "SMALL"
-  elif small_counts_30 >= 20:
-    movement_mode_text = "30-ROUND SMALL IMBALANCE DETECTED"
-    movement_desc = "Reversal probability peak reached. Switching signal to Big."
-    next_shot = "BIG"
-  elif is_dragon_5:
+  # --- FIXED PRIORITY LOGIC FOR STATUS & SIGNAL ALIGNMENT ---
+  if is_dragon_5:
     next_shot = last_real_size
     movement_mode_text = (
         f"5-ROUND DEEP DRAGON DETECTED 🔥 ({last_real_size})"
@@ -361,28 +344,24 @@ if len(st.session_state.result_history) >= 1:
     next_shot = "SMALL" if last_real_size == "BIG" else "BIG"
     movement_mode_text = "DOUBLE-CHAIN LOOP (2-2 PATTERN)"
     movement_desc = "Twin alternation pattern detected in last 4 rounds."
+  elif big_counts_30 >= 22 and not is_dragon_3 and not is_dragon_5:
+    # Imbalance only triggers reversal if NOT actively in a dragon trend
+    movement_mode_text = "30-ROUND BIG IMBALANCE DETECTED"
+    movement_desc = (
+        "Reversal probability peak reached. Switching signal to Small."
+    )
+    next_shot = "SMALL"
+  elif small_counts_30 >= 22 and not is_dragon_3 and not is_dragon_5:
+    movement_mode_text = "30-ROUND SMALL IMBALANCE DETECTED"
+    movement_desc = "Reversal probability peak reached. Switching signal to Big."
+    next_shot = "BIG"
+  else:
+    movement_mode_text = "BALANCED STATIC TREND"
+    movement_desc = (
+        f"Live cycles synced under [{session_name}]. Market pattern stable."
+    )
 
-  # 4. Back-End Step-Loss Logic (Dynamic Auto-Correction)
-  consecutive_losses = 0
-  if len(st.session_state.history_records) > 0:
-    for rec in reversed(st.session_state.history_records):
-      if rec["bs_wl"] == "L":
-        consecutive_losses += 1
-      elif rec["bs_wl"] == "W":
-        break
-
-  if (
-      consecutive_losses >= 1
-      and not is_dragon_3
-      and not is_dragon_5
-      and not is_zigzag_3
-      and not is_double_chain_4
-      and big_counts_30 < 20
-      and small_counts_30 < 20
-  ):
-    next_shot = "SMALL" if next_shot == "BIG" else "BIG"
-
-  # 5. Color Trend Engine
+  # Color Trend Engine
   green_numbers = [1, 3, 7, 9]
   red_numbers = [0, 2, 4, 6, 8]
 
@@ -403,13 +382,12 @@ if len(st.session_state.result_history) >= 1:
         "GREEN 🟢" if predicted_color_code == "GREEN" else "RED 🔴"
     )
 
-  # Target Numbers Logic
   if next_shot == "BIG":
     if predicted_color_code == "GREEN":
       target_nums_list = [5, 7, 9]
     else:
       target_nums_list = [6, 8, 5]
-  else:  # SMALL
+  else:
     if predicted_color_code == "RED":
       target_nums_list = [0, 2, 4]
     else:
@@ -418,7 +396,6 @@ if len(st.session_state.result_history) >= 1:
   dynamic_target_text = ", ".join(map(str, target_nums_list))
   display_color = "#38bdf8" if next_shot == "BIG" else "#ef4444"
 
-  # Confidence Calculation (%)
   recent_freq_count = res_hist.count(new_num)
   base_calc = (
       96.20
@@ -426,15 +403,13 @@ if len(st.session_state.result_history) >= 1:
       + (recent_freq_count * 0.2)
       + (session_volatility_boost * 0.4)
   )
-  if consecutive_losses > 0 or is_dragon_5 or is_zigzag_3:
+  if is_dragon_3 or is_dragon_5 or is_zigzag_3:
     base_calc += 2.5
   confidence_display = f"{min(round(base_calc, 2), 99.99)}%"
 
-  # Lock Pending Prediction for Next Input
   st.session_state.pending_prediction = next_shot
   st.session_state.pending_color_prediction = predicted_color_code
 
-  # 6. FRONTEND STRATEGY DISPLAY
   st.markdown(
       f"### 🎯 STRATEGY SIGNAL: <span style='color:{display_color};"
       f" font-weight:bold;'>[ {next_shot} ]</span> | CONFIDENCE: <span"
@@ -475,9 +450,6 @@ if len(st.session_state.result_history) >= 1:
       unsafe_allow_html=True,
   )
 
-  # =========================================================================
-  # 🌟 PERFECT RENDER: LIVE RESULT HISTORY CHART (ACTIVE LAST 7 ROWS)
-  # =========================================================================
   st.write("---")
   st.markdown("### 📋 Live Analysis History Chart")
 
@@ -491,7 +463,6 @@ if len(st.session_state.result_history) >= 1:
         1 for r in st.session_state.history_records if r["bs_wl"] == "L"
     )
 
-    # Clean HTML String Construction
     table_rows_html = ""
     for idx, rec in enumerate(last_7_records, 1):
       bs_code = "B" if rec["bs_actual"] == "BIG" else "S"
@@ -540,7 +511,6 @@ if len(st.session_state.result_history) >= 1:
 
     st.markdown(full_table_code, unsafe_allow_html=True)
 
-    # Recent Result Ratio
     st.markdown(
         f"""
         <div class="ratio-box">
