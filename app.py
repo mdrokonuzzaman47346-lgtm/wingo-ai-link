@@ -144,7 +144,7 @@ with c5:
 st.markdown(
     f"""
 <div style='background-color:#0f172a; padding:12px; border:1px solid #38bdf8; border-left:6px solid #a855f7; border-radius:6px; margin-top:8px; margin-bottom:12px;'>
-    <span style='color:#e2e8f0; font-size:14px; font-weight:bold;'>📊 GOOGLE SHEET LIVE SYNC ({total_records_count:,} HISTORICAL PERIOD्स) + TRIPLE-LOCK ENGINE:</span> 
+    <span style='color:#e2e8f0; font-size:14px; font-weight:bold;'>📊 GOOGLE SHEET LIVE SYNC ({total_records_count:,} HISTORICAL PERIODস্) + TRIPLE-LOCK ENGINE:</span> 
     <span style='color:#4ade80; font-weight:bold;'> FULLY INTEGRATED & RUNNING IN BACKEND ⚡</span><br>
     <small style='color:#94a3b8;'>Time-Session Volatility, Color Synergy Loop & Dynamic Loss Auto-Recovery Filtering.</small>
 </div>
@@ -345,7 +345,6 @@ if len(st.session_state.result_history) >= 1:
     movement_mode_text = "DOUBLE-CHAIN LOOP (2-2 PATTERN)"
     movement_desc = "Twin alternation pattern detected in last 4 rounds."
   elif big_counts_30 >= 22 and not is_dragon_3 and not is_dragon_5:
-    # Imbalance only triggers reversal if NOT actively in a dragon trend
     movement_mode_text = "30-ROUND BIG IMBALANCE DETECTED"
     movement_desc = (
         "Reversal probability peak reached. Switching signal to Small."
