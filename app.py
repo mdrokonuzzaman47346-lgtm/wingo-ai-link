@@ -93,11 +93,8 @@ if "pending_color_prediction" not in st.session_state:
 
 # Automatically parse and load Google Sheet historical data into analysis engine if available
 sheet_results_pool = []
-sheet_periods_pool = []
 if live_df is not None and not live_df.empty:
   try:
-    # Assuming columns might contain period and number/result. Adjust names if needed based on sheet structure.
-    # We will safely extract numeric values from the DataFrame
     for _, row in live_df.tail(200).iterrows():
       for col in live_df.columns:
         val = str(row[col])
@@ -265,7 +262,7 @@ with col1:
 
 with col2:
   st.markdown("### 📊 MX-Server Real-Time Triple-Lock Analysis")
-  if combined_results:
+  if st.session_state.result_history:
     res_30 = combined_results[-30:]
     freq_dict = [res_30.count(i) for i in range(10)]
     big_counts = sum(1 for x in res_30 if x >= 5)
@@ -285,17 +282,22 @@ with col2:
         unsafe_allow_html=True,
     )
   else:
-    st.info("Memory is empty. Log data or ensure Google Sheet has records.")
+    st.info(
+        "Log real-time data to activate server and view tracking chain."
+    )
 
-# 4. Strategy & Advanced Market Engine Core (Driven by Combined Sheet + Live Data)
-if len(combined_results) >= 1:
+# 4. Strategy & Advanced Market Engine Core (Strictly checked against manual live input memory)
+if len(st.session_state.result_history) >= 1:
   st.write("---")
 
   res_hist = combined_results
   per_hist = st.session_state.period_history
+  live_res_hist = st.session_state.result_history
 
-  old_num = res_hist[-2] if len(res_hist) >= 2 else res_hist[-1]
-  new_num = res_hist[-1]
+  old_num = (
+      live_res_hist[-2] if len(live_res_hist) >= 2 else live_res_hist[-1]
+  )
+  new_num = live_res_hist[-1]
   diff = abs(old_num - new_num)
   sizes = ["SMALL" if n <= 4 else "BIG" for n in res_hist]
   current_period_last_digit = (
@@ -557,10 +559,10 @@ if len(combined_results) >= 1:
     )
 
   else:
-    st.info(
-        "Log real-time results or sync with Google Sheet history to generate"
-        " chart."
-    )
+    st.info("Log at least 1 real-time result to generate chart.")
 
 else:
-  st.info("Waiting for data stream to activate matrix analysis core.")
+  st.info(
+      "Log at least 1 real-time result from the panel above to activate matrix"
+      " analysis core and generate signals."
+  )
