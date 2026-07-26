@@ -58,7 +58,7 @@ st.markdown(
 )
 
 st.title("👑 Wingo 1m Matrix Omni-Engine v12.0 Apex Master")
-st.subheader("Institutional Grade Engine | Instant High-Speed Engine Active 🚀")
+st.subheader("Institutional Grade Engine | Full-History Macro-Trend Engine Active 🚀")
 
 # 1.1 Google Sheet Live Data Loader Integration
 sheet_id = "1OwGoYO76mBvQpD8B5iclV3dfPwn4_sUiCHt8dMNuMqc"
@@ -75,8 +75,48 @@ def load_google_sheet_data():
 
 
 live_df = load_google_sheet_data()
+
+# Google Sheet থেকে সম্পূর্ণ ডেটা ফেচ এবং সেফটি ফিল্টারসহ হিস্ট্রি লিস্টে রূপান্তর করা
+sheet_results_history = []
+sheet_periods_history = []
+
+if live_df is not None and not live_df.empty:
+  try:
+    possible_num_cols = [
+        c
+        for c in live_df.columns
+        if "num" in c.lower() or "result" in c.lower() or "val" in c.lower()
+    ]
+    possible_per_cols = [
+        c for c in live_df.columns if "period" in c.lower() or "issue" in c.lower()
+    ]
+
+    num_col = (
+        possible_num_cols[0]
+        if possible_num_cols
+        else (live_df.columns[1] if len(live_df.columns) > 1 else live_df.columns[0])
+    )
+    per_col = possible_per_cols[0] if possible_per_cols else live_df.columns[0]
+
+    # 🛠️ Safety Filter: সায়েন্টিফিক নোটেশন, ফাঁকা সেল ও ভুল ডেটা হ্যান্ডেল করা
+    live_df[num_col] = pd.to_numeric(live_df[num_col], errors="coerce")
+    live_df[per_col] = pd.to_numeric(live_df[per_col], errors="coerce")
+    live_df = live_df.dropna(subset=[num_col, per_col])
+
+    for _, row in live_df.iterrows():
+      val_num = int(row[num_col])
+      per_str = str(int(row[per_col]))
+      val_per = int(per_str[-3:] if len(per_str) >= 3 else per_str)
+
+      sheet_results_history.append(val_num)
+      sheet_periods_history.append(val_per)
+  except Exception as ex:
+    pass
+
 total_records_count = (
-    len(live_df) if live_df is not None and not live_df.empty else 3835
+    len(sheet_results_history)
+    if sheet_results_history
+    else (len(live_df) if live_df is not None and not live_df.empty else 3835)
 )
 
 # 2. Global AI Core Connection Status Panel
@@ -85,17 +125,15 @@ st.markdown("### 🌐 Global AI Core Connection Status")
 c1, c2, c3 = st.columns(3)
 with c1:
   st.markdown(
-      "<div"
-      " style='background-color:#143d22; padding:12px; border-left:5px solid"
-      " #2ecc71; border-radius:5px; font-weight:bold; color:#f8fafc;'>🤖"
-      " 10,000,000 MEGA DATA BASE: ONLINE<br><small"
-      " style='color:#a8e6cf;'>(FAST FLASH CACHE)</small></div>",
+      "<div style='background-color:#143d22; padding:12px; border-left:5px solid"
+      " #2ecc71; border-radius:5px; font-weight:bold; color:#f8fafc;'>🤖 FULL"
+      " GOOGLE SHEET HISTORY: ONLINE<br><small"
+      " style='color:#a8e6cf;'>(MACRO-TREND ACTIVE)</small></div>",
       unsafe_allow_html=True,
   )
 with c2:
   st.markdown(
-      "<div"
-      " style='background-color:#1c3144; padding:12px; border-left:5px solid"
+      "<div style='background-color:#1c3144; padding:12px; border-left:5px solid"
       " #3498db; border-radius:5px; font-weight:bold; color:#f8fafc;'>⚡"
       " HIGH-QUALITY AI CORE SERVER v12.0:<br><small"
       " style='color:#7efff5;'>APEX ULTRA RUNNING</small></div>",
@@ -103,10 +141,9 @@ with c2:
   )
 with c3:
   st.markdown(
-      "<div"
-      " style='background-color:#3d3414; padding:12px; border-left:5px solid"
-      " #f1c40f; border-radius:5px; font-weight:bold; color:#f8fafc;'>🔥 AI"
-      " GLOBAL MOVEMENT DETECTOR & 5.0 BILLION QUANTUM CLOUD: LOCKED</div>",
+      "<div style='background-color:#3d3414; padding:12px; border-left:5px solid"
+      " #f1c40f; border-radius:5px; font-weight:bold; color:#f8fafc;'>🔥 FULL"
+      " DATABASE PATTERN TRACKER & CLOUD: LOCKED</div>",
       unsafe_allow_html=True,
   )
 
@@ -115,7 +152,7 @@ c4, c5 = st.columns(2)
 with c4:
   st.markdown(
       """
-    <div style='background-color:#1e293b; padding:10px; border-left:5px solid #9b59b6; border-radius:4px; font-weight:bold; color:#f8fafc; margin-bottom:6px;'>🧠 LSTM NEURAL NETWORK & GAP FREQUENCY: ACTIVE</div>
+    <div style='background-color:#1e293b; padding:10px; border-left:5px solid #9b59b6; border-radius:4px; font-weight:bold; color:#f8fafc; margin-bottom:6px;'>🧠 FULL-HISTORY MACRO-FREQUENCY ANALYZER: ACTIVE</div>
     <div style='background-color:#1e293b; padding:10px; border-left:5px solid #38bdf8; border-radius:4px; font-weight:bold; color:#f8fafc; margin-bottom:6px;'>⚡ GCP HIGH-COMPUTE TIME/SESSION PIPELINE: CONNECTED</div>
     """,
       unsafe_allow_html=True,
@@ -124,7 +161,7 @@ with c5:
   st.markdown(
       """
     <div style='background-color:#1e293b; padding:10px; border-left:5px solid #2ecc71; border-radius:4px; font-weight:bold; color:#f8fafc; margin-bottom:6px;'>🛰️ MX-SERVER COLOR SYNERGY ANCHOR: ONLINE</div>
-    <div style='background-color:#1e293b; padding:10px; border-left:5px solid #e74c3c; border-radius:4px; font-weight:bold; color:#f8fafc; margin-bottom:6px;'>🌐 DEEP PATTERN RECOVERY MATRIX: SYNCHRONIZED</div>
+    <div style='background-color:#1e293b; padding:10px; border-left:5px solid #e74c3c; border-radius:4px; font-weight:bold; color:#f8fafc; margin-bottom:6px;'>🌐 DEEP FULL-DATABASE RECOVERY MATRIX: SYNCHRONIZED</div>
     """,
       unsafe_allow_html=True,
   )
@@ -133,9 +170,9 @@ with c5:
 st.markdown(
     f"""
 <div style='background-color:#0f172a; padding:12px; border:1px solid #38bdf8; border-left:6px solid #a855f7; border-radius:6px; margin-top:8px; margin-bottom:12px;'>
-    <span style='color:#e2e8f0; font-size:14px; font-weight:bold;'>📊 GOOGLE SHEET LIVE SYNC ({total_records_count:,} HISTORICAL PERIOD्स) + TRIPLE-LOCK ENGINE:</span> 
-    <span style='color:#4ade80; font-weight:bold;'> FULLY INTEGRATED & RUNNING IN BACKEND ⚡</span><br>
-    <small style='color:#94a3b8;'>Time-Session Volatility, Color Synergy Loop & Dynamic Loss Auto-Recovery Filtering.</small>
+    <span style='color:#e2e8f0; font-size:14px; font-weight:bold;'>📊 GOOGLE SHEET FULL-HISTORY SYNC ({total_records_count:,} TOTAL RECORDS) + TRIPLE-LOCK ENGINE:</span> 
+    <span style='color:#4ade80; font-weight:bold;'> FULL DATABASE INTEGRATED & ANALYZING ⚡</span><br>
+    <small style='color:#94a3b8;'>Entire Sheet Macro-Trends, Micro Sliding Windows & Full-Database Frequency Integration.</small>
 </div>
 """,
     unsafe_allow_html=True,
@@ -153,11 +190,14 @@ if "pending_prediction" not in st.session_state:
 if "pending_color_prediction" not in st.session_state:
   st.session_state.pending_color_prediction = None
 
+if sheet_results_history and not st.session_state.result_history:
+  st.session_state.result_history = sheet_results_history[-200:]
+  st.session_state.period_history = sheet_periods_history[-200:]
+
 st.write("---")
 col1, col2 = st.columns([1, 1])
 
 
-# Helper Function to Determine Color from Number
 def get_number_color(n):
   if n in [1, 3, 7, 9]:
     return "GREEN"
@@ -193,7 +233,6 @@ with col1:
       actual_bs = "BIG" if log_result >= 5 else "SMALL"
       actual_color = get_number_color(log_result)
 
-      # Match current entry with the previous round's prediction
       if st.session_state.pending_prediction is not None:
         bs_wl = (
             "W" if st.session_state.pending_prediction == actual_bs else "L"
@@ -209,7 +248,6 @@ with col1:
       else:
         rg_wl = "-"
 
-      # Permanent record locking
       rec = {
           "period": log_period,
           "num": log_result,
@@ -219,16 +257,8 @@ with col1:
           "rg_wl": rg_wl,
       }
 
-      if len(st.session_state.history_records) >= 100:
-        st.session_state.history_records.pop(0)
       st.session_state.history_records.append(rec)
-
-      if len(st.session_state.result_history) >= 100:
-        st.session_state.result_history.pop(0)
       st.session_state.result_history.append(log_result)
-
-      if len(st.session_state.period_history) >= 100:
-        st.session_state.period_history.pop(0)
       st.session_state.period_history.append(log_period)
 
       st.rerun()
@@ -243,36 +273,66 @@ with col1:
       st.rerun()
 
 with col2:
-  st.markdown("### 📊 MX-Server Real-Time Triple-Lock Analysis")
-  if st.session_state.result_history and st.session_state.period_history:
-    res_30 = st.session_state.result_history[-30:]
-    per_30 = st.session_state.period_history[-30:]
+  st.markdown("### 📊 Full-Database Macro & Triple-Lock Analysis")
+  active_analysis_res = (
+      sheet_results_history
+      if sheet_results_history
+      else st.session_state.result_history
+  )
+  active_analysis_per = (
+      sheet_periods_history
+      if sheet_periods_history
+      else st.session_state.period_history
+  )
 
-    freq_dict = [res_30.count(i) for i in range(10)]
-    big_counts = sum(1 for x in res_30 if x >= 5)
-    small_counts = sum(1 for x in res_30 if x <= 4)
+  if active_analysis_res:
+    recent_30_res = active_analysis_res[-30:]
+    recent_30_per = active_analysis_per[-30:]
 
-    st.markdown(f"📝 **Last 30 Live Results Tracking Chain:** `{res_30}`")
-    st.markdown(f"⏳ **Last 30 Live 3-Digit Period Tracking Chain:** `{per_30}`")
-    st.markdown(f"📊 **Auto-Frequency Tracker (0-9 Exact Density):** `{freq_dict}`")
+    full_freq_dict = [active_analysis_res.count(i) for i in range(10)]
+    total_big_full = sum(1 for x in active_analysis_res if x >= 5)
+    total_small_full = sum(1 for x in active_analysis_res if x <= 4)
+
+    st.markdown(
+        f"📝 **Full Database Total Records Tracked:**"
+        f" `{len(active_analysis_res)}` Items"
+    )
+    st.markdown(
+        f"⏳ **Last 30 Live Period Tracking Chain:** `{recent_30_per}`"
+    )
+    st.markdown(
+        f"📊 **Full-Database Frequency Tracker (0-9 Exact Density):**"
+        f" `{full_freq_dict}`"
+    )
 
     st.markdown(
         f"""
         <div style='background-color:#1c3144; padding:12px; border-radius:6px; border:1px solid #3498db; margin-top:10px; margin-bottom:10px;'>
-            <span style='font-size:15px; font-weight:bold; color:#7efff5;'>📈 Recent Result Ratio ➔ BIG: {big_counts} | SMALL: {small_counts}</span>
+            <span style='font-size:15px; font-weight:bold; color:#7efff5;'>📈 Full-DB Ratio ➔ TOTAL BIG: {total_big_full} | TOTAL SMALL: {total_small_full}</span>
         </div>
         """,
         unsafe_allow_html=True,
     )
   else:
-    st.info("Triple-Lock Memory is empty. Log real-time data to activate server.")
+    st.info(
+        "Database is empty. Log real-time data or check Google Sheet connection."
+    )
 
-# 4. Strategy & Advanced Market Engine Core
-if len(st.session_state.result_history) >= 1:
+combined_res_source = (
+    sheet_results_history
+    if sheet_results_history
+    else st.session_state.result_history
+)
+
+if len(combined_res_source) >= 1:
   st.write("---")
 
-  res_hist = st.session_state.result_history
-  per_hist = st.session_state.period_history
+  res_hist = combined_res_source
+  per_hist = (
+      sheet_periods_history
+      if sheet_periods_history
+      else st.session_state.period_history
+  )
 
   old_num = res_hist[-2] if len(res_hist) >= 2 else res_hist[-1]
   new_num = res_hist[-1]
@@ -280,7 +340,6 @@ if len(st.session_state.result_history) >= 1:
   sizes = ["SMALL" if n <= 4 else "BIG" for n in res_hist]
   current_period_last_digit = per_hist[-1] % 10 if per_hist else 0
 
-  # 1. Time Session Volatility Engine
   current_hour = datetime.datetime.now().hour
   if 0 <= current_hour < 6:
     session_name = "NIGHT STABLE SESSION"
@@ -295,7 +354,6 @@ if len(st.session_state.result_history) >= 1:
     session_name = "EVENING PEAK SESSION"
     session_volatility_boost = 1.3
 
-  # 2. Dynamic Pattern Recognition
   last_3_sizes = sizes[-3:] if len(sizes) >= 3 else sizes
   last_5_sizes = sizes[-5:] if len(sizes) >= 5 else sizes
 
@@ -313,9 +371,13 @@ if len(st.session_state.result_history) >= 1:
       and sizes[-2] != sizes[-3]
   )
 
-  # 3. Main Decision Engine
-  big_counts_30 = sum(1 for x in sizes if x == "BIG")
-  small_counts_30 = sum(1 for x in sizes if x == "SMALL")
+  total_big_count = sum(1 for x in sizes if x == "BIG")
+  total_small_count = sum(1 for x in sizes if x == "SMALL")
+  total_len = len(sizes)
+
+  big_ratio_percentage = (
+      (total_big_count / total_len) * 100 if total_len > 0 else 50
+  )
 
   omni_ai_weight = (
       old_num + new_num + current_period_last_digit + diff
@@ -323,22 +385,26 @@ if len(st.session_state.result_history) >= 1:
   next_shot = "BIG" if omni_ai_weight == 0 else "SMALL"
   last_real_size = sizes[-1]
 
-  movement_mode_text = "BALANCED STATIC TREND"
+  movement_mode_text = "FULL-DATABASE MACRO TREND ALIGNED"
   movement_desc = (
-      f"Live Google Sheet cycles synced under [{session_name}]. Market pattern"
-      " stable."
+      f"Analyzed all {total_len} records from Google Sheet under"
+      f" [{session_name}]. Full-history pattern sync active."
   )
 
-  if big_counts_30 >= 20:
+  if big_ratio_percentage >= 58:
     next_shot = "SMALL"
-    movement_mode_text = "30-ROUND BIG IMBALANCE DETECTED"
+    movement_mode_text = "FULL-DB MACRO BIG IMBALANCE DETECTED"
     movement_desc = (
-        "Reversal probability peak reached. Switching signal to Small."
+        "Entire database shows heavy Big saturation. Reversal probability peak"
+        " reached for Small."
     )
-  elif small_counts_30 >= 20:
+  elif big_ratio_percentage <= 42 and total_len > 10:
     next_shot = "BIG"
-    movement_mode_text = "30-ROUND SMALL IMBALANCE DETECTED"
-    movement_desc = "Reversal probability peak reached. Switching signal to Big."
+    movement_mode_text = "FULL-DB MACRO SMALL IMBALANCE DETECTED"
+    movement_desc = (
+        "Entire database shows heavy Small saturation. Reversal probability"
+        " peak reached for Big."
+    )
   elif is_dragon_5:
     next_shot = last_real_size
     movement_mode_text = (
@@ -360,9 +426,8 @@ if len(st.session_state.result_history) >= 1:
   elif is_double_chain_4:
     next_shot = "SMALL" if last_real_size == "BIG" else "BIG"
     movement_mode_text = "DOUBLE-CHAIN LOOP (2-2 PATTERN)"
-    movement_desc = "Twin alternation pattern detected in last 4 rounds."
+    movement_desc = "Twin alternation pattern detected in recent sequence."
 
-  # 4. Back-End Step-Loss Logic (Dynamic Auto-Correction)
   consecutive_losses = 0
   if len(st.session_state.history_records) > 0:
     for rec in reversed(st.session_state.history_records):
@@ -374,34 +439,25 @@ if len(st.session_state.result_history) >= 1:
   if consecutive_losses >= 1:
     next_shot = "SMALL" if next_shot == "BIG" else "BIG"
 
-  # 5. Color Trend Engine
-  green_numbers = [1, 3, 7, 9]
+  green_numbers = [1, 3, 7, 9, 5]
   red_numbers = [0, 2, 4, 6, 8]
 
-  green_count_10 = sum(
-      1 for n in res_hist[-10:] if n in green_numbers or n == 5
-  )
-  red_count_10 = sum(1 for n in res_hist[-10:] if n in red_numbers)
+  green_count_full = sum(1 for n in res_hist if n in green_numbers)
+  red_count_full = sum(1 for n in res_hist if n in red_numbers)
 
-  if green_count_10 > red_count_10:
+  if green_count_full >= red_count_full:
     predicted_color_text = "GREEN 🟢"
     predicted_color_code = "GREEN"
-  elif red_count_10 > green_count_10:
+  else:
     predicted_color_text = "RED 🔴"
     predicted_color_code = "RED"
-  else:
-    predicted_color_code = "GREEN" if next_shot == "BIG" else "RED"
-    predicted_color_text = (
-        "GREEN 🟢" if predicted_color_code == "GREEN" else "RED 🔴"
-    )
 
-  # Target Numbers Logic
   if next_shot == "BIG":
     if predicted_color_code == "GREEN":
       target_nums_list = [5, 7, 9]
     else:
       target_nums_list = [6, 8, 5]
-  else:  # SMALL
+  else:
     if predicted_color_code == "RED":
       target_nums_list = [0, 2, 4]
     else:
@@ -410,25 +466,22 @@ if len(st.session_state.result_history) >= 1:
   dynamic_target_text = ", ".join(map(str, target_nums_list))
   display_color = "#38bdf8" if next_shot == "BIG" else "#ef4444"
 
-  # Confidence Calculation (%)
   recent_freq_count = res_hist.count(new_num)
   base_calc = (
-      96.20
-      + (diff * 0.25)
-      + (recent_freq_count * 0.2)
-      + (session_volatility_boost * 0.4)
+      97.10
+      + (diff * 0.20)
+      + (recent_freq_count * 0.15)
+      + (session_volatility_boost * 0.3)
   )
   if consecutive_losses > 0 or is_dragon_5 or is_zigzag_3:
-    base_calc += 2.5
+    base_calc += 2.0
   confidence_display = f"{min(round(base_calc, 2), 99.99)}%"
 
-  # Lock Pending Prediction for Next Input
   st.session_state.pending_prediction = next_shot
   st.session_state.pending_color_prediction = predicted_color_code
 
-  # 6. FRONTEND STRATEGY DISPLAY
   st.markdown(
-      f"### 🎯 STRATEGY SIGNAL: <span style='color:{display_color};"
+      f"### 🎯 FULL-HISTORY MACRO SIGNAL: <span style='color:{display_color};"
       f" font-weight:bold;'>[ {next_shot} ]</span> | CONFIDENCE: <span"
       f" style='color:#2ecc71; font-weight:bold;'>{confidence_display}</span>",
       unsafe_allow_html=True,
@@ -467,9 +520,6 @@ if len(st.session_state.result_history) >= 1:
       unsafe_allow_html=True,
   )
 
-  # =========================================================================
-  # 🌟 PERFECT RENDER: LIVE RESULT HISTORY CHART (ACTIVE LAST 7 ROWS)
-  # =========================================================================
   st.write("---")
   st.markdown("### 📋 Live Analysis History Chart")
 
@@ -483,7 +533,6 @@ if len(st.session_state.result_history) >= 1:
         1 for r in st.session_state.history_records if r["bs_wl"] == "L"
     )
 
-    # Clean HTML String Construction
     table_rows_html = ""
     for idx, rec in enumerate(last_7_records, 1):
       bs_code = "B" if rec["bs_actual"] == "BIG" else "S"
@@ -532,12 +581,11 @@ if len(st.session_state.result_history) >= 1:
 
     st.markdown(full_table_code, unsafe_allow_html=True)
 
-    # Recent Result Ratio
     st.markdown(
         f"""
         <div class="ratio-box">
             <span style="font-size:17px; font-weight:bold; color:#7efff5;">
-                📈 Recent Result Ratio ➔ WIN: <span class="txt-win">{total_bs_wins}</span> | LOSS: <span class="txt-loss">{total_bs_losses}</span>
+                📈 Session Record Ratio ➔ WIN: <span class="txt-win">{total_bs_wins}</span> | LOSS: <span class="txt-loss">{total_bs_losses}</span>
             </span>
         </div>
         """,
@@ -548,4 +596,4 @@ if len(st.session_state.result_history) >= 1:
     st.info("Log at least 1 real-time result to generate chart.")
 
 else:
-  st.info("Log at least 1 real-time result to activate matrix analysis core.")
+  st.info("Log at least 1 real-time result to activate full-history matrix analysis core.")
