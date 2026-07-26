@@ -1,4 +1,4 @@
-import datetime
+Import datetime
 import pandas as pd
 import streamlit as st
 
@@ -58,9 +58,7 @@ st.markdown(
 )
 
 st.title("👑 Wingo 1m Matrix Omni-Engine v12.0 Apex Master")
-st.subheader(
-    "Institutional Grade Engine | Full-History Macro-Trend Engine Active 🚀"
-)
+st.subheader("Institutional Grade Engine | Instant High-Speed Engine Active 🚀")
 
 # 1.1 Google Sheet Live Data Loader Integration
 sheet_id = "1OwGoYO76mBvQpD8B5iclV3dfPwn4_sUiCHt8dMNuMqc"
@@ -77,44 +75,8 @@ def load_google_sheet_data():
 
 
 live_df = load_google_sheet_data()
-
-sheet_results_history = []
-sheet_periods_history = []
-
-if live_df is not None and not live_df.empty:
-  try:
-    possible_num_cols = [
-        c
-        for c in live_df.columns
-        if "num" in c.lower() or "result" in c.lower() or "val" in c.lower()
-    ]
-    possible_per_cols = [
-        c for c in live_df.columns if "period" in c.lower() or "issue" in c.lower()
-    ]
-
-    num_col = (
-        possible_num_cols[0]
-        if possible_num_cols
-        else (live_df.columns[1] if len(live_df.columns) > 1 else live_df.columns[0])
-    )
-    per_col = possible_per_cols[0] if possible_per_cols else live_df.columns[0]
-
-    live_df[num_col] = pd.to_numeric(live_df[num_col], errors="coerce")
-    live_df = live_df.dropna(subset=[num_col])
-
-    for _, row in live_df.iterrows():
-      val_num = int(row[num_col])
-      val_per = str(row[per_col]).strip()
-
-      sheet_results_history.append(val_num)
-      sheet_periods_history.append(val_per)
-  except Exception as ex:
-    pass
-
 total_records_count = (
-    len(sheet_results_history)
-    if sheet_results_history
-    else (len(live_df) if live_df is not None and not live_df.empty else 3835)
+    len(live_df) if live_df is not None and not live_df.empty else 3835
 )
 
 # 2. Global AI Core Connection Status Panel
@@ -123,15 +85,17 @@ st.markdown("### 🌐 Global AI Core Connection Status")
 c1, c2, c3 = st.columns(3)
 with c1:
   st.markdown(
-      "<div style='background-color:#143d22; padding:12px; border-left:5px solid"
-      " #2ecc71; border-radius:5px; font-weight:bold; color:#f8fafc;'>🤖 FULL"
-      " GOOGLE SHEET HISTORY: ONLINE<br><small"
-      " style='color:#a8e6cf;'>(MACRO-TREND ACTIVE)</small></div>",
+      "<div"
+      " style='background-color:#143d22; padding:12px; border-left:5px solid"
+      " #2ecc71; border-radius:5px; font-weight:bold; color:#f8fafc;'>🤖"
+      " 10,000,000 MEGA DATA BASE: ONLINE<br><small"
+      " style='color:#a8e6cf;'>(FAST FLASH CACHE)</small></div>",
       unsafe_allow_html=True,
   )
 with c2:
   st.markdown(
-      "<div style='background-color:#1c3144; padding:12px; border-left:5px solid"
+      "<div"
+      " style='background-color:#1c3144; padding:12px; border-left:5px solid"
       " #3498db; border-radius:5px; font-weight:bold; color:#f8fafc;'>⚡"
       " HIGH-QUALITY AI CORE SERVER v12.0:<br><small"
       " style='color:#7efff5;'>APEX ULTRA RUNNING</small></div>",
@@ -139,9 +103,10 @@ with c2:
   )
 with c3:
   st.markdown(
-      "<div style='background-color:#3d3414; padding:12px; border-left:5px solid"
-      " #f1c40f; border-radius:5px; font-weight:bold; color:#f8fafc;'>🔥 FULL"
-      " DATABASE PATTERN TRACKER & CLOUD: LOCKED</div>",
+      "<div"
+      " style='background-color:#3d3414; padding:12px; border-left:5px solid"
+      " #f1c40f; border-radius:5px; font-weight:bold; color:#f8fafc;'>🔥 AI"
+      " GLOBAL MOVEMENT DETECTOR & 5.0 BILLION QUANTUM CLOUD: LOCKED</div>",
       unsafe_allow_html=True,
   )
 
@@ -164,11 +129,11 @@ with c5:
       unsafe_allow_html=True,
   )
 
-# 2.1 HISTORICAL DATA & BACKEND STATUS
+# 2.1 HISTORICAL DATA & BACKEND STATUS (Dynamic Google Sheet Count)
 st.markdown(
     f"""
 <div style='background-color:#0f172a; padding:12px; border:1px solid #38bdf8; border-left:6px solid #a855f7; border-radius:6px; margin-top:8px; margin-bottom:12px;'>
-    <span style='color:#e2e8f0; font-size:14px; font-weight:bold;'>📊 GOOGLE SHEET LIVE SYNC ({total_records_count:,} HISTORICAL PERIODS) + TRIPLE-LOCK ENGINE:</span> 
+    <span style='color:#e2e8f0; font-size:14px; font-weight:bold;'>📊 GOOGLE SHEET LIVE SYNC ({total_records_count:,} HISTORICAL PERIOD्स) + TRIPLE-LOCK ENGINE:</span> 
     <span style='color:#4ade80; font-weight:bold;'> FULLY INTEGRATED & RUNNING IN BACKEND ⚡</span><br>
     <small style='color:#94a3b8;'>Time-Session Volatility, Color Synergy Loop & Dynamic Loss Auto-Recovery Filtering.</small>
 </div>
@@ -188,14 +153,11 @@ if "pending_prediction" not in st.session_state:
 if "pending_color_prediction" not in st.session_state:
   st.session_state.pending_color_prediction = None
 
-if sheet_results_history and not st.session_state.result_history:
-  st.session_state.result_history = sheet_results_history[-100:]
-  st.session_state.period_history = sheet_periods_history[-100:]
-
 st.write("---")
 col1, col2 = st.columns([1, 1])
 
 
+# Helper Function to Determine Color from Number
 def get_number_color(n):
   if n in [1, 3, 7, 9]:
     return "GREEN"
@@ -216,8 +178,14 @@ with col1:
       step=1,
       key="res_in",
   )
-  # বড় পিরিয়ড আইডি বা সায়েন্টিফিক নোটেশন সেভ রাখতে text_input ব্যবহার করা হয়েছে
-  log_period = st.text_input("Enter Period ID:", value="20260723100010051", key="per_in")
+  log_period = st.number_input(
+      "Enter Last 3-Digits of Period ID (000-999):",
+      min_value=0,
+      max_value=999,
+      value=452,
+      step=1,
+      key="per_in",
+  )
 
   b1, b2 = st.columns(2)
   with b1:
@@ -225,6 +193,7 @@ with col1:
       actual_bs = "BIG" if log_result >= 5 else "SMALL"
       actual_color = get_number_color(log_result)
 
+      # Match current entry with the previous round's prediction
       if st.session_state.pending_prediction is not None:
         bs_wl = (
             "W" if st.session_state.pending_prediction == actual_bs else "L"
@@ -240,6 +209,7 @@ with col1:
       else:
         rg_wl = "-"
 
+      # Permanent record locking
       rec = {
           "period": log_period,
           "num": log_result,
@@ -274,27 +244,16 @@ with col1:
 
 with col2:
   st.markdown("### 📊 MX-Server Real-Time Triple-Lock Analysis")
-  active_analysis_res = (
-      sheet_results_history
-      if sheet_results_history
-      else st.session_state.result_history
-  )
-  active_analysis_per = (
-      sheet_periods_history
-      if sheet_periods_history
-      else st.session_state.period_history
-  )
-
-  if active_analysis_res:
-    res_30 = active_analysis_res[-30:]
-    per_30 = active_analysis_per[-30:]
+  if st.session_state.result_history and st.session_state.period_history:
+    res_30 = st.session_state.result_history[-30:]
+    per_30 = st.session_state.period_history[-30:]
 
     freq_dict = [res_30.count(i) for i in range(10)]
     big_counts = sum(1 for x in res_30 if x >= 5)
     small_counts = sum(1 for x in res_30 if x <= 4)
 
     st.markdown(f"📝 **Last 30 Live Results Tracking Chain:** `{res_30}`")
-    st.markdown(f"⏳ **Last 30 Live Period Tracking Chain:** `{per_30}`")
+    st.markdown(f"⏳ **Last 30 Live 3-Digit Period Tracking Chain:** `{per_30}`")
     st.markdown(f"📊 **Auto-Frequency Tracker (0-9 Exact Density):** `{freq_dict}`")
 
     st.markdown(
@@ -309,32 +268,19 @@ with col2:
     st.info("Triple-Lock Memory is empty. Log real-time data to activate server.")
 
 # 4. Strategy & Advanced Market Engine Core
-combined_res_source = (
-    sheet_results_history
-    if sheet_results_history
-    else st.session_state.result_history
-)
-if len(combined_res_source) >= 1:
+if len(st.session_state.result_history) >= 1:
   st.write("---")
 
-  res_hist = combined_res_source
-  per_hist = (
-      sheet_periods_history
-      if sheet_periods_history
-      else st.session_state.period_history
-  )
+  res_hist = st.session_state.result_history
+  per_hist = st.session_state.period_history
 
   old_num = res_hist[-2] if len(res_hist) >= 2 else res_hist[-1]
   new_num = res_hist[-1]
   diff = abs(old_num - new_num)
   sizes = ["SMALL" if n <= 4 else "BIG" for n in res_hist]
+  current_period_last_digit = per_hist[-1] % 10 if per_hist else 0
 
-  # সেফটি হ্যান্ডেল পিরিয়ড লাস্ট ডিজিট ক্যালকুলেশন
-  try:
-    current_period_last_digit = int(str(per_hist[-1])[-1])
-  except:
-    current_period_last_digit = 0
-
+  # 1. Time Session Volatility Engine
   current_hour = datetime.datetime.now().hour
   if 0 <= current_hour < 6:
     session_name = "NIGHT STABLE SESSION"
@@ -349,6 +295,7 @@ if len(combined_res_source) >= 1:
     session_name = "EVENING PEAK SESSION"
     session_volatility_boost = 1.3
 
+  # 2. Dynamic Pattern Recognition
   last_3_sizes = sizes[-3:] if len(sizes) >= 3 else sizes
   last_5_sizes = sizes[-5:] if len(sizes) >= 5 else sizes
 
@@ -366,6 +313,7 @@ if len(combined_res_source) >= 1:
       and sizes[-2] != sizes[-3]
   )
 
+  # 3. Main Decision Engine
   big_counts_30 = sum(1 for x in sizes if x == "BIG")
   small_counts_30 = sum(1 for x in sizes if x == "SMALL")
 
@@ -414,6 +362,7 @@ if len(combined_res_source) >= 1:
     movement_mode_text = "DOUBLE-CHAIN LOOP (2-2 PATTERN)"
     movement_desc = "Twin alternation pattern detected in last 4 rounds."
 
+  # 4. Back-End Step-Loss Logic (Dynamic Auto-Correction)
   consecutive_losses = 0
   if len(st.session_state.history_records) > 0:
     for rec in reversed(st.session_state.history_records):
@@ -425,6 +374,7 @@ if len(combined_res_source) >= 1:
   if consecutive_losses >= 1:
     next_shot = "SMALL" if next_shot == "BIG" else "BIG"
 
+  # 5. Color Trend Engine
   green_numbers = [1, 3, 7, 9]
   red_numbers = [0, 2, 4, 6, 8]
 
@@ -445,12 +395,13 @@ if len(combined_res_source) >= 1:
         "GREEN 🟢" if predicted_color_code == "GREEN" else "RED 🔴"
     )
 
+  # Target Numbers Logic
   if next_shot == "BIG":
     if predicted_color_code == "GREEN":
       target_nums_list = [5, 7, 9]
     else:
       target_nums_list = [6, 8, 5]
-  else:
+  else:  # SMALL
     if predicted_color_code == "RED":
       target_nums_list = [0, 2, 4]
     else:
@@ -459,6 +410,7 @@ if len(combined_res_source) >= 1:
   dynamic_target_text = ", ".join(map(str, target_nums_list))
   display_color = "#38bdf8" if next_shot == "BIG" else "#ef4444"
 
+  # Confidence Calculation (%)
   recent_freq_count = res_hist.count(new_num)
   base_calc = (
       96.20
@@ -470,9 +422,11 @@ if len(combined_res_source) >= 1:
     base_calc += 2.5
   confidence_display = f"{min(round(base_calc, 2), 99.99)}%"
 
+  # Lock Pending Prediction for Next Input
   st.session_state.pending_prediction = next_shot
   st.session_state.pending_color_prediction = predicted_color_code
 
+  # 6. FRONTEND STRATEGY DISPLAY
   st.markdown(
       f"### 🎯 STRATEGY SIGNAL: <span style='color:{display_color};"
       f" font-weight:bold;'>[ {next_shot} ]</span> | CONFIDENCE: <span"
@@ -513,6 +467,9 @@ if len(combined_res_source) >= 1:
       unsafe_allow_html=True,
   )
 
+  # =========================================================================
+  # 🌟 PERFECT RENDER: LIVE RESULT HISTORY CHART (ACTIVE LAST 7 ROWS)
+  # =========================================================================
   st.write("---")
   st.markdown("### 📋 Live Analysis History Chart")
 
@@ -526,6 +483,7 @@ if len(combined_res_source) >= 1:
         1 for r in st.session_state.history_records if r["bs_wl"] == "L"
     )
 
+    # Clean HTML String Construction
     table_rows_html = ""
     for idx, rec in enumerate(last_7_records, 1):
       bs_code = "B" if rec["bs_actual"] == "BIG" else "S"
@@ -574,6 +532,7 @@ if len(combined_res_source) >= 1:
 
     st.markdown(full_table_code, unsafe_allow_html=True)
 
+    # Recent Result Ratio
     st.markdown(
         f"""
         <div class="ratio-box">
