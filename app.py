@@ -313,7 +313,7 @@ if len(st.session_state.result_history) >= 1:
       and sizes[-2] != sizes[-3]
   )
 
-  # 3. Main Decision Engine
+  # 3. Main Decision Engine & Unified Status Logic
   big_counts_30 = sum(1 for x in sizes if x == "BIG")
   small_counts_30 = sum(1 for x in sizes if x == "SMALL")
 
@@ -325,11 +325,10 @@ if len(st.session_state.result_history) >= 1:
 
   movement_mode_text = "BALANCED STATIC TREND"
   movement_desc = (
-      "Live cycles synced under"
-      f" [{session_name}]. Market pattern stable."
+      f"Live cycles synced under [{session_name}]. Market pattern stable."
   )
 
-  # --- Unified Logic Fix: Ensuring Status matches Strategy Signal ---
+  # Priority check for patterns to perfectly match Status and Signal
   if big_counts_30 >= 20:
     movement_mode_text = "30-ROUND BIG IMBALANCE DETECTED"
     movement_desc = (
@@ -364,6 +363,7 @@ if len(st.session_state.result_history) >= 1:
     movement_desc = "Twin alternation pattern detected in last 4 rounds."
 
   # 4. Back-End Step-Loss Logic (Dynamic Auto-Correction)
+  # Only apply if no strong pattern (like Dragon/Zigzag/Imbalance) is currently forcing a synchronized signal
   consecutive_losses = 0
   if len(st.session_state.history_records) > 0:
     for rec in reversed(st.session_state.history_records):
@@ -372,7 +372,16 @@ if len(st.session_state.result_history) >= 1:
       elif rec["bs_wl"] == "W":
         break
 
-  if consecutive_losses >= 1:
+  # Step loss will only invert if normal balanced mode is active, preserving pattern consistency
+  if (
+      consecutive_losses >= 1
+      and not is_dragon_3
+      and not is_dragon_5
+      and not is_zigzag_3
+      and not is_double_chain_4
+      and big_counts_30 < 20
+      and small_counts_30 < 20
+  ):
     next_shot = "SMALL" if next_shot == "BIG" else "BIG"
 
   # 5. Color Trend Engine
@@ -444,7 +453,7 @@ if len(st.session_state.result_history) >= 1:
             <span style='color:#ffffff; font-size:18px; font-weight:bold;'>{predicted_color_text}</span>
         </div>
         """,
-        unsafe_allow_html=True,
+        unsafe_allow_html=Themed := True,
     )
   with sc2:
     st.markdown(
