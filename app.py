@@ -91,42 +91,6 @@ if "pending_prediction" not in st.session_state:
 if "pending_color_prediction" not in st.session_state:
   st.session_state.pending_color_prediction = None
 
-# Automatically load Google Sheet data into backend session state if empty
-if (
-    live_df is not None
-    and not live_df.empty
-    and not st.session_state.result_history
-):
-  for _, row in live_df.iterrows():
-    try:
-      raw_per = str(row.iloc[0]).strip()
-      if "e" in raw_per.lower() or "." in raw_per:
-        per_val = int(float(raw_per)) % 1000
-      else:
-        per_val = int(raw_per[-3:])
-
-      num_val = int(float(row.iloc[1]))
-      if 0 <= num_val <= 9:
-        st.session_state.result_history.append(num_val)
-        st.session_state.period_history.append(per_val)
-        actual_bs = "BIG" if num_val >= 5 else "SMALL"
-        actual_color = (
-            "GREEN"
-            if (num_val in [1, 3, 7, 9, 5])
-            else ("RED" if num_val in [2, 4, 6, 8, 0] else "UNKNOWN")
-        )
-        rec = {
-            "period": per_val,
-            "num": num_val,
-            "bs_actual": actual_bs,
-            "rg_actual": actual_color,
-            "bs_wl": "-",
-            "rg_wl": "-",
-        }
-        st.session_state.history_records.append(rec)
-    except Exception:
-      continue
-
 # 2. Global AI Core Connection Status Panel
 st.markdown("### 🌐 Global AI Core Connection Status")
 
@@ -361,20 +325,21 @@ if len(st.session_state.result_history) >= 1:
 
   movement_mode_text = "BALANCED STATIC TREND"
   movement_desc = (
-      f"Live Google Sheet cycles synced under [{session_name}]. Market pattern"
-      " stable."
+      "Live cycles synced under"
+      f" [{session_name}]. Market pattern stable."
   )
 
+  # --- Unified Logic Fix: Ensuring Status matches Strategy Signal ---
   if big_counts_30 >= 20:
-    next_shot = "SMALL"
     movement_mode_text = "30-ROUND BIG IMBALANCE DETECTED"
     movement_desc = (
         "Reversal probability peak reached. Switching signal to Small."
     )
+    next_shot = "SMALL"
   elif small_counts_30 >= 20:
-    next_shot = "BIG"
     movement_mode_text = "30-ROUND SMALL IMBALANCE DETECTED"
     movement_desc = "Reversal probability peak reached. Switching signal to Big."
+    next_shot = "BIG"
   elif is_dragon_5:
     next_shot = last_real_size
     movement_mode_text = (
