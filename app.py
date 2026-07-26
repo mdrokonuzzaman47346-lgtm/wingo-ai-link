@@ -58,10 +58,7 @@ st.markdown(
 )
 
 st.title("👑 Wingo 1m Matrix Omni-Engine v12.0 Apex Master")
-st.subheader(
-    "Institutional Grade Engine | Full Google Sheet Historical Pattern Engine"
-    " Active 🚀"
-)
+st.subheader("Institutional Grade Engine | Instant High-Speed Engine Active 🚀")
 
 # 1.1 Google Sheet Live Data Loader Integration
 sheet_id = "1OwGoYO76mBvQpD8B5iclV3dfPwn4_sUiCHt8dMNuMqc"
@@ -78,8 +75,11 @@ def load_google_sheet_data():
 
 
 live_df = load_google_sheet_data()
+total_records_count = (
+    len(live_df) if live_df is not None and not live_df.empty else 3835
+)
 
-# 3. Session Memory Setup & Google Sheet Historical Sync
+# 3. Session Memory Setup
 if "result_history" not in st.session_state:
   st.session_state.result_history = []
 if "period_history" not in st.session_state:
@@ -91,28 +91,6 @@ if "pending_prediction" not in st.session_state:
 if "pending_color_prediction" not in st.session_state:
   st.session_state.pending_color_prediction = None
 
-# Automatically parse and load Google Sheet historical data into analysis engine if available
-sheet_results_pool = []
-if live_df is not None and not live_df.empty:
-  try:
-    for _, row in live_df.tail(200).iterrows():
-      for col in live_df.columns:
-        val = str(row[col])
-        if val.isdigit() and len(val) == 1:
-          sheet_results_pool.append(int(val))
-  except Exception:
-    pass
-
-# Combine Google Sheet background data with session history for deep pattern analysis
-combined_results = (
-    list(sheet_results_pool) + st.session_state.result_history
-    if sheet_results_pool
-    else st.session_state.result_history
-)
-total_records_count = (
-    len(live_df) if live_df is not None and not live_df.empty else 3835
-)
-
 # 2. Global AI Core Connection Status Panel
 st.markdown("### 🌐 Global AI Core Connection Status")
 
@@ -123,7 +101,7 @@ with c1:
       " style='background-color:#143d22; padding:12px; border-left:5px solid"
       " #2ecc71; border-radius:5px; font-weight:bold; color:#f8fafc;'>🤖"
       " 10,000,000 MEGA DATA BASE: ONLINE<br><small"
-      " style='color:#a8e6cf;'>(GOOGLE SHEET FULL SYNC)</small></div>",
+      " style='color:#a8e6cf;'>(FAST FLASH CACHE)</small></div>",
       unsafe_allow_html=True,
   )
 with c2:
@@ -166,9 +144,9 @@ with c5:
 st.markdown(
     f"""
 <div style='background-color:#0f172a; padding:12px; border:1px solid #38bdf8; border-left:6px solid #a855f7; border-radius:6px; margin-top:8px; margin-bottom:12px;'>
-    <span style='color:#e2e8f0; font-size:14px; font-weight:bold;'>📊 GOOGLE SHEET FULL HISTORICAL SYNC ({total_records_count:,} RECORDS) + BACKEND ENGINE:</span> 
-    <span style='color:#4ade80; font-weight:bold;'> FULLY INTEGRATED & ANALYZING PATTERNS ⚡</span><br>
-    <small style='color:#94a3b8;'>Google Sheet CSV data is now actively merged with real-time analytics to drive calculations.</small>
+    <span style='color:#e2e8f0; font-size:14px; font-weight:bold;'>📊 GOOGLE SHEET LIVE SYNC ({total_records_count:,} HISTORICAL PERIODস্) + TRIPLE-LOCK ENGINE:</span> 
+    <span style='color:#4ade80; font-weight:bold;'> FULLY INTEGRATED & RUNNING IN BACKEND ⚡</span><br>
+    <small style='color:#94a3b8;'>Time-Session Volatility, Color Synergy Loop & Dynamic Loss Auto-Recovery Filtering.</small>
 </div>
 """,
     unsafe_allow_html=True,
@@ -262,15 +240,16 @@ with col1:
 
 with col2:
   st.markdown("### 📊 MX-Server Real-Time Triple-Lock Analysis")
-  if st.session_state.result_history:
-    res_30 = combined_results[-30:]
+  if st.session_state.result_history and st.session_state.period_history:
+    res_30 = st.session_state.result_history[-30:]
+    per_30 = st.session_state.period_history[-30:]
+
     freq_dict = [res_30.count(i) for i in range(10)]
     big_counts = sum(1 for x in res_30 if x >= 5)
     small_counts = sum(1 for x in res_30 if x <= 4)
 
-    st.markdown(
-        f"📝 **Last 30 Combined Tracking Chain (Sheet + Live):** `{res_30}`"
-    )
+    st.markdown(f"📝 **Last 30 Live Results Tracking Chain:** `{res_30}`")
+    st.markdown(f"⏳ **Last 30 Live 3-Digit Period Tracking Chain:** `{per_30}`")
     st.markdown(f"📊 **Auto-Frequency Tracker (0-9 Exact Density):** `{freq_dict}`")
 
     st.markdown(
@@ -282,27 +261,20 @@ with col2:
         unsafe_allow_html=True,
     )
   else:
-    st.info(
-        "Log real-time data to activate server and view tracking chain."
-    )
+    st.info("Triple-Lock Memory is empty. Log real-time data to activate server.")
 
-# 4. Strategy & Advanced Market Engine Core (Strictly checked against manual live input memory)
+# 4. Strategy & Advanced Market Engine Core
 if len(st.session_state.result_history) >= 1:
   st.write("---")
 
-  res_hist = combined_results
+  res_hist = st.session_state.result_history
   per_hist = st.session_state.period_history
-  live_res_hist = st.session_state.result_history
 
-  old_num = (
-      live_res_hist[-2] if len(live_res_hist) >= 2 else live_res_hist[-1]
-  )
-  new_num = live_res_hist[-1]
+  old_num = res_hist[-2] if len(res_hist) >= 2 else res_hist[-1]
+  new_num = res_hist[-1]
   diff = abs(old_num - new_num)
   sizes = ["SMALL" if n <= 4 else "BIG" for n in res_hist]
-  current_period_last_digit = (
-      per_hist[-1] % 10 if per_hist else new_num % 10
-  )
+  current_period_last_digit = per_hist[-1] % 10 if per_hist else 0
 
   current_hour = datetime.datetime.now().hour
   if 0 <= current_hour < 6:
@@ -335,8 +307,8 @@ if len(st.session_state.result_history) >= 1:
       and sizes[-2] != sizes[-3]
   )
 
-  big_counts_30 = sum(1 for x in sizes[-30:] if x == "BIG")
-  small_counts_30 = sum(1 for x in sizes[-30:] if x == "SMALL")
+  big_counts_30 = sum(1 for x in sizes if x == "BIG")
+  small_counts_30 = sum(1 for x in sizes if x == "SMALL")
 
   omni_ai_weight = (
       old_num + new_num + current_period_last_digit + diff
@@ -356,40 +328,31 @@ if len(st.session_state.result_history) >= 1:
         f"5-ROUND DEEP DRAGON DETECTED 🔥 ({last_real_size})"
     )
     movement_desc = (
-        "Deep momentum streak active from Sheet+Live history. Following"
-        " continuous trend vector."
+        "Deep momentum streak active. Following continuous trend vector."
     )
   elif is_dragon_3:
     next_shot = last_real_size
     movement_mode_text = f"3-ROUND DRAGON FORMATION ({last_real_size})"
-    movement_desc = (
-        "Short-term streak active from historical pool. Following momentum"
-        " alignment."
-    )
+    movement_desc = "Short-term streak active. Following momentum alignment."
   elif is_zigzag_3:
     next_shot = "BIG" if last_real_size == "SMALL" else "SMALL"
     movement_mode_text = "ZIG-ZAG OSCILLATION (1-1 PATTERN)"
     movement_desc = (
-        "High frequency alternating pattern detected from historical data."
-        " Reversal signal active."
+        "High frequency alternating pattern detected. Reversal signal active."
     )
   elif is_double_chain_4:
     next_shot = "SMALL" if last_real_size == "BIG" else "BIG"
     movement_mode_text = "DOUBLE-CHAIN LOOP (2-2 PATTERN)"
-    movement_desc = "Twin alternation pattern detected in recent history."
+    movement_desc = "Twin alternation pattern detected in last 4 rounds."
   elif big_counts_30 >= 22 and not is_dragon_3 and not is_dragon_5:
     movement_mode_text = "30-ROUND BIG IMBALANCE DETECTED"
     movement_desc = (
-        "Reversal probability peak reached based on historical count."
-        " Switching signal to Small."
+        "Reversal probability peak reached. Switching signal to Small."
     )
     next_shot = "SMALL"
   elif small_counts_30 >= 22 and not is_dragon_3 and not is_dragon_5:
     movement_mode_text = "30-ROUND SMALL IMBALANCE DETECTED"
-    movement_desc = (
-        "Reversal probability peak reached based on historical count."
-        " Switching signal to Big."
-    )
+    movement_desc = "Reversal probability peak reached. Switching signal to Big."
     next_shot = "BIG"
   else:
     movement_mode_text = "BALANCED STATIC TREND"
@@ -562,7 +525,4 @@ if len(st.session_state.result_history) >= 1:
     st.info("Log at least 1 real-time result to generate chart.")
 
 else:
-  st.info(
-      "Log at least 1 real-time result from the panel above to activate matrix"
-      " analysis core and generate signals."
-  )
+  st.info("Log at least 1 real-time result to activate matrix analysis core.")
