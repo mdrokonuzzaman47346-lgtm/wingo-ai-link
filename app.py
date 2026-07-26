@@ -363,7 +363,6 @@ if len(st.session_state.result_history) >= 1:
     movement_desc = "Twin alternation pattern detected in last 4 rounds."
 
   # 4. Back-End Step-Loss Logic (Dynamic Auto-Correction)
-  # Only apply if no strong pattern (like Dragon/Zigzag/Imbalance) is currently forcing a synchronized signal
   consecutive_losses = 0
   if len(st.session_state.history_records) > 0:
     for rec in reversed(st.session_state.history_records):
@@ -372,7 +371,6 @@ if len(st.session_state.result_history) >= 1:
       elif rec["bs_wl"] == "W":
         break
 
-  # Step loss will only invert if normal balanced mode is active, preserving pattern consistency
   if (
       consecutive_losses >= 1
       and not is_dragon_3
@@ -453,7 +451,7 @@ if len(st.session_state.result_history) >= 1:
             <span style='color:#ffffff; font-size:18px; font-weight:bold;'>{predicted_color_text}</span>
         </div>
         """,
-        unsafe_allow_html=Themed := True,
+        unsafe_allow_html=True,
     )
   with sc2:
     st.markdown(
