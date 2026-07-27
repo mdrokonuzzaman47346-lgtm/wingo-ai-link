@@ -418,7 +418,7 @@ if len(st.session_state.result_history) >= 1:
   elif is_double_chain_4:
     next_shot = "SMALL" if last_real_size == "BIG" else "BIG"
     movement_mode_text = "DOUBLE-CHAIN LOOP (2-2 PATTERN)"
-    movement_desc = "Twin alternation pattern detected in last 4 rounds."
+    movement_desc = "Twin alternation pattern (2-2 loop) detected in last 4 rounds. Executing structural sequence reversal."
   else:
     omni_ai_weight = (
         old_num + new_num + current_period_last_digit + diff
