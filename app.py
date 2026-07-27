@@ -347,7 +347,6 @@ if len(st.session_state.result_history) >= 1:
   )
 
   # New False Breakout / Trap Filter (Choppy or erratic behavior check)
-  # If market changes rapidly without clear sequence in last 4 items
   is_choppy_trap = (
       len(last_4_sizes) == 4
       and last_4_sizes[0] != last_4_sizes[1]
@@ -361,12 +360,14 @@ if len(st.session_state.result_history) >= 1:
   ]
   big_counts_total = sum(1 for x in global_sizes_chain if x == "BIG")
   small_counts_total = sum(1 for x in global_sizes_chain if x == "SMALL")
+  
+  # Imbalance threshold calculation logic
+  imbalance_threshold = int(len(global_sizes_chain) * 0.55) if len(global_sizes_chain) > 40 else 20
 
   last_real_size = sizes[-1]
 
   # 3. Synchronized Decision Engine with Trap Filter & Fail-safe Balance Switch
   if is_choppy_trap:
-    # Trigger Warning / Balance Mode Switch on Trap/False Breakout
     omni_ai_weight = (
         old_num + new_num + current_period_last_digit + diff
     ) % 2
@@ -378,6 +379,14 @@ if len(st.session_state.result_history) >= 1:
         f"Erratic breakout pattern found. Switched to safety balance engine"
         f" under [{session_name}]."
     )
+  elif big_counts_total >= imbalance_threshold:
+    next_shot = "SMALL"
+    movement_mode_text = "GLOBAL MARKET BIG IMBALANCE DETECTED"
+    movement_desc = "Reversal probability peak reached. Switching signal to Small."
+  elif small_counts_total >= imbalance_threshold:
+    next_shot = "BIG"
+    movement_mode_text = "GLOBAL MARKET SMALL IMBALANCE DETECTED"
+    movement_desc = "Reversal probability peak reached. Switching signal to Big."
   elif is_dragon_5:
     next_shot = last_real_size
     movement_mode_text = f"5-ROUND DEEP DRAGON DETECTED 🔥 ({last_real_size})"
@@ -395,14 +404,12 @@ if len(st.session_state.result_history) >= 1:
         "High frequency alternating pattern detected. Reversal signal active."
     )
   elif is_step_121:
-    # 1-2-1 Step Pattern Logic (Follows reversal/continuation balance)
     next_shot = "SMALL" if last_real_size == "BIG" else "BIG"
     movement_mode_text = "1-2-1 ALTERNATING STEP PATTERN"
     movement_desc = (
         "Step-ratio frequency matched. Executing synchronized adaptive reversal."
     )
   elif is_mirror_6:
-    # Mirror Symmetry Pattern Logic
     next_shot = "SMALL" if last_real_size == "BIG" else "BIG"
     movement_mode_text = "SYMMETRY MIRROR PATTERN DETECTED"
     movement_desc = (
@@ -413,7 +420,6 @@ if len(st.session_state.result_history) >= 1:
     movement_mode_text = "DOUBLE-CHAIN LOOP (2-2 PATTERN)"
     movement_desc = "Twin alternation pattern detected in last 4 rounds."
   else:
-    # Fail-safe Fallback Balanced Mode
     omni_ai_weight = (
         old_num + new_num + current_period_last_digit + diff
     ) % 2
@@ -466,7 +472,7 @@ if len(st.session_state.result_history) >= 1:
   if is_dragon_5 or is_zigzag_3 or is_step_121:
     base_calc += 2.5
   if is_choppy_trap:
-    base_calc = 88.50  # Adjusted confidence for safety/balance mode
+    base_calc = 88.50
 
   confidence_display = f"{min(round(base_calc, 2), 99.99)}%"
 
