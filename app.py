@@ -60,9 +60,11 @@ st.markdown(
 st.title("👑 Wingo 1m Matrix Omni-Engine v12.0 Apex Master")
 st.subheader("Institutional Grade Engine | Instant High-Speed Engine Active 🚀")
 
-# 1.1 Google Sheet Live Data Loader Integration (With dtype=str to prevent scientific notation)
+# 1.1 Google Sheet Live Data Loader Integration (Corrected URL Format)
 sheet_id = "1OwGoYO76mBvQpD8B5iclV3dfPwn4_sUiCHt8dMNuMqc"
-csv_url = f"https://google.com{sheet_id}/export?format=csv"
+csv_url = (
+    f"https://docs.google.com/spreadsheets/d/{sheet_id}/export?format=csv"
+)
 
 
 @st.cache_data(ttl=60)
