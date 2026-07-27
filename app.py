@@ -76,7 +76,7 @@ def load_google_sheet_data():
 
 live_df = load_google_sheet_data()
 total_records_count = (
-    len(live_df) if live_df is not None and not live_df.empty else 3835
+    len(live_df) if live_df is not None and not live_df.empty else 0
 )
 
 # Helper Function to Determine Color from Number
@@ -192,7 +192,6 @@ with col1:
       actual_bs = "BIG" if log_result >= 5 else "SMALL"
       actual_color = get_number_color(log_result)
 
-      # Match current entry with the previous round's prediction
       if st.session_state.pending_prediction is not None:
         bs_wl = (
             "W" if st.session_state.pending_prediction == actual_bs else "L"
@@ -208,7 +207,6 @@ with col1:
       else:
         rg_wl = "-"
 
-      # Permanent record locking
       rec = {
           "period": log_period,
           "num": log_result,
@@ -262,7 +260,6 @@ with col2:
 if len(st.session_state.result_history) >= 1:
   st.write("---")
 
-  # --- BACKEND ALL-ROUND SCANNING GENERATION FROM GOOGLE SHEET ---
   sheet_nums_global = []
   if live_df is not None and not live_df.empty:
     try:
@@ -416,7 +413,6 @@ if len(st.session_state.result_history) >= 1:
         "GREEN 🟢" if predicted_color_code == "GREEN" else "RED 🔴"
     )
 
-  # Target Numbers Matrix Logic Fix
   if next_shot == "BIG":
     if predicted_color_code == "GREEN":
       target_nums_list = [5, 7, 9]
@@ -431,7 +427,6 @@ if len(st.session_state.result_history) >= 1:
   dynamic_target_text = ", ".join(map(str, target_nums_list))
   display_color = "#38bdf8" if next_shot == "BIG" else "#ef4444"
 
-  # Confidence Calculation (%)
   recent_freq_count = res_hist.count(new_num)
   base_calc = (
       96.20
@@ -443,11 +438,9 @@ if len(st.session_state.result_history) >= 1:
     base_calc += 2.5
   confidence_display = f"{min(round(base_calc, 2), 99.99)}%"
 
-  # Lock Pending Prediction for Next Input
   st.session_state.pending_prediction = next_shot
   st.session_state.pending_color_prediction = predicted_color_code
 
-  # 6. FRONTEND STRATEGY DISPLAY
   st.markdown(
       f"### 🎯 STRATEGY SIGNAL: [ {next_shot} ] | CONFIDENCE: <span"
       f" style='color:#2ecc71; font-weight:bold;'>{confidence_display}</span>",
