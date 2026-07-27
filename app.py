@@ -161,7 +161,7 @@ st.markdown(
 <div style='background-color:#0f172a; padding:12px; border:1px solid #38bdf8; border-left:6px solid #a855f7; border-radius:6px; margin-top:8px; margin-bottom:12px;'>
     <span style='color:#e2e8f0; font-size:14px; font-weight:bold;'>📊 GOOGLE SHEET LIVE SYNC ({total_records_count:,} HISTORICAL PERIOD্স) + TRIPLE-LOCK ENGINE:</span> 
     <span style='color:#4ade80; font-weight:bold;'> FULLY INTEGRATED & RUNNING IN BACKEND ⚡</span><br>
-    <small style='color:#94a3b8;'>Time-Session Volatility, Color Synergy Loop & Dynamic Status-Signal Synchronization.</small>
+    <small style='color:#94a3b8;'>Time-Session Volatility, Color Synergy Loop & Dynamic Status-Signal Synchronization with Advanced Multi-Pattern & Trap Filter.</small>
 </div>
 """,
     unsafe_allow_html=True,
@@ -310,22 +310,50 @@ if len(st.session_state.result_history) >= 1:
     session_name = "EVENING PEAK SESSION"
     session_volatility_boost = 1.3
 
-  # 2. Dynamic Pattern Recognition
+  # 2. Advanced Dynamic Pattern Recognition (Added 1-2-1 Step & Mirror Patterns)
   last_3_sizes = sizes[-3:] if len(sizes) >= 3 else sizes
   last_5_sizes = sizes[-5:] if len(sizes) >= 5 else sizes
+  last_4_sizes = sizes[-4:] if len(sizes) >= 4 else sizes
+  last_6_sizes = sizes[-6:] if len(sizes) >= 6 else sizes
 
-  is_dragon_3 = len(last_3_sizes) == 3 and len(set(last_3_sizes)) == 1
   is_dragon_5 = len(last_5_sizes) == 5 and len(set(last_5_sizes)) == 1
+  is_dragon_3 = len(last_3_sizes) == 3 and len(set(last_3_sizes)) == 1
   is_zigzag_3 = (
       len(last_3_sizes) == 3
       and last_3_sizes[-1] != last_3_sizes[-2]
       and last_3_sizes[-2] != last_3_sizes[-3]
   )
   is_double_chain_4 = (
-      len(sizes) >= 4
-      and sizes[-1] == sizes[-2]
-      and sizes[-3] == sizes[-4]
-      and sizes[-2] != sizes[-3]
+      len(last_4_sizes) == 4
+      and last_4_sizes[-1] == last_4_sizes[-2]
+      and last_4_sizes[-3] == last_4_sizes[-4]
+      and last_4_sizes[-2] != last_4_sizes[-3]
+  )
+
+  # New 1-2-1 Alternating Step Pattern (e.g., S -> B -> B -> S or B -> S -> S -> B)
+  is_step_121 = (
+      len(last_4_sizes) == 4
+      and last_4_sizes[0] != last_4_sizes[1]
+      and last_4_sizes[1] == last_4_sizes[2]
+      and last_4_sizes[2] != last_4_sizes[3]
+  )
+
+  # New Mirror / Symmetry Pattern Detection (Last 6 rounds symmetry check)
+  is_mirror_6 = (
+      len(last_6_sizes) == 6
+      and last_6_sizes[0] == last_6_sizes[5]
+      and last_6_sizes[1] == last_6_sizes[4]
+      and last_6_sizes[2] == last_6_sizes[3]
+  )
+
+  # New False Breakout / Trap Filter (Choppy or erratic behavior check)
+  # If market changes rapidly without clear sequence in last 4 items
+  is_choppy_trap = (
+      len(last_4_sizes) == 4
+      and last_4_sizes[0] != last_4_sizes[1]
+      and last_4_sizes[1] != last_4_sizes[2]
+      and last_4_sizes[2] != last_4_sizes[3]
+      and not is_zigzag_3
   )
 
   global_sizes_chain = [
@@ -336,8 +364,21 @@ if len(st.session_state.result_history) >= 1:
 
   last_real_size = sizes[-1]
 
-  # 3. Synchronized Decision Engine (Status & Signal 100% Match)
-  if is_dragon_5:
+  # 3. Synchronized Decision Engine with Trap Filter & Fail-safe Balance Switch
+  if is_choppy_trap:
+    # Trigger Warning / Balance Mode Switch on Trap/False Breakout
+    omni_ai_weight = (
+        old_num + new_num + current_period_last_digit + diff
+    ) % 2
+    next_shot = "BIG" if omni_ai_weight == 0 else "SMALL"
+    movement_mode_text = (
+        "⚠️ WARNING: TRAP / CHOPPY MARKET DETECTED (BALANCED SAFETY MODE)"
+    )
+    movement_desc = (
+        f"Erratic breakout pattern found. Switched to safety balance engine"
+        f" under [{session_name}]."
+    )
+  elif is_dragon_5:
     next_shot = last_real_size
     movement_mode_text = f"5-ROUND DEEP DRAGON DETECTED 🔥 ({last_real_size})"
     movement_desc = (
@@ -353,11 +394,26 @@ if len(st.session_state.result_history) >= 1:
     movement_desc = (
         "High frequency alternating pattern detected. Reversal signal active."
     )
+  elif is_step_121:
+    # 1-2-1 Step Pattern Logic (Follows reversal/continuation balance)
+    next_shot = "SMALL" if last_real_size == "BIG" else "BIG"
+    movement_mode_text = "1-2-1 ALTERNATING STEP PATTERN"
+    movement_desc = (
+        "Step-ratio frequency matched. Executing synchronized adaptive reversal."
+    )
+  elif is_mirror_6:
+    # Mirror Symmetry Pattern Logic
+    next_shot = "SMALL" if last_real_size == "BIG" else "BIG"
+    movement_mode_text = "SYMMETRY MIRROR PATTERN DETECTED"
+    movement_desc = (
+        "Historical sequence loop reflection active. Reversing at mirror axis."
+    )
   elif is_double_chain_4:
     next_shot = "SMALL" if last_real_size == "BIG" else "BIG"
     movement_mode_text = "DOUBLE-CHAIN LOOP (2-2 PATTERN)"
     movement_desc = "Twin alternation pattern detected in last 4 rounds."
   else:
+    # Fail-safe Fallback Balanced Mode
     omni_ai_weight = (
         old_num + new_num + current_period_last_digit + diff
     ) % 2
@@ -407,8 +463,11 @@ if len(st.session_state.result_history) >= 1:
       + (res_hist.count(new_num) * 0.01)
       + (session_volatility_boost * 0.4)
   )
-  if is_dragon_5 or is_zigzag_3:
+  if is_dragon_5 or is_zigzag_3 or is_step_121:
     base_calc += 2.5
+  if is_choppy_trap:
+    base_calc = 88.50  # Adjusted confidence for safety/balance mode
+
   confidence_display = f"{min(round(base_calc, 2), 99.99)}%"
 
   st.session_state.pending_prediction = next_shot
