@@ -60,7 +60,7 @@ st.markdown(
 st.title("👑 Wingo 1m Matrix Omni-Engine v12.0 Apex Master")
 st.subheader("Institutional Grade Engine | Instant High-Speed Engine Active 🚀")
 
-# 1.1 Google Sheet Live Data Loader Integration (Corrected URL Format)
+# 1.1 Google Sheet Live Data Loader Integration
 sheet_id = "1OwGoYO76mBvQpD8B5iclV3dfPwn4_sUiCHt8dMNuMqc"
 csv_url = (
     f"https://docs.google.com/spreadsheets/d/{sheet_id}/export?format=csv"
@@ -80,6 +80,7 @@ live_df = load_google_sheet_data()
 total_records_count = (
     len(live_df) if live_df is not None and not live_df.empty else 0
 )
+
 
 # Helper Function to Determine Color from Number
 def get_number_color(n):
@@ -154,13 +155,13 @@ with c5:
       unsafe_allow_html=True,
   )
 
-# 2.1 HISTORICAL DATA & BACKEND STATUS (Dynamic Google Sheet Count)
+# 2.1 HISTORICAL DATA & BACKEND STATUS
 st.markdown(
     f"""
 <div style='background-color:#0f172a; padding:12px; border:1px solid #38bdf8; border-left:6px solid #a855f7; border-radius:6px; margin-top:8px; margin-bottom:12px;'>
     <span style='color:#e2e8f0; font-size:14px; font-weight:bold;'>📊 GOOGLE SHEET LIVE SYNC ({total_records_count:,} HISTORICAL PERIOD্স) + TRIPLE-LOCK ENGINE:</span> 
     <span style='color:#4ade80; font-weight:bold;'> FULLY INTEGRATED & RUNNING IN BACKEND ⚡</span><br>
-    <small style='color:#94a3b8;'>Time-Session Volatility, Color Synergy Loop & Dynamic Loss Auto-Recovery Filtering.</small>
+    <small style='color:#94a3b8;'>Time-Session Volatility, Color Synergy Loop & Dynamic Status-Signal Synchronization.</small>
 </div>
 """,
     unsafe_allow_html=True,
@@ -258,7 +259,7 @@ with col2:
   else:
     st.info("Triple-Lock Memory is empty. Log real-time data to activate server.")
 
-# 4. Strategy & Advanced Market Engine Core
+# 4. Strategy & Advanced Market Engine Core (Synchronized & Fixed)
 if len(st.session_state.result_history) >= 1:
   st.write("---")
 
@@ -327,41 +328,16 @@ if len(st.session_state.result_history) >= 1:
       and sizes[-2] != sizes[-3]
   )
 
-  # 3. Main Decision Engine
   global_sizes_chain = [
       "SMALL" if x <= 4 else "BIG" for x in global_analysis_chain
   ]
   big_counts_total = sum(1 for x in global_sizes_chain if x == "BIG")
   small_counts_total = sum(1 for x in global_sizes_chain if x == "SMALL")
 
-  omni_ai_weight = (
-      old_num + new_num + current_period_last_digit + diff
-  ) % 2
-  next_shot = "BIG" if omni_ai_weight == 0 else "SMALL"
   last_real_size = sizes[-1]
 
-  movement_mode_text = "BALANCED STATIC TREND"
-  movement_desc = (
-      f"Live cycles synced under [{session_name}]. Market pattern stable."
-  )
-
-  imbalance_threshold = (
-      int(len(global_sizes_chain) * 0.55)
-      if len(global_sizes_chain) > 40
-      else 20
-  )
-
-  if big_counts_total >= imbalance_threshold:
-    movement_mode_text = "GLOBAL MARKET BIG IMBALANCE DETECTED"
-    movement_desc = (
-        "Reversal probability peak reached. Switching signal to Small."
-    )
-    next_shot = "SMALL"
-  elif small_counts_total >= imbalance_threshold:
-    movement_mode_text = "GLOBAL MARKET SMALL IMBALANCE DETECTED"
-    movement_desc = "Reversal probability peak reached. Switching signal to Big."
-    next_shot = "BIG"
-  elif is_dragon_5:
+  # 3. Synchronized Decision Engine (Status & Signal 100% Match)
+  if is_dragon_5:
     next_shot = last_real_size
     movement_mode_text = f"5-ROUND DEEP DRAGON DETECTED 🔥 ({last_real_size})"
     movement_desc = (
@@ -381,20 +357,17 @@ if len(st.session_state.result_history) >= 1:
     next_shot = "SMALL" if last_real_size == "BIG" else "BIG"
     movement_mode_text = "DOUBLE-CHAIN LOOP (2-2 PATTERN)"
     movement_desc = "Twin alternation pattern detected in last 4 rounds."
+  else:
+    omni_ai_weight = (
+        old_num + new_num + current_period_last_digit + diff
+    ) % 2
+    next_shot = "BIG" if omni_ai_weight == 0 else "SMALL"
+    movement_mode_text = "BALANCED STATIC TREND"
+    movement_desc = (
+        f"Live cycles synced under [{session_name}]. Market pattern stable."
+    )
 
-  # 4. Back-End Step-Loss Logic
-  consecutive_losses = 0
-  if len(st.session_state.history_records) > 0:
-    for rec in reversed(st.session_state.history_records):
-      if rec["bs_wl"] == "L":
-        consecutive_losses += 1
-      elif rec["bs_wl"] == "W":
-        break
-
-  if consecutive_losses >= 1:
-    next_shot = "SMALL" if next_shot == "BIG" else "BIG"
-
-  # 5. Color Trend Engine
+  # 4. Color Trend Engine
   green_numbers = [1, 3, 7, 9]
   red_numbers = [0, 2, 4, 6, 8]
 
@@ -427,16 +400,14 @@ if len(st.session_state.result_history) >= 1:
       target_nums_list = [1, 3]
 
   dynamic_target_text = ", ".join(map(str, target_nums_list))
-  display_color = "#38bdf8" if next_shot == "BIG" else "#ef4444"
 
-  recent_freq_count = res_hist.count(new_num)
   base_calc = (
       96.20
       + (diff * 0.25)
-      + (recent_freq_count * 0.01)
+      + (res_hist.count(new_num) * 0.01)
       + (session_volatility_boost * 0.4)
   )
-  if consecutive_losses > 0 or is_dragon_5 or is_zigzag_3:
+  if is_dragon_5 or is_zigzag_3:
     base_calc += 2.5
   confidence_display = f"{min(round(base_calc, 2), 99.99)}%"
 
