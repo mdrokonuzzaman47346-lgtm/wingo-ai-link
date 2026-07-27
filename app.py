@@ -79,7 +79,6 @@ total_records_count = (
     len(live_df) if live_df is not None and not live_df.empty else 3835
 )
 
-
 # Helper Function to Determine Color from Number
 def get_number_color(n):
   if n in [1, 3, 7, 9]:
@@ -102,45 +101,6 @@ if "pending_prediction" not in st.session_state:
   st.session_state.pending_prediction = None
 if "pending_color_prediction" not in st.session_state:
   st.session_state.pending_color_prediction = None
-
-# Pre-populate Session State with Google Sheet Data for ALL-round analysis if memory is empty
-if (
-    not st.session_state.result_history
-    and live_df is not None
-    and not live_df.empty
-):
-  try:
-    col_num = "num" if "num" in live_df.columns else live_df.columns[1]
-    col_per = "period" if "period" in live_df.columns else live_df.columns[0]
-
-    sheet_nums = (
-        pd.to_numeric(live_df[col_num], errors="coerce")
-        .dropna()
-        .astype(int)
-        .tolist()
-    )
-    sheet_pers = (
-        pd.to_numeric(live_df[col_per], errors="coerce")
-        .dropna()
-        .astype(int)
-        .tolist()
-    )
-
-    for p, n in zip(sheet_pers, sheet_nums):
-      actual_bs = "BIG" if n >= 5 else "SMALL"
-      actual_color = get_number_color(n)
-      st.session_state.history_records.append({
-          "period": p,
-          "num": n,
-          "bs_actual": actual_bs,
-          "rg_actual": actual_color,
-          "bs_wl": "-",
-          "rg_wl": "-",
-      })
-      st.session_state.result_history.append(n)
-      st.session_state.period_history.append(p)
-  except Exception as e:
-    pass
 
 # 2. Global AI Core Connection Status Panel
 st.markdown("### 🌐 Global AI Core Connection Status")
@@ -192,7 +152,7 @@ with c5:
       unsafe_allow_html=True,
   )
 
-# 2.1 HISTORICAL DATA & BACKEND STATUS
+# 2.1 HISTORICAL DATA & BACKEND STATUS (Dynamic Google Sheet Count)
 st.markdown(
     f"""
 <div style='background-color:#0f172a; padding:12px; border:1px solid #38bdf8; border-left:6px solid #a855f7; border-radius:6px; margin-top:8px; margin-bottom:12px;'>
@@ -205,7 +165,7 @@ st.markdown(
 )
 
 st.write("---")
-col1, col2 = st.columns([1, 1])
+col1, col2 = st.columns(2)
 
 with col1:
   st.markdown("### 📥 Live Result & Period Logging Panel")
@@ -232,6 +192,7 @@ with col1:
       actual_bs = "BIG" if log_result >= 5 else "SMALL"
       actual_color = get_number_color(log_result)
 
+      # Match current entry with the previous round's prediction
       if st.session_state.pending_prediction is not None:
         bs_wl = (
             "W" if st.session_state.pending_prediction == actual_bs else "L"
@@ -247,6 +208,7 @@ with col1:
       else:
         rg_wl = "-"
 
+      # Permanent record locking
       rec = {
           "period": log_period,
           "num": log_result,
@@ -288,7 +250,7 @@ with col2:
     st.markdown(
         f"""
         <div style='background-color:#1c3144; padding:12px; border-radius:6px; border:1px solid #3498db; margin-top:10px; margin-bottom:10px;'>
-            📈 Total Data Ratio ➔ BIG: {big_counts} | SMALL: {small_counts}
+            <span style='font-size:15px; font-weight:bold; color:#7efff5;'>📈 Total Data Ratio ➔ BIG: {big_counts} | SMALL: {small_counts}</span>
         </div>
         """,
         unsafe_allow_html=True,
@@ -300,6 +262,29 @@ with col2:
 if len(st.session_state.result_history) >= 1:
   st.write("---")
 
+  # --- BACKEND ALL-ROUND SCANNING GENERATION FROM GOOGLE SHEET ---
+  sheet_nums_global = []
+  if live_df is not None and not live_df.empty:
+    try:
+      col_num_global = next(
+          (
+              c
+              for c in live_df.columns
+              if c.lower() in ["num", "number", "result"]
+          ),
+          live_df.columns[0],
+      )
+      sheet_nums_global = (
+          pd.to_numeric(live_df[col_num_global], errors="coerce")
+          .dropna()
+          .astype(int)
+          .tolist()
+      )
+    except Exception:
+      pass
+
+  global_analysis_chain = sheet_nums_global + st.session_state.result_history
+
   res_hist = st.session_state.result_history
   per_hist = st.session_state.period_history
 
@@ -307,6 +292,7 @@ if len(st.session_state.result_history) >= 1:
   new_num = res_hist[-1]
   diff = abs(old_num - new_num)
   sizes = ["SMALL" if n <= 4 else "BIG" for n in res_hist]
+
   current_period_last_digit = per_hist[-1] % 10 if per_hist else 0
 
   # 1. Time Session Volatility Engine
@@ -332,8 +318,8 @@ if len(st.session_state.result_history) >= 1:
   is_dragon_5 = len(last_5_sizes) == 5 and len(set(last_5_sizes)) == 1
   is_zigzag_3 = (
       len(last_3_sizes) == 3
-      and last_3_sizes[0] != last_3_sizes[1]
-      and last_3_sizes[1] != last_3_sizes[2]
+      and last_3_sizes[-1] != last_3_sizes[-2]
+      and last_3_sizes[-2] != last_3_sizes[-3]
   )
   is_double_chain_4 = (
       len(sizes) >= 4
@@ -343,8 +329,11 @@ if len(st.session_state.result_history) >= 1:
   )
 
   # 3. Main Decision Engine
-  big_counts_total = sum(1 for x in sizes if x == "BIG")
-  small_counts_total = sum(1 for x in sizes if x == "SMALL")
+  global_sizes_chain = [
+      "SMALL" if x <= 4 else "BIG" for x in global_analysis_chain
+  ]
+  big_counts_total = sum(1 for x in global_sizes_chain if x == "BIG")
+  small_counts_total = sum(1 for x in global_sizes_chain if x == "SMALL")
 
   omni_ai_weight = (
       old_num + new_num + current_period_last_digit + diff
@@ -353,9 +342,15 @@ if len(st.session_state.result_history) >= 1:
   last_real_size = sizes[-1]
 
   movement_mode_text = "BALANCED STATIC TREND"
-  movement_desc = f"Live cycles synced under [{session_name}]. Market pattern stable."
+  movement_desc = (
+      f"Live cycles synced under [{session_name}]. Market pattern stable."
+  )
 
-  imbalance_threshold = int(len(sizes) * 0.55) if len(sizes) > 40 else 20
+  imbalance_threshold = (
+      int(len(global_sizes_chain) * 0.55)
+      if len(global_sizes_chain) > 40
+      else 20
+  )
 
   if big_counts_total >= imbalance_threshold:
     movement_mode_text = "GLOBAL MARKET BIG IMBALANCE DETECTED"
@@ -404,8 +399,10 @@ if len(st.session_state.result_history) >= 1:
   green_numbers = [1, 3, 7, 9]
   red_numbers = [0, 2, 4, 6, 8]
 
-  green_count_total = sum(1 for n in res_hist if n in green_numbers or n == 5)
-  red_count_total = sum(1 for n in res_hist if n in red_numbers)
+  green_count_total = sum(
+      1 for n in global_analysis_chain if n in green_numbers or n == 5
+  )
+  red_count_total = sum(1 for n in global_analysis_chain if n in red_numbers)
 
   if green_count_total > red_count_total:
     predicted_color_text = "GREEN 🟢"
@@ -419,17 +416,17 @@ if len(st.session_state.result_history) >= 1:
         "GREEN 🟢" if predicted_color_code == "GREEN" else "RED 🔴"
     )
 
-  # Target Numbers Logic
+  # Target Numbers Matrix Logic Fix
   if next_shot == "BIG":
     if predicted_color_code == "GREEN":
       target_nums_list = [5, 7, 9]
     else:
-      target_nums_list = [6, 8, 5]
+      target_nums_list = [6, 8]
   else:
     if predicted_color_code == "RED":
       target_nums_list = [0, 2, 4]
     else:
-      target_nums_list = [1, 3, 0]
+      target_nums_list = [1, 3]
 
   dynamic_target_text = ", ".join(map(str, target_nums_list))
   display_color = "#38bdf8" if next_shot == "BIG" else "#ef4444"
