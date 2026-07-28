@@ -310,7 +310,7 @@ if len(st.session_state.result_history) >= 1:
     session_name = "EVENING PEAK SESSION"
     session_volatility_boost = 1.3
 
-  # 2. Advanced Dynamic Pattern Recognition (Updated with last_3_nums & has_repeated_num_path)[span_1](start_span)[span_1](end_span)
+  # 2. Advanced Dynamic Pattern Recognition (Updated with Strict Sequence Guard, Triple Num, & Decay Factor)
   last_3_sizes = sizes[-3:] if len(sizes) >= 3 else sizes
   last_5_sizes = sizes[-5:] if len(sizes) >= 5 else sizes
   last_4_sizes = sizes[-4:] if len(sizes) >= 4 else sizes
@@ -318,6 +318,7 @@ if len(st.session_state.result_history) >= 1:
 
   last_3_nums = res_hist[-3:] if len(res_hist) >= 3 else res_hist
   has_repeated_num_path = len(set(last_3_nums)) < len(last_3_nums)
+  is_triple_num_3 = len(set(last_3_nums)) == 1 and len(last_3_nums) >= 3
 
   is_dragon_5 = len(last_5_sizes) == 5 and len(set(last_5_sizes)) == 1
   is_dragon_3 = len(last_3_sizes) == 3 and len(set(last_3_sizes)) == 1
@@ -349,7 +350,7 @@ if len(st.session_state.result_history) >= 1:
       and last_6_sizes[2] == last_6_sizes[3]
   )
 
-  # New False Breakout / Trap Filter (Updated with last_3_nums & has_repeated_num_path)[span_2](start_span)[span_2](end_span)
+  # Updated False Breakout / Trap Filter with Strict Sequence Guard priority
   is_choppy_trap = (
       len(last_4_sizes) == 4
       and last_4_sizes[0] != last_4_sizes[1]
@@ -358,6 +359,19 @@ if len(st.session_state.result_history) >= 1:
       and not is_zigzag_3
       and not has_repeated_num_path
   )
+
+  # Multi-Step Momentum Decay Factor Integration
+  streak_count = 1
+  for i in range(len(sizes) - 2, -1, -1):
+    if sizes[i] == sizes[-1]:
+      streak_count += 1
+    else:
+      break
+  momentum_decay_factor = max(0.5, 1.0 - (streak_count * 0.08))
+
+  # Period ID Digit Frequency Weight Integration
+  period_digit_match_count = per_hist.count(per_hist[-1]) if per_hist else 1
+  period_digit_weight = 1.0 + (period_digit_match_count * 0.05)
 
   global_sizes_chain = [
       "SMALL" if x <= 4 else "BIG" for x in global_analysis_chain
@@ -369,7 +383,7 @@ if len(st.session_state.result_history) >= 1:
 
   last_real_size = sizes[-1]
 
-  # 3. Synchronized Decision Engine with Trap Filter & Fail-safe Balance Switch
+  # 3. Synchronized Decision Engine with Priority Tree Modification
   if is_choppy_trap:
     omni_ai_weight = (
         old_num + new_num + current_period_last_digit + diff + (diff % 3)
@@ -382,6 +396,14 @@ if len(st.session_state.result_history) >= 1:
         f"Erratic breakout pattern found. Switched to safety balance engine"
         f" under [{session_name}]."
     )
+  elif is_triple_num_3:
+    next_shot = last_real_size
+    movement_mode_text = "🔥 চরম ইমব্যালেন্স ও নতুন লম্বা ট্রেন্ড অ্যালার্ট (TRIPLE NUMBER DETECTED)"
+    movement_desc = f"ট্রেড সিকোয়েন্সে শক্তিশালী ট্রিপল নাম্বার লজিক সক্রিয় হয়েছে। চলমান সাইড [{last_real_size}] কন্টিনিউ করবে।"
+  elif has_repeated_num_path and not is_dragon_5:
+    next_shot = "SMALL" if last_real_size == "BIG" else "BIG"
+    movement_mode_text = "⚡ ব্রেকআউট ট্র্যাপ ও বিপরীত সিগন্যাল (DOUBLE/REPEATED NUMBER PATH)"
+    movement_desc = f"ডাবল সংখ্যা বা রিপিটেড পাথ ডিটেক্ট হওয়ায় ব্রেকআউট ট্র্যাপ এড়াতে বিপরীত সিগন্যাল [{next_shot}] সচল করা হয়েছে।"
   elif big_counts_total >= imbalance_threshold:
     next_shot = "SMALL"
     movement_mode_text = "GLOBAL MARKET BIG IMBALANCE DETECTED"
@@ -432,7 +454,7 @@ if len(st.session_state.result_history) >= 1:
         f"Live cycles synced under [{session_name}]. Market pattern stable."
     )
 
-  # 4. Color Trend Engine (Updated with cross-balance condition for size & color alignment)[span_3](start_span)[span_3](end_span)
+  # 4. Color Trend Engine (Updated with Conflicting Signal Guard / Cross-Balance Condition)
   green_numbers = [1, 3, 7, 9]
   red_numbers = [0, 2, 4, 6, 8]
 
@@ -453,6 +475,14 @@ if len(st.session_state.result_history) >= 1:
         "GREEN 🟢" if predicted_color_code == "GREEN" else "RED 🔴"
     )
 
+  # Cross-Balance Synergy Alignment Check to avoid conflicting signals
+  if next_shot == "BIG" and predicted_color_code == "RED" and new_num not in [6, 8]:
+    predicted_color_code = "GREEN"
+    predicted_color_text = "GREEN 🟢"
+  elif next_shot == "SMALL" and predicted_color_code == "GREEN" and new_num not in [1, 3]:
+    predicted_color_code = "RED"
+    predicted_color_text = "RED 🔴"
+
   if next_shot == "BIG":
     if predicted_color_code == "GREEN":
       target_nums_list = [5, 7, 9]
@@ -468,10 +498,12 @@ if len(st.session_state.result_history) >= 1:
 
   base_calc = (
       96.20
-      + (diff * 0.25)
+      + (diff * 0.25 * period_digit_weight)
       + (res_hist.count(new_num) * 0.01)
       + (session_volatility_boost * 0.4)
   )
+  base_calc *= momentum_decay_factor
+  
   if is_dragon_5 or is_zigzag_3 or is_step_121:
     base_calc += 2.5
   if is_choppy_trap:
