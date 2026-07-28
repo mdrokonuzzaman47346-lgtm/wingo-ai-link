@@ -310,11 +310,14 @@ if len(st.session_state.result_history) >= 1:
     session_name = "EVENING PEAK SESSION"
     session_volatility_boost = 1.3
 
-  # 2. Advanced Dynamic Pattern Recognition (Added 1-2-1 Step & Mirror Patterns)
+  # 2. Advanced Dynamic Pattern Recognition (Updated with last_3_nums & has_repeated_num_path)[span_1](start_span)[span_1](end_span)
   last_3_sizes = sizes[-3:] if len(sizes) >= 3 else sizes
   last_5_sizes = sizes[-5:] if len(sizes) >= 5 else sizes
   last_4_sizes = sizes[-4:] if len(sizes) >= 4 else sizes
   last_6_sizes = sizes[-6:] if len(sizes) >= 6 else sizes
+
+  last_3_nums = res_hist[-3:] if len(res_hist) >= 3 else res_hist
+  has_repeated_num_path = len(set(last_3_nums)) < len(last_3_nums)
 
   is_dragon_5 = len(last_5_sizes) == 5 and len(set(last_5_sizes)) == 1
   is_dragon_3 = len(last_3_sizes) == 3 and len(set(last_3_sizes)) == 1
@@ -330,7 +333,7 @@ if len(st.session_state.result_history) >= 1:
       and last_4_sizes[-2] != last_4_sizes[-3]
   )
 
-  # New 1-2-1 Alternating Step Pattern (e.g., S -> B -> B -> S or B -> S -> S -> B)
+  # New 1-2-1 Alternating Step Pattern
   is_step_121 = (
       len(last_4_sizes) == 4
       and last_4_sizes[0] != last_4_sizes[1]
@@ -338,7 +341,7 @@ if len(st.session_state.result_history) >= 1:
       and last_4_sizes[2] != last_4_sizes[3]
   )
 
-  # New Mirror / Symmetry Pattern Detection (Last 6 rounds symmetry check)
+  # New Mirror / Symmetry Pattern Detection
   is_mirror_6 = (
       len(last_6_sizes) == 6
       and last_6_sizes[0] == last_6_sizes[5]
@@ -346,13 +349,14 @@ if len(st.session_state.result_history) >= 1:
       and last_6_sizes[2] == last_6_sizes[3]
   )
 
-  # New False Breakout / Trap Filter (Choppy or erratic behavior check)
+  # New False Breakout / Trap Filter (Updated with last_3_nums & has_repeated_num_path)[span_2](start_span)[span_2](end_span)
   is_choppy_trap = (
       len(last_4_sizes) == 4
       and last_4_sizes[0] != last_4_sizes[1]
       and last_4_sizes[1] != last_4_sizes[2]
       and last_4_sizes[2] != last_4_sizes[3]
       and not is_zigzag_3
+      and not has_repeated_num_path
   )
 
   global_sizes_chain = [
@@ -361,7 +365,6 @@ if len(st.session_state.result_history) >= 1:
   big_counts_total = sum(1 for x in global_sizes_chain if x == "BIG")
   small_counts_total = sum(1 for x in global_sizes_chain if x == "SMALL")
   
-  # Imbalance threshold calculation logic
   imbalance_threshold = int(len(global_sizes_chain) * 0.55) if len(global_sizes_chain) > 40 else 20
 
   last_real_size = sizes[-1]
@@ -369,7 +372,7 @@ if len(st.session_state.result_history) >= 1:
   # 3. Synchronized Decision Engine with Trap Filter & Fail-safe Balance Switch
   if is_choppy_trap:
     omni_ai_weight = (
-        old_num + new_num + current_period_last_digit + diff
+        old_num + new_num + current_period_last_digit + diff + (diff % 3)
     ) % 2
     next_shot = "BIG" if omni_ai_weight == 0 else "SMALL"
     movement_mode_text = (
@@ -421,7 +424,7 @@ if len(st.session_state.result_history) >= 1:
     movement_desc = "Twin alternation pattern (2-2 loop) detected in last 4 rounds. Executing structural sequence reversal."
   else:
     omni_ai_weight = (
-        old_num + new_num + current_period_last_digit + diff
+        old_num + new_num + current_period_last_digit + diff + (diff % 3)
     ) % 2
     next_shot = "BIG" if omni_ai_weight == 0 else "SMALL"
     movement_mode_text = "BALANCED STATIC TREND"
@@ -429,7 +432,7 @@ if len(st.session_state.result_history) >= 1:
         f"Live cycles synced under [{session_name}]. Market pattern stable."
     )
 
-  # 4. Color Trend Engine
+  # 4. Color Trend Engine (Updated with cross-balance condition for size & color alignment)[span_3](start_span)[span_3](end_span)
   green_numbers = [1, 3, 7, 9]
   red_numbers = [0, 2, 4, 6, 8]
 
@@ -438,10 +441,10 @@ if len(st.session_state.result_history) >= 1:
   )
   red_count_total = sum(1 for n in global_analysis_chain if n in red_numbers)
 
-  if green_count_total > red_count_total:
+  if green_count_total > red_count_total and next_shot != "SMALL":
     predicted_color_text = "GREEN 🟢"
     predicted_color_code = "GREEN"
-  elif red_count_total > green_count_total:
+  elif red_count_total > green_count_total and next_shot != "BIG":
     predicted_color_text = "RED 🔴"
     predicted_color_code = "RED"
   else:
