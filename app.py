@@ -4,7 +4,7 @@ import streamlit as st
 
 # 1. Page Configuration
 st.set_page_config(
-    page_title="Wingo Matrix Omni-Engine v12.0 Apex", page_icon="👑", layout="wide"
+    page_title="Wingo Matrix Omni-Engine v12.1 Apex", page_icon="👑", layout="wide"
 )
 
 # Custom Glowing CSS for Table & UI
@@ -57,7 +57,7 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-st.title("👑 Wingo 1m Matrix Omni-Engine v12.0 Apex Master")
+st.title("👑 Wingo 1m Matrix Omni-Engine v12.1 Apex Master")
 st.subheader("Institutional Grade Engine | Instant High-Speed Engine Active 🚀")
 
 # 1.1 Google Sheet Live Data Loader Integration
@@ -123,7 +123,7 @@ with c2:
       "<div"
       " style='background-color:#1c3144; padding:12px; border-left:5px solid"
       " #3498db; border-radius:5px; font-weight:bold; color:#f8fafc;'>⚡"
-      " HIGH-QUALITY AI CORE SERVER v12.0:<br><small"
+      " HIGH-QUALITY AI CORE SERVER v12.1:<br><small"
       " style='color:#7efff5;'>APEX ULTRA RUNNING</small></div>",
       unsafe_allow_html=True,
   )
@@ -161,7 +161,7 @@ st.markdown(
 <div style='background-color:#0f172a; padding:12px; border:1px solid #38bdf8; border-left:6px solid #a855f7; border-radius:6px; margin-top:8px; margin-bottom:12px;'>
     <span style='color:#e2e8f0; font-size:14px; font-weight:bold;'>📊 GOOGLE SHEET LIVE SYNC ({total_records_count:,} HISTORICAL PERIOD্স) + TRIPLE-LOCK ENGINE:</span> 
     <span style='color:#4ade80; font-weight:bold;'> FULLY INTEGRATED & RUNNING IN BACKEND ⚡</span><br>
-    <small style='color:#94a3b8;'>Time-Session Volatility, Color Synergy Loop & Dynamic Status-Signal Synchronization with Advanced Multi-Pattern & Trap Filter.</small>
+    <small style='color:#94a3b8;'>Time-Session Volatility, Color Synergy Loop & Dynamic Status-Signal Synchronization with Advanced Multi-Pattern & Strict Chronological Order Fix.</small>
 </div>
 """,
     unsafe_allow_html=True,
@@ -278,7 +278,7 @@ if len(st.session_state.result_history) >= 1:
           pd.to_numeric(live_df[col_num_global], errors="coerce")
           .dropna()
           .astype(int)
-          .tolist()
+          .tolist()[::-1]
       )
     except Exception:
       pass
@@ -310,7 +310,7 @@ if len(st.session_state.result_history) >= 1:
     session_name = "EVENING PEAK SESSION"
     session_volatility_boost = 1.3
 
-  # 2. Advanced Dynamic Pattern Recognition (Updated with Strict Sequence Guard, Triple Num, & Decay Factor)
+  # 2. Advanced Dynamic Pattern Recognition
   last_3_sizes = sizes[-3:] if len(sizes) >= 3 else sizes
   last_5_sizes = sizes[-5:] if len(sizes) >= 5 else sizes
   last_4_sizes = sizes[-4:] if len(sizes) >= 4 else sizes
@@ -334,7 +334,6 @@ if len(st.session_state.result_history) >= 1:
       and last_4_sizes[-2] != last_4_sizes[-3]
   )
 
-  # New 1-2-1 Alternating Step Pattern
   is_step_121 = (
       len(last_4_sizes) == 4
       and last_4_sizes[0] != last_4_sizes[1]
@@ -342,7 +341,6 @@ if len(st.session_state.result_history) >= 1:
       and last_4_sizes[2] != last_4_sizes[3]
   )
 
-  # New Mirror / Symmetry Pattern Detection
   is_mirror_6 = (
       len(last_6_sizes) == 6
       and last_6_sizes[0] == last_6_sizes[5]
@@ -350,7 +348,6 @@ if len(st.session_state.result_history) >= 1:
       and last_6_sizes[2] == last_6_sizes[3]
   )
 
-  # Updated False Breakout / Trap Filter with Strict Sequence Guard priority
   is_choppy_trap = (
       len(last_4_sizes) == 4
       and last_4_sizes[0] != last_4_sizes[1]
@@ -360,7 +357,6 @@ if len(st.session_state.result_history) >= 1:
       and not has_repeated_num_path
   )
 
-  # Multi-Step Momentum Decay Factor Integration
   streak_count = 1
   for i in range(len(sizes) - 2, -1, -1):
     if sizes[i] == sizes[-1]:
@@ -369,7 +365,6 @@ if len(st.session_state.result_history) >= 1:
       break
   momentum_decay_factor = max(0.5, 1.0 - (streak_count * 0.08))
 
-  # Period ID Digit Frequency Weight Integration
   period_digit_match_count = per_hist.count(per_hist[-1]) if per_hist else 1
   period_digit_weight = 1.0 + (period_digit_match_count * 0.05)
 
@@ -384,35 +379,7 @@ if len(st.session_state.result_history) >= 1:
   last_real_size = sizes[-1]
 
   # 3. Synchronized Decision Engine with Priority Tree Modification
-  if is_choppy_trap:
-    omni_ai_weight = (
-        old_num + new_num + current_period_last_digit + diff + (diff % 3)
-    ) % 2
-    next_shot = "BIG" if omni_ai_weight == 0 else "SMALL"
-    movement_mode_text = (
-        "⚠️ WARNING: TRAP / CHOPPY MARKET DETECTED (BALANCED SAFETY MODE)"
-    )
-    movement_desc = (
-        f"Erratic breakout pattern found. Switched to safety balance engine"
-        f" under [{session_name}]."
-    )
-  elif is_triple_num_3:
-    next_shot = last_real_size
-    movement_mode_text = "🔥 চরম ইমব্যালেন্স ও নতুন লম্বা ট্রেন্ড অ্যালার্ট (TRIPLE NUMBER DETECTED)"
-    movement_desc = f"ট্রেড সিকোয়েন্সে শক্তিশালী ট্রিপল নাম্বার লজিক সক্রিয় হয়েছে। চলমান সাইড [{last_real_size}] কন্টিনিউ করবে।"
-  elif has_repeated_num_path and not is_dragon_5:
-    next_shot = "SMALL" if last_real_size == "BIG" else "BIG"
-    movement_mode_text = "⚡ ব্রেকআউট ট্র্যাপ ও বিপরীত সিগন্যাল (DOUBLE/REPEATED NUMBER PATH)"
-    movement_desc = f"ডাবল সংখ্যা বা রিপিটেড পাথ ডিটেক্ট হওয়ায় ব্রেকআউট ট্র্যাপ এড়াতে বিপরীত সিগন্যাল [{next_shot}] সচল করা হয়েছে।"
-  elif big_counts_total >= imbalance_threshold:
-    next_shot = "SMALL"
-    movement_mode_text = "GLOBAL MARKET BIG IMBALANCE DETECTED"
-    movement_desc = "Reversal probability peak reached. Switching signal to Small."
-  elif small_counts_total >= imbalance_threshold:
-    next_shot = "BIG"
-    movement_mode_text = "GLOBAL MARKET SMALL IMBALANCE DETECTED"
-    movement_desc = "Reversal probability peak reached. Switching signal to Big."
-  elif is_dragon_5:
+  if is_dragon_5:
     next_shot = last_real_size
     movement_mode_text = f"5-ROUND DEEP DRAGON DETECTED 🔥 ({last_real_size})"
     movement_desc = (
@@ -428,6 +395,34 @@ if len(st.session_state.result_history) >= 1:
     movement_desc = (
         "High frequency alternating pattern detected. Reversal signal active."
     )
+  elif is_choppy_trap:
+    omni_ai_weight = (
+        old_num + new_num + current_period_last_digit + diff + (diff % 3)
+    ) % 2
+    next_shot = "BIG" if omni_ai_weight == 0 else "SMALL"
+    movement_mode_text = (
+        "⚠️ WARNING: TRAP / CHOPPY MARKET DETECTED (BALANCED SAFETY MODE)"
+    )
+    movement_desc = (
+        f"Erratic breakout pattern found. Switched to safety balance engine"
+        f" under [{session_name}]."
+    )
+  elif is_triple_num_3:
+    next_shot = last_real_size
+    movement_mode_text = "🔥 চরম ইমব্যালেন্স ও নতুন লম্বা ট্রেন্ড অ্যালার্ট (TRIPLE NUMBER DETECTED)"
+    movement_desc = f"ট্রেড সিকোয়েন্সে শক্তিশালী ট্রিপল নাম্বার লজিক সক্রিয় হয়েছে। চলমান সাইড [{last_real_size}] কন্টিনিউ করবে।"
+  elif has_repeated_num_path:
+    next_shot = "SMALL" if last_real_size == "BIG" else "BIG"
+    movement_mode_text = "⚡ ব্রেকআউট ট্র্যাপ ও বিপরীত সিগন্যাল (DOUBLE/REPEATED NUMBER PATH)"
+    movement_desc = f"ডাবল সংখ্যা বা রিপিটেড পাথ ডিটেক্ট হওয়ায় ব্রেকআউট ট্র্যাপ এড়াতে বিপরীত সিগন্যাল [{next_shot}] সচল করা হয়েছে।"
+  elif big_counts_total >= imbalance_threshold:
+    next_shot = "SMALL"
+    movement_mode_text = "GLOBAL MARKET BIG IMBALANCE DETECTED"
+    movement_desc = "Reversal probability peak reached. Switching signal to Small."
+  elif small_counts_total >= imbalance_threshold:
+    next_shot = "BIG"
+    movement_mode_text = "GLOBAL MARKET SMALL IMBALANCE DETECTED"
+    movement_desc = "Reversal probability peak reached. Switching signal to Big."
   elif is_step_121:
     next_shot = "SMALL" if last_real_size == "BIG" else "BIG"
     movement_mode_text = "1-2-1 ALTERNATING STEP PATTERN"
