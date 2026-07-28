@@ -378,76 +378,72 @@ if len(st.session_state.result_history) >= 1:
 
   last_real_size = sizes[-1]
 
-  # 3. Synchronized Decision Engine with Priority Tree Modification
-  if is_dragon_5:
-    next_shot = last_real_size
-    movement_mode_text = f"5-ROUND DEEP DRAGON DETECTED 🔥 ({last_real_size})"
-    movement_desc = (
-        "Deep momentum streak active. Following continuous trend vector."
-    )
-  elif is_dragon_3:
-    next_shot = last_real_size
-    movement_mode_text = f"3-ROUND DRAGON FORMATION ({last_real_size})"
-    movement_desc = "Short-term streak active. Following momentum alignment."
-  elif is_zigzag_3:
-    next_shot = "BIG" if last_real_size == "SMALL" else "SMALL"
-    movement_mode_text = "ZIG-ZAG OSCILLATION (1-1 PATTERN)"
-    movement_desc = (
-        "High frequency alternating pattern detected. Reversal signal active."
-    )
-  elif is_choppy_trap:
+  # 3. Synchronized Decision Engine with CORRECTED Priority Tree
+  if is_choppy_trap:
     omni_ai_weight = (
         old_num + new_num + current_period_last_digit + diff + (diff % 3)
     ) % 2
     next_shot = "BIG" if omni_ai_weight == 0 else "SMALL"
-    movement_mode_text = (
-        "⚠️ WARNING: TRAP / CHOPPY MARKET DETECTED (BALANCED SAFETY MODE)"
-    )
-    movement_desc = (
-        f"Erratic breakout pattern found. Switched to safety balance engine"
-        f" under [{session_name}]."
-    )
+    movement_mode_text = "⚠️ WARNING: TRAP / CHOPPY MARKET DETECTED (BALANCED SAFETY MODE)"
+    movement_desc = f"Erratic breakout pattern found. Switched to safety balance engine under [{session_name}]."
+    
   elif is_triple_num_3:
     next_shot = last_real_size
-    movement_mode_text = "🔥 চরম ইমব্যালেন্স ও নতুন লম্বা ট্রেন্ড অ্যালার্ট (TRIPLE NUMBER DETECTED)"
-    movement_desc = f"ট্রেড সিকোয়েন্সে শক্তিশালী ট্রিপল নাম্বার লজিক সক্রিয় হয়েছে। চলমান সাইড [{last_real_size}] কন্টিনিউ করবে।"
+    movement_mode_text = "🚨 EXTREME CHAOS: TRIPLE NUMBER DETECTED"
+    movement_desc = f"Powerful triple number logic triggered in trade sequence. Expected to continue current momentum size [{last_real_size}]."
+    
   elif has_repeated_num_path:
     next_shot = "SMALL" if last_real_size == "BIG" else "BIG"
-    movement_mode_text = "⚡ ব্রেকআউট ট্র্যাপ ও বিপরীত সিগন্যাল (DOUBLE/REPEATED NUMBER PATH)"
-    movement_desc = f"ডাবল সংখ্যা বা রিপিটেড পাথ ডিটেক্ট হওয়ায় ব্রেকআউট ট্র্যাপ এড়াতে বিপরীত সিগন্যাল [{next_shot}] সচল করা হয়েছে।"
+    movement_mode_text = "⚠️ BREAKOUT TRAP: DOUBLE NUMBER DETECTED"
+    movement_desc = f"Double or repeated digit path detected. Executing strict adaptive sequence reversal to prevent false breakout trap."
+    
+  elif is_dragon_5:
+    next_shot = last_real_size
+    movement_mode_text = f"5-ROUND DEEP DRAGON DETECTED 🔥 ({last_real_size})"
+    movement_desc = "Deep momentum streak active. Following continuous trend vector."
+    
+  elif is_dragon_3:
+    next_shot = last_real_size
+    movement_mode_text = f"3-ROUND DRAGON FORMATION ({last_real_size})"
+    movement_desc = "Short-term streak active. Following momentum alignment."
+    
+  elif is_zigzag_3:
+    next_shot = "BIG" if last_real_size == "SMALL" else "SMALL"
+    movement_mode_text = "ZIG-ZAG OSCILLATION (1-1 PATTERN)"
+    movement_desc = "High frequency alternating pattern detected. Reversal signal active."
+    
   elif big_counts_total >= imbalance_threshold:
     next_shot = "SMALL"
     movement_mode_text = "GLOBAL MARKET BIG IMBALANCE DETECTED"
     movement_desc = "Reversal probability peak reached. Switching signal to Small."
+    
   elif small_counts_total >= imbalance_threshold:
     next_shot = "BIG"
     movement_mode_text = "GLOBAL MARKET SMALL IMBALANCE DETECTED"
     movement_desc = "Reversal probability peak reached. Switching signal to Big."
+    
   elif is_step_121:
     next_shot = "SMALL" if last_real_size == "BIG" else "BIG"
     movement_mode_text = "1-2-1 ALTERNATING STEP PATTERN"
-    movement_desc = (
-        "Step-ratio frequency matched. Executing synchronized adaptive reversal."
-    )
+    movement_desc = "Step-ratio frequency matched. Executing synchronized adaptive reversal."
+    
   elif is_mirror_6:
     next_shot = "SMALL" if last_real_size == "BIG" else "BIG"
     movement_mode_text = "SYMMETRY MIRROR PATTERN DETECTED"
-    movement_desc = (
-        "Historical sequence loop reflection active. Reversing at mirror axis."
-    )
+    movement_desc = "Historical sequence loop reflection active. Reversing at mirror axis."
+    
   elif is_double_chain_4:
     next_shot = "SMALL" if last_real_size == "BIG" else "BIG"
     movement_mode_text = "DOUBLE-CHAIN LOOP (2-2 PATTERN)"
     movement_desc = "Twin alternation pattern (2-2 loop) detected in last 4 rounds. Executing structural sequence reversal."
+    
   else:
     omni_ai_weight = (
         old_num + new_num + current_period_last_digit + diff + (diff % 3)
     ) % 2
     next_shot = "BIG" if omni_ai_weight == 0 else "SMALL"
     movement_mode_text = "BALANCED STATIC TREND"
-    movement_desc = (
-        f"Live cycles synced under [{session_name}]. Market pattern stable."
-    )
+    movement_desc = f"Live cycles synced under [{session_name}]. Market pattern stable."
 
   # 4. Color Trend Engine (Updated with Conflicting Signal Guard / Cross-Balance Condition)
   green_numbers = [1, 3, 7, 9]
