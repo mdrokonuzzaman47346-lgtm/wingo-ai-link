@@ -159,7 +159,7 @@ with c5:
 st.markdown(
     f"""
 <div style='background-color:#0f172a; padding:12px; border:1px solid #38bdf8; border-left:6px solid #a855f7; border-radius:6px; margin-top:8px; margin-bottom:12px;'>
-    <span style='color:#e2e8f0; font-size:14px; font-weight:bold;'>📊 GOOGLE SHEET LIVE SYNC ({total_records_count:,} HISTORICAL PERIOD্স) + TRIPLE-LOCK ENGINE:</span> 
+    <span style='color:#e2e8f0; font-size:14px; font-weight:bold;'>📊 GOOGLE SHEET LIVE SYNC ({total_records_count:,} HISTORICAL PERIODS) + TRIPLE-LOCK ENGINE:</span> 
     <span style='color:#4ade80; font-weight:bold;'> FULLY INTEGRATED & RUNNING IN BACKEND ⚡</span><br>
     <small style='color:#94a3b8;'>Time-Session Volatility, Color Synergy Loop & Dynamic Status-Signal Synchronization with Advanced Multi-Pattern & Strict Chronological Order Fix.</small>
 </div>
@@ -291,7 +291,17 @@ if len(st.session_state.result_history) >= 1:
   old_num = res_hist[-2] if len(res_hist) >= 2 else res_hist[-1]
   new_num = res_hist[-1]
   diff = abs(old_num - new_num)
-  sizes = ["SMALL" if n <= 4 else "BIG" for n in res_hist]
+  
+  # Sliding 30-Round Live Sequence Scanning
+  active_30_res = res_hist[-30:] if len(res_hist) >= 30 else res_hist
+  active_30_sizes = ["SMALL" if n <= 4 else "BIG" for n in active_30_res]
+  
+  # Old results rolling backward into sheet baseline smoothly
+  if len(res_hist) > 30:
+    overflow_nums = res_hist[:-30]
+    global_analysis_chain = sheet_nums_global + overflow_nums + active_30_res
+  else:
+    global_analysis_chain = sheet_nums_global + active_30_res
 
   current_period_last_digit = per_hist[-1] % 10 if per_hist else 0
 
@@ -310,13 +320,13 @@ if len(st.session_state.result_history) >= 1:
     session_name = "EVENING PEAK SESSION"
     session_volatility_boost = 1.3
 
-  # 2. Advanced Dynamic Pattern Recognition
-  last_3_sizes = sizes[-3:] if len(sizes) >= 3 else sizes
-  last_5_sizes = sizes[-5:] if len(sizes) >= 5 else sizes
-  last_4_sizes = sizes[-4:] if len(sizes) >= 4 else sizes
-  last_6_sizes = sizes[-6:] if len(sizes) >= 6 else sizes
+  # 2. Advanced Dynamic Pattern Recognition (Scanning Active 30-Round Sequence Flow)
+  last_3_sizes = active_30_sizes[-3:] if len(active_30_sizes) >= 3 else active_30_sizes
+  last_5_sizes = active_30_sizes[-5:] if len(active_30_sizes) >= 5 else active_30_sizes
+  last_4_sizes = active_30_sizes[-4:] if len(active_30_sizes) >= 4 else active_30_sizes
+  last_6_sizes = active_30_sizes[-6:] if len(active_30_sizes) >= 6 else active_30_sizes
 
-  last_3_nums = res_hist[-3:] if len(res_hist) >= 3 else res_hist
+  last_3_nums = active_30_res[-3:] if len(active_30_res) >= 3 else active_30_res
   has_repeated_num_path = len(set(last_3_nums)) < len(last_3_nums)
   is_triple_num_3 = len(set(last_3_nums)) == 1 and len(last_3_nums) >= 3
 
@@ -358,12 +368,12 @@ if len(st.session_state.result_history) >= 1:
   )
 
   streak_count = 1
-  for i in range(len(sizes) - 2, -1, -1):
-    if sizes[i] == sizes[-1]:
+  for i in range(len(active_30_sizes) - 2, -1, -1):
+    if active_30_sizes[i] == active_30_sizes[-1]:
       streak_count += 1
     else:
       break
-  momentum_decay_factor = max(0.5, 1.0 - (streak_count * 0.08))
+  momentum_decay_factor = max(0.8, 1.0 - (streak_count * 0.03))
 
   period_digit_match_count = per_hist.count(per_hist[-1]) if per_hist else 1
   period_digit_weight = 1.0 + (period_digit_match_count * 0.05)
@@ -376,7 +386,7 @@ if len(st.session_state.result_history) >= 1:
   
   imbalance_threshold = int(len(global_sizes_chain) * 0.55) if len(global_sizes_chain) > 40 else 20
 
-  last_real_size = sizes[-1]
+  last_real_size = active_30_sizes[-1]
 
   # 3. Synchronized Decision Engine with CORRECTED Priority Tree
   if is_choppy_trap:
@@ -445,6 +455,14 @@ if len(st.session_state.result_history) >= 1:
     movement_mode_text = "BALANCED STATIC TREND"
     movement_desc = f"Live cycles synced under [{session_name}]. Market pattern stable."
 
+  # Smart Win/Loss Chart Feedback & Auto-Correction Loop (Detects 2+ consecutive 'L' markers)
+  if len(st.session_state.history_records) >= 2:
+    recent_wl_logs = [r["bs_wl"] for r in st.session_state.history_records[-2:]]
+    if all(wl == "L" for wl in recent_wl_logs):
+      next_shot = "SMALL" if next_shot == "BIG" else "BIG"
+      movement_mode_text = "🛡️ FAIL-SAFE OVERRIDE: CONSECUTIVE LOSS CHAIN BREAK"
+      movement_desc = f"Detected 2 consecutive losses in history tracking. Automatically inverted next signal to [{next_shot}] to bypass market trap."
+
   # 4. Color Trend Engine (Updated with Conflicting Signal Guard / Cross-Balance Condition)
   green_numbers = [1, 3, 7, 9]
   red_numbers = [0, 2, 4, 6, 8]
@@ -489,9 +507,10 @@ if len(st.session_state.result_history) >= 1:
 
   base_calc = (
       96.20
-      + (diff * 0.25 * period_digit_weight)
+      + (diff * 0.25)
       + (res_hist.count(new_num) * 0.01)
       + (session_volatility_boost * 0.4)
+      + (period_digit_weight * 0.5)
   )
   base_calc *= momentum_decay_factor
   
