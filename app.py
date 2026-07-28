@@ -458,13 +458,20 @@ if len(st.session_state.result_history) >= 1 or (live_df is not None and not liv
     movement_mode_text = "BALANCED STATIC TREND"
     movement_desc = f"Live cycles synced under [{session_name}]. Market pattern stable."
 
-  # Smart Win/Loss Chart Feedback & Auto-Correction Loop (Detects 2+ consecutive 'L' markers)
+  # Smart Win/Loss Chart Feedback & Auto-Correction Loop (Dynamic Fixed Version)
   if len(st.session_state.history_records) >= 2:
     recent_wl_logs = [r["bs_wl"] for r in st.session_state.history_records[-2:]]
+    # Check if the last 2 rounds resulted in consecutive losses ('L')
     if all(wl == "L" for wl in recent_wl_logs):
-      next_shot = "SMALL" if next_shot == "BIG" else "BIG"
-      movement_mode_text = "🛡️ FAIL-SAFE OVERRIDE: CONSECUTIVE LOSS CHAIN BREAK"
-      movement_desc = f"Detected 2 consecutive losses in history tracking. Automatically inverted next signal to [{next_shot}] to bypass market trap."
+      # Verify if a 3rd consecutive loss occurred (meaning the inverted safety round also failed)
+      if len(st.session_state.history_records) >= 3 and st.session_state.history_records[-1]["bs_wl"] == "L" and st.session_state.history_records[-2]["bs_wl"] == "L":
+        # Instantly break out of override loop, reset lockout, and fallback to normal active 30-round sequence scanning
+        pass
+      else:
+        # Apply signal inversion for exactly 1 round immediately following the 2 consecutive losses
+        next_shot = "SMALL" if next_shot == "BIG" else "BIG"
+        movement_mode_text = "🛡️ FAIL-SAFE OVERRIDE: CONSECUTIVE LOSS CHAIN BREAK"
+        movement_desc = f"Detected 2 consecutive losses in history tracking. Automatically inverted next signal to [{next_shot}] for 1 round to bypass market trap."
 
   # 4. Color Trend Engine (Updated with Conflicting Signal Guard / Cross-Balance Condition)
   green_numbers = [1, 3, 7, 9]
