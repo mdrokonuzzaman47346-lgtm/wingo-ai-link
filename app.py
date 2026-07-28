@@ -260,33 +260,37 @@ with col2:
     st.info("Triple-Lock Memory is empty. Log real-time data to activate server.")
 
 # 4. Strategy & Advanced Market Engine Core (Synchronized & Fixed)
-if len(st.session_state.result_history) >= 1:
-  st.write("---")
+sheet_nums_global = []
+if live_df is not None and not live_df.empty:
+  try:
+    col_num_global = next(
+        (
+            c
+            for c in live_df.columns
+            if c.lower() in ["num", "number", "result"]
+        ),
+        live_df.columns[0],
+    )
+    sheet_nums_global = (
+        pd.to_numeric(live_df[col_num_global], errors="coerce")
+        .dropna()
+        .astype(int)
+        .tolist()[::-1]
+    )
+  except Exception:
+    pass
 
-  sheet_nums_global = []
-  if live_df is not None and not live_df.empty:
-    try:
-      col_num_global = next(
-          (
-              c
-              for c in live_df.columns
-              if c.lower() in ["num", "number", "result"]
-          ),
-          live_df.columns[0],
-      )
-      sheet_nums_global = (
-          pd.to_numeric(live_df[col_num_global], errors="coerce")
-          .dropna()
-          .astype(int)
-          .tolist()[::-1]
-      )
-    except Exception:
-      pass
+if len(st.session_state.result_history) >= 1 or (live_df is not None and not live_df.empty):
+  st.write("---")
 
   global_analysis_chain = sheet_nums_global + st.session_state.result_history
 
-  res_hist = st.session_state.result_history
-  per_hist = st.session_state.period_history
+  if st.session_state.result_history:
+    res_hist = st.session_state.result_history
+    per_hist = st.session_state.period_history
+  else:
+    res_hist = sheet_nums_global
+    per_hist = [0] * len(sheet_nums_global)
 
   old_num = res_hist[-2] if len(res_hist) >= 2 else res_hist[-1]
   new_num = res_hist[-1]
@@ -364,8 +368,7 @@ if len(st.session_state.result_history) >= 1:
       and last_4_sizes[1] != last_4_sizes[2]
       and last_4_sizes[2] != last_4_sizes[3]
       and not is_zigzag_3
-      and not has_repeated_num_path
-  )
+  ) or (has_repeated_num_path and not is_dragon_5)
 
   streak_count = 1
   for i in range(len(active_30_sizes) - 2, -1, -1):
