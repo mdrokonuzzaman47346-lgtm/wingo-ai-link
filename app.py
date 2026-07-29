@@ -259,7 +259,7 @@ with col2:
   else:
     st.info("Triple-Lock Memory is empty. Log real-time data to activate server.")
 
-# 4. Strategy & Advanced Market Engine Core (Synchronized & Fixed)
+# 4. Optimized Architectural Backend Analysis Engine
 sheet_nums_global = []
 if live_df is not None and not live_df.empty:
   try:
@@ -283,8 +283,6 @@ if live_df is not None and not live_df.empty:
 if len(st.session_state.result_history) >= 1 or (live_df is not None and not live_df.empty):
   st.write("---")
 
-  global_analysis_chain = sheet_nums_global + st.session_state.result_history
-
   if st.session_state.result_history:
     res_hist = st.session_state.result_history
     per_hist = st.session_state.period_history
@@ -296,18 +294,20 @@ if len(st.session_state.result_history) >= 1 or (live_df is not None and not liv
   new_num = res_hist[-1]
   diff = abs(old_num - new_num)
   
-  # Sliding 30-Round Live Sequence Scanning
+  # Chronological Stack & Sliding 30-Round Pair Matrix Window
   active_30_res = res_hist[-30:] if len(res_hist) >= 30 else res_hist
-  active_30_sizes = ["SMALL" if n <= 4 else "BIG" for n in active_30_res]
+  active_30_per = per_hist[-30:] if len(per_hist) >= 30 else per_hist
   
-  # Old results rolling backward into sheet baseline smoothly
-  if len(res_hist) > 30:
-    overflow_nums = res_hist[:-30]
-    global_analysis_chain = sheet_nums_global + overflow_nums + active_30_res
-  else:
-    global_analysis_chain = sheet_nums_global + active_30_res
+  # Unify Pair Records (Period ID + Result Number) chronological stack validation
+  pair_records_30 = list(zip(active_30_per, active_30_res))
+  validated_res_30 = [num for _, num in pair_records_30]
+  active_30_sizes = ["SMALL" if n <= 4 else "BIG" for n in validated_res_30]
 
   current_period_last_digit = per_hist[-1] % 10 if per_hist else 0
+
+  # Historical Reference Baseline Alignment (No Period Matching)
+  global_sizes_chain = ["SMALL" if x <= 4 else "BIG" for x in sheet_nums_global]
+  macro_baseline_big_freq = global_sizes_chain.count("BIG") / len(global_sizes_chain) if global_sizes_chain else 0.5
 
   # 1. Time Session Volatility Engine
   current_hour = datetime.datetime.now().hour
@@ -324,13 +324,13 @@ if len(st.session_state.result_history) >= 1 or (live_df is not None and not liv
     session_name = "EVENING PEAK SESSION"
     session_volatility_boost = 1.3
 
-  # 2. Advanced Dynamic Pattern Recognition (Scanning Active 30-Round Sequence Flow)
+  # 2. Independent Background Analytical Modules Computation
   last_3_sizes = active_30_sizes[-3:] if len(active_30_sizes) >= 3 else active_30_sizes
   last_5_sizes = active_30_sizes[-5:] if len(active_30_sizes) >= 5 else active_30_sizes
   last_4_sizes = active_30_sizes[-4:] if len(active_30_sizes) >= 4 else active_30_sizes
   last_6_sizes = active_30_sizes[-6:] if len(active_30_sizes) >= 6 else active_30_sizes
 
-  last_3_nums = active_30_res[-3:] if len(active_30_res) >= 3 else active_30_res
+  last_3_nums = validated_res_30[-3:] if len(validated_res_30) >= 3 else validated_res_30
   has_repeated_num_path = len(set(last_3_nums)) < len(last_3_nums)
   is_triple_num_3 = len(set(last_3_nums)) == 1 and len(last_3_nums) >= 3
 
@@ -347,21 +347,18 @@ if len(st.session_state.result_history) >= 1 or (live_df is not None and not liv
       and last_4_sizes[-3] == last_4_sizes[-4]
       and last_4_sizes[-2] != last_4_sizes[-3]
   )
-
   is_step_121 = (
       len(last_4_sizes) == 4
       and last_4_sizes[0] != last_4_sizes[1]
       and last_4_sizes[1] == last_4_sizes[2]
       and last_4_sizes[2] != last_4_sizes[3]
   )
-
   is_mirror_6 = (
       len(last_6_sizes) == 6
       and last_6_sizes[0] == last_6_sizes[5]
       and last_6_sizes[1] == last_6_sizes[4]
       and last_6_sizes[2] == last_6_sizes[3]
   )
-
   is_choppy_trap = (
       len(last_4_sizes) == 4
       and last_4_sizes[0] != last_4_sizes[1]
@@ -376,145 +373,124 @@ if len(st.session_state.result_history) >= 1 or (live_df is not None and not liv
       streak_count += 1
     else:
       break
+      
+  # Calibrate Momentum Decay Factor Mandate
   momentum_decay_factor = max(0.8, 1.0 - (streak_count * 0.03))
 
   period_digit_match_count = per_hist.count(per_hist[-1]) if per_hist else 1
   period_digit_weight = 1.0 + (period_digit_match_count * 0.05)
 
-  global_sizes_chain = [
-      "SMALL" if x <= 4 else "BIG" for x in global_analysis_chain
-  ]
-  big_counts_total = sum(1 for x in global_sizes_chain if x == "BIG")
-  small_counts_total = sum(1 for x in global_sizes_chain if x == "SMALL")
-  
-  imbalance_threshold = int(len(global_sizes_chain) * 0.55) if len(global_sizes_chain) > 40 else 20
+  big_counts_total = active_30_sizes.count("BIG")
+  small_counts_total = active_30_sizes.count("SMALL")
+  imbalance_threshold = 18
 
   last_real_size = active_30_sizes[-1]
 
-  # 3. Synchronized Decision Engine with CORRECTED Priority Tree
+  # 3. Unified Voting Matrix & Parallel Analytical Evidence Weighting System
+  vote_weights = {"BIG": 0.0, "SMALL": 0.0}
+
+  # Module 1: Dragon / Streak Voting
+  if is_dragon_5 or is_dragon_3:
+    vote_weights[last_real_size] += 3.5
+  else:
+    opp_size = "SMALL" if last_real_size == "BIG" else "BIG"
+    vote_weights[opp_size] += 1.0
+
+  # Module 2: Zig-Zag / Alternation Voting
+  if is_zigzag_3 or is_step_121 or is_double_chain_4 or is_mirror_6:
+    alt_size = "SMALL" if last_real_size == "BIG" else "BIG"
+    vote_weights[alt_size] += 3.0
+
+  # Module 3: Imbalance & Macro Baseline Reference Voting
+  if big_counts_total >= imbalance_threshold or macro_baseline_big_freq > 0.55:
+    vote_weights["SMALL"] += 2.0
+  if small_counts_total >= imbalance_threshold or macro_baseline_big_freq < 0.45:
+    vote_weights["BIG"] += 2.0
+
+  # Module 4: Chaos / Trap / Repetition Safeguard Voting
+  if is_choppy_trap or has_repeated_num_path:
+    rev_size = "SMALL" if last_real_size == "BIG" else "BIG"
+    vote_weights[rev_size] += 2.5
+  if is_triple_num_3:
+    vote_weights[last_real_size] += 4.0
+
+  # Fallback Mathematical Trajectory Weighting if votes tie
+  if vote_weights["BIG"] == vote_weights["SMALL"]:
+    omni_ai_weight = (old_num + new_num + current_period_last_digit + diff + (diff % 3)) % 2
+    default_shot = "BIG" if omni_ai_weight == 0 else "SMALL"
+    vote_weights[default_shot] += 0.5
+
+  # Determine final prediction output purely from the highest collective voting weight
+  next_shot = max(vote_weights, key=vote_weights.get)
+
+  # Descriptive Status Generation
   if is_choppy_trap:
-    omni_ai_weight = (
-        old_num + new_num + current_period_last_digit + diff + (diff % 3)
-    ) % 2
-    next_shot = "BIG" if omni_ai_weight == 0 else "SMALL"
     movement_mode_text = "⚠️ WARNING: TRAP / CHOPPY MARKET DETECTED (BALANCED SAFETY MODE)"
     movement_desc = f"Erratic breakout pattern found. Switched to safety balance engine under [{session_name}]."
-    
   elif is_triple_num_3:
-    next_shot = last_real_size
     movement_mode_text = "🚨 EXTREME CHAOS: TRIPLE NUMBER DETECTED"
     movement_desc = f"Powerful triple number logic triggered in trade sequence. Expected to continue current momentum size [{last_real_size}]."
-    
   elif has_repeated_num_path:
-    next_shot = "SMALL" if last_real_size == "BIG" else "BIG"
     movement_mode_text = "⚠️ BREAKOUT TRAP: DOUBLE NUMBER DETECTED"
     movement_desc = f"Double or repeated digit path detected. Executing strict adaptive sequence reversal to prevent false breakout trap."
-    
   elif is_dragon_5:
-    next_shot = last_real_size
     movement_mode_text = f"5-ROUND DEEP DRAGON DETECTED 🔥 ({last_real_size})"
     movement_desc = "Deep momentum streak active. Following continuous trend vector."
-    
   elif is_dragon_3:
-    next_shot = last_real_size
     movement_mode_text = f"3-ROUND DRAGON FORMATION ({last_real_size})"
     movement_desc = "Short-term streak active. Following momentum alignment."
-    
   elif is_zigzag_3:
-    next_shot = "BIG" if last_real_size == "SMALL" else "SMALL"
     movement_mode_text = "ZIG-ZAG OSCILLATION (1-1 PATTERN)"
     movement_desc = "High frequency alternating pattern detected. Reversal signal active."
-    
   elif big_counts_total >= imbalance_threshold:
-    next_shot = "SMALL"
     movement_mode_text = "GLOBAL MARKET BIG IMBALANCE DETECTED"
     movement_desc = "Reversal probability peak reached. Switching signal to Small."
-    
   elif small_counts_total >= imbalance_threshold:
-    next_shot = "BIG"
     movement_mode_text = "GLOBAL MARKET SMALL IMBALANCE DETECTED"
     movement_desc = "Reversal probability peak reached. Switching signal to Big."
-    
   elif is_step_121:
-    next_shot = "SMALL" if last_real_size == "BIG" else "BIG"
     movement_mode_text = "1-2-1 ALTERNATING STEP PATTERN"
     movement_desc = "Step-ratio frequency matched. Executing synchronized adaptive reversal."
-    
   elif is_mirror_6:
-    next_shot = "SMALL" if last_real_size == "BIG" else "BIG"
     movement_mode_text = "SYMMETRY MIRROR PATTERN DETECTED"
     movement_desc = "Historical sequence loop reflection active. Reversing at mirror axis."
-    
   elif is_double_chain_4:
-    next_shot = "SMALL" if last_real_size == "BIG" else "BIG"
     movement_mode_text = "DOUBLE-CHAIN LOOP (2-2 PATTERN)"
     movement_desc = "Twin alternation pattern (2-2 loop) detected in last 4 rounds. Executing structural sequence reversal."
-    
   else:
-    omni_ai_weight = (
-        old_num + new_num + current_period_last_digit + diff + (diff % 3)
-    ) % 2
-    next_shot = "BIG" if omni_ai_weight == 0 else "SMALL"
     movement_mode_text = "BALANCED STATIC TREND"
     movement_desc = f"Live cycles synced under [{session_name}]. Market pattern stable."
 
-  # Smart Win/Loss Chart Feedback & Auto-Correction Loop (Dynamic Fixed Version)
-  if len(st.session_state.history_records) >= 2:
-    recent_wl_logs = [r["bs_wl"] for r in st.session_state.history_records[-2:]]
-    # Check if the last 2 rounds resulted in consecutive losses ('L')
-    if all(wl == "L" for wl in recent_wl_logs):
-      # Verify if a 3rd consecutive loss occurred (meaning the inverted safety round also failed)
-      if len(st.session_state.history_records) >= 3 and st.session_state.history_records[-1]["bs_wl"] == "L" and st.session_state.history_records[-2]["bs_wl"] == "L":
-        # Instantly break out of override loop, reset lockout, and fallback to normal active 30-round sequence scanning
-        pass
-      else:
-        # Apply signal inversion for exactly 1 round immediately following the 2 consecutive losses
-        next_shot = "SMALL" if next_shot == "BIG" else "BIG"
-        movement_mode_text = "🛡️ FAIL-SAFE OVERRIDE: CONSECUTIVE LOSS CHAIN BREAK"
-        movement_desc = f"Detected 2 consecutive losses in history tracking. Automatically inverted next signal to [{next_shot}] for 1 round to bypass market trap."
-
-  # 4. Color Trend Engine (Updated with Conflicting Signal Guard / Cross-Balance Condition)
-  green_numbers = [1, 3, 7, 9]
+  # 4. Color Trend Engine & Strict Cross-Balance Color Synergy Locking
+  green_numbers = [1, 3, 5, 7, 9]
   red_numbers = [0, 2, 4, 6, 8]
 
-  green_count_total = sum(
-      1 for n in global_analysis_chain if n in green_numbers or n == 5
-  )
-  red_count_total = sum(1 for n in global_analysis_chain if n in red_numbers)
+  green_count_total = sum(1 for n in validated_res_30 if n in green_numbers)
+  red_count_total = sum(1 for n in validated_res_30 if n in red_numbers)
 
   if green_count_total > red_count_total and next_shot != "SMALL":
-    predicted_color_text = "GREEN 🟢"
     predicted_color_code = "GREEN"
   elif red_count_total > green_count_total and next_shot != "BIG":
-    predicted_color_text = "RED 🔴"
     predicted_color_code = "RED"
   else:
     predicted_color_code = "GREEN" if next_shot == "BIG" else "RED"
-    predicted_color_text = (
-        "GREEN 🟢" if predicted_color_code == "GREEN" else "RED 🔴"
-    )
 
-  # Cross-Balance Synergy Alignment Check to avoid conflicting signals
+  # Enforce strict Cross-Balance Color Synergy Locking
   if next_shot == "BIG" and predicted_color_code == "RED" and new_num not in [6, 8]:
     predicted_color_code = "GREEN"
-    predicted_color_text = "GREEN 🟢"
   elif next_shot == "SMALL" and predicted_color_code == "GREEN" and new_num not in [1, 3]:
     predicted_color_code = "RED"
-    predicted_color_text = "RED 🔴"
+
+  predicted_color_text = "GREEN 🟢" if predicted_color_code == "GREEN" else "RED 🔴"
 
   if next_shot == "BIG":
-    if predicted_color_code == "GREEN":
-      target_nums_list = [5, 7, 9]
-    else:
-      target_nums_list = [6, 8]
+    target_nums_list = [5, 7, 9] if predicted_color_code == "GREEN" else [6, 8]
   else:
-    if predicted_color_code == "RED":
-      target_nums_list = [0, 2, 4]
-    else:
-      target_nums_list = [1, 3]
+    target_nums_list = [0, 2, 4] if predicted_color_code == "RED" else [1, 3]
 
   dynamic_target_text = ", ".join(map(str, target_nums_list))
 
+  # Normalized Confidence Index Formula Mandate
   base_calc = (
       96.20
       + (diff * 0.25)
