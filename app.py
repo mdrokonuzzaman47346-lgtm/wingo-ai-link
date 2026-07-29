@@ -420,46 +420,8 @@ if len(st.session_state.result_history) >= 1 or (live_df is not None and not liv
     default_shot = "BIG" if omni_ai_weight == 0 else "SMALL"
     vote_weights[default_shot] += 0.5
 
-  # Determine final prediction output purely from the highest collective voting weight
+  # Determine final prediction output PURELY and strictly from the highest collective voting weight
   next_shot = max(vote_weights, key=vote_weights.get)
-
-  # Descriptive Status Generation
-  if is_choppy_trap:
-    movement_mode_text = "⚠️ WARNING: TRAP / CHOPPY MARKET DETECTED (BALANCED SAFETY MODE)"
-    movement_desc = f"Erratic breakout pattern found. Switched to safety balance engine under [{session_name}]."
-  elif is_triple_num_3:
-    movement_mode_text = "🚨 EXTREME CHAOS: TRIPLE NUMBER DETECTED"
-    movement_desc = f"Powerful triple number logic triggered in trade sequence. Expected to continue current momentum size [{last_real_size}]."
-  elif has_repeated_num_path:
-    movement_mode_text = "⚠️ BREAKOUT TRAP: DOUBLE NUMBER DETECTED"
-    movement_desc = f"Double or repeated digit path detected. Executing strict adaptive sequence reversal to prevent false breakout trap."
-  elif is_dragon_5:
-    movement_mode_text = f"5-ROUND DEEP DRAGON DETECTED 🔥 ({last_real_size})"
-    movement_desc = "Deep momentum streak active. Following continuous trend vector."
-  elif is_dragon_3:
-    movement_mode_text = f"3-ROUND DRAGON FORMATION ({last_real_size})"
-    movement_desc = "Short-term streak active. Following momentum alignment."
-  elif is_zigzag_3:
-    movement_mode_text = "ZIG-ZAG OSCILLATION (1-1 PATTERN)"
-    movement_desc = "High frequency alternating pattern detected. Reversal signal active."
-  elif big_counts_total >= imbalance_threshold:
-    movement_mode_text = "GLOBAL MARKET BIG IMBALANCE DETECTED"
-    movement_desc = "Reversal probability peak reached. Switching signal to Small."
-  elif small_counts_total >= imbalance_threshold:
-    movement_mode_text = "GLOBAL MARKET SMALL IMBALANCE DETECTED"
-    movement_desc = "Reversal probability peak reached. Switching signal to Big."
-  elif is_step_121:
-    movement_mode_text = "1-2-1 ALTERNATING STEP PATTERN"
-    movement_desc = "Step-ratio frequency matched. Executing synchronized adaptive reversal."
-  elif is_mirror_6:
-    movement_mode_text = "SYMMETRY MIRROR PATTERN DETECTED"
-    movement_desc = "Historical sequence loop reflection active. Reversing at mirror axis."
-  elif is_double_chain_4:
-    movement_mode_text = "DOUBLE-CHAIN LOOP (2-2 PATTERN)"
-    movement_desc = "Twin alternation pattern (2-2 loop) detected in last 4 rounds. Executing structural sequence reversal."
-  else:
-    movement_mode_text = "BALANCED STATIC TREND"
-    movement_desc = f"Live cycles synced under [{session_name}]. Market pattern stable."
 
   # 4. Color Trend Engine & Strict Cross-Balance Color Synergy Locking
   green_numbers = [1, 3, 5, 7, 9]
@@ -506,6 +468,44 @@ if len(st.session_state.result_history) >= 1 or (live_df is not None and not liv
     base_calc = 88.50
 
   confidence_display = f"{min(round(base_calc, 2), 99.99)}%"
+
+  # 5. Explanatory Status Generation (Executed strictly AFTER next_shot is frozen)
+  if is_choppy_trap:
+    movement_mode_text = "⚠️ WARNING: TRAP / CHOPPY MARKET DETECTED (BALANCED SAFETY MODE)"
+    movement_desc = f"Erratic breakout pattern found. Unified voting matrix resolved to [{next_shot}] with collective weight analysis under [{session_name}]."
+  elif is_triple_num_3:
+    movement_mode_text = "🚨 EXTREME CHAOS: TRIPLE NUMBER DETECTED"
+    movement_desc = f"Powerful triple number logic triggered in trade sequence. Unified voting matrix finalized output [{next_shot}] based on weighted score dominance."
+  elif has_repeated_num_path:
+    movement_mode_text = "⚠️ BREAKOUT TRAP: DOUBLE NUMBER DETECTED"
+    movement_desc = f"Double or repeated digit path detected. Voting matrix successfully weighed active vectors to lock final decision [{next_shot}]."
+  elif is_dragon_5:
+    movement_mode_text = f"5-ROUND DEEP DRAGON DETECTED 🔥 ({last_real_size})"
+    movement_desc = f"Deep momentum streak active. Collective matrix weights aligned to support output [{next_shot}]."
+  elif is_dragon_3:
+    movement_mode_text = f"3-ROUND DRAGON FORMATION ({last_real_size})"
+    movement_desc = f"Short-term streak active. Voting architecture confirmed highest weight for [{next_shot}]."
+  elif is_zigzag_3:
+    movement_mode_text = "ZIG-ZAG OSCILLATION (1-1 PATTERN)"
+    movement_desc = f"High frequency alternating pattern detected. Alternation evidence successfully drove matrix decision to [{next_shot}]."
+  elif big_counts_total >= imbalance_threshold:
+    movement_mode_text = "GLOBAL MARKET BIG IMBALANCE DETECTED"
+    movement_desc = f"Reversal probability peak reached. Matrix evaluation weighted correction factors to output [{next_shot}]."
+  elif small_counts_total >= imbalance_threshold:
+    movement_mode_text = "GLOBAL MARKET SMALL IMBALANCE DETECTED"
+    movement_desc = f"Reversal probability peak reached. Matrix evaluation weighted correction factors to output [{next_shot}]."
+  elif is_step_121:
+    movement_mode_text = "1-2-1 ALTERNATING STEP PATTERN"
+    movement_desc = f"Step-ratio frequency matched. Collective evidence successfully favored [{next_shot}]."
+  elif is_mirror_6:
+    movement_mode_text = "SYMMETRY MIRROR PATTERN DETECTED"
+    movement_desc = f"Historical sequence loop reflection active. Voting matrix balanced reflection weights to output [{next_shot}]."
+  elif is_double_chain_4:
+    movement_mode_text = "DOUBLE-CHAIN LOOP (2-2 PATTERN)"
+    movement_desc = f"Twin alternation pattern detected in last 4 rounds. Voting weights converged on [{next_shot}]."
+  else:
+    movement_mode_text = "BALANCED STATIC TREND"
+    movement_desc = f"Live cycles synced under [{session_name}]. Market pattern stable; highest cumulative weight resolved to [{next_shot}]."
 
   st.session_state.pending_prediction = next_shot
   st.session_state.pending_color_prediction = predicted_color_code
