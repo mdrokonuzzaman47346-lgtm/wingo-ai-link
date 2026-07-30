@@ -305,7 +305,7 @@ if len(st.session_state.result_history) >= 1 or (live_df is not None and not liv
 
   current_period_last_digit = per_hist[-1] % 10 if per_hist else 0
 
-  # Historical Reference Baseline Alignment (No Period Matching)
+  # Historical Reference Baseline Alignment (No Period Matching) - Reference Only
   global_sizes_chain = ["SMALL" if x <= 4 else "BIG" for x in sheet_nums_global]
   macro_baseline_big_freq = global_sizes_chain.count("BIG") / len(global_sizes_chain) if global_sizes_chain else 0.5
 
@@ -401,10 +401,10 @@ if len(st.session_state.result_history) >= 1 or (live_df is not None and not liv
     alt_size = "SMALL" if last_real_size == "BIG" else "BIG"
     vote_weights[alt_size] += 3.0
 
-  # Module 3: Imbalance & Macro Baseline Reference Voting
-  if big_counts_total >= imbalance_threshold or macro_baseline_big_freq > 0.55:
+  # Module 3: Imbalance Voting (Live 30 Results as Primary Decision Source - Historical Baseline removed from direct voting condition)
+  if big_counts_total >= imbalance_threshold:
     vote_weights["SMALL"] += 2.0
-  if small_counts_total >= imbalance_threshold or macro_baseline_big_freq < 0.45:
+  if small_counts_total >= imbalance_threshold:
     vote_weights["BIG"] += 2.0
 
   # Module 4: Chaos / Trap / Repetition Safeguard Voting
