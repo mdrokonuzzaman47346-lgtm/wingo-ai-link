@@ -416,9 +416,12 @@ if len(st.session_state.result_history) >= 1 or (live_df is not None and not liv
 
   # Fallback Mathematical Trajectory Weighting if votes tie
   if vote_weights["BIG"] == vote_weights["SMALL"]:
-    omni_ai_weight = (old_num + new_num + current_period_last_digit + diff + (diff % 3)) % 2
-    default_shot = "BIG" if omni_ai_weight == 0 else "SMALL"
-    vote_weights[default_shot] += 0.5
+    recent_big = active_30_sizes[-10:].count("BIG")
+    recent_small = active_30_sizes[-10:].count("SMALL")
+    if recent_big > recent_small:
+      vote_weights["BIG"] += 0.5
+    elif recent_small > recent_big:
+      vote_weights["SMALL"] += 0.5
 
   # Determine final prediction output PURELY and strictly from the highest collective voting weight
   next_shot = max(vote_weights, key=vote_weights.get)
