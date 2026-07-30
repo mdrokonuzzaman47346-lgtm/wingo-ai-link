@@ -108,6 +108,51 @@ if "pending_prediction" not in st.session_state:
 if "pending_color_prediction" not in st.session_state:
   st.session_state.pending_color_prediction = None
 
+
+# --- STEP 2: JSON Payload Builder for Gemini AI ---
+def build_gemini_payload(
+    res_30,
+    per_30,
+    active_30_sizes,
+    freq_dict,
+    big_counts,
+    small_counts,
+    session_name,
+    movement_mode_text,
+    next_shot,
+    predicted_color_text,
+    dynamic_target_text,
+    confidence_display,
+    history_records_slice
+):
+  """Safely collects dashboard metrics and outputs into a structured JSON payload for Gemini."""
+  try:
+    color_history_chain = [get_number_color(n) for n in res_30]
+    payload = {
+        "last_30_results": res_30,
+        "last_30_period_ids": per_30,
+        "big_small_history": active_30_sizes,
+        "color_history": color_history_chain,
+        "historical_records": history_records_slice,
+        "pattern_analysis_result": movement_mode_text,
+        "trend_analysis": session_name,
+        "frequency_analysis": freq_dict,
+        "ratio_analysis": {
+            "big_count": big_counts,
+            "small_count": small_counts
+        },
+        "confidence_score": confidence_display,
+        "dashboard_recommendation": {
+            "direction": next_shot,
+            "predicted_color": predicted_color_text,
+            "target_numbers": dynamic_target_text
+        }
+    }
+    return payload
+  except Exception as e:
+    return {"error": str(e)}
+
+
 # --- STEP 1: Gemini API Safe Connector & Layer Initialization (google-generativeai) ---
 def get_gemini_ai_analysis(payload_data):
   """Independent Gemini AI Analysis Layer using google-generativeai with strict timeout and error handling."""
@@ -570,6 +615,23 @@ if len(st.session_state.result_history) >= 1 or (live_df is not None and not liv
 
   st.session_state.pending_prediction = next_shot
   st.session_state.pending_color_prediction = predicted_color_code
+
+  # Build Payload for Step 2 Verification
+  current_payload_snapshot = build_gemini_payload(
+      res_30=active_30_res,
+      per_30=active_30_per,
+      active_30_sizes=active_30_sizes,
+      freq_dict=[res_hist.count(i) for i in range(10)],
+      big_counts=big_counts_total,
+      small_counts=small_counts_total,
+      session_name=session_name,
+      movement_mode_text=movement_mode_text,
+      next_shot=next_shot,
+      predicted_color_text=predicted_color_text,
+      dynamic_target_text=dynamic_target_text,
+      confidence_display=confidence_display,
+      history_records_slice=st.session_state.history_records[-30:]
+  )
 
   st.markdown(
       f"### 🎯 STRATEGY SIGNAL: [ {next_shot} ] | CONFIDENCE: <span"
