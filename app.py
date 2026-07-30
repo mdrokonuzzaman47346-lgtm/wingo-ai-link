@@ -1,9 +1,6 @@
 import datetime
-import json
-import os
 import pandas as pd
 import streamlit as st
-import google.generativeai as genai
 
 # 1. Page Configuration
 st.set_page_config(
@@ -107,111 +104,6 @@ if "pending_prediction" not in st.session_state:
   st.session_state.pending_prediction = None
 if "pending_color_prediction" not in st.session_state:
   st.session_state.pending_color_prediction = None
-
-
-# --- STEP 2: JSON Payload Builder for Gemini AI ---
-def build_gemini_payload(
-    res_30,
-    per_30,
-    active_30_sizes,
-    freq_dict,
-    big_counts,
-    small_counts,
-    session_name,
-    movement_mode_text,
-    next_shot,
-    predicted_color_text,
-    dynamic_target_text,
-    confidence_display,
-    history_records_slice
-):
-  """Safely collects dashboard metrics and outputs into a structured JSON payload for Gemini."""
-  try:
-    color_history_chain = [get_number_color(n) for n in res_30]
-    payload = {
-        "last_30_results": res_30,
-        "last_30_period_ids": per_30,
-        "big_small_history": active_30_sizes,
-        "color_history": color_history_chain,
-        "historical_records": history_records_slice,
-        "pattern_analysis_result": movement_mode_text,
-        "trend_analysis": session_name,
-        "frequency_analysis": freq_dict,
-        "ratio_analysis": {
-            "big_count": big_counts,
-            "small_count": small_counts
-        },
-        "confidence_score": confidence_display,
-        "dashboard_recommendation": {
-            "direction": next_shot,
-            "predicted_color": predicted_color_text,
-            "target_numbers": dynamic_target_text
-        }
-    }
-    return payload
-  except Exception as e:
-    return {"error": str(e)}
-
-
-# --- STEP 3: Gemini API Integration Layer (google-generativeai, Secrets Only, 10s Timeout, Safe Error Handling) ---
-def get_gemini_ai_analysis(payload_data):
-  """Integrates Gemini API call using the JSON payload with Streamlit Secrets, 10s timeout, and safe error handling."""
-  try:
-    # 8. Read the Gemini API key from Streamlit Secrets only
-    if "GEMINI_API_KEY" in st.secrets:
-      api_key = st.secrets["GEMINI_API_KEY"]
-    else:
-      return {"status": "Offline", "error": "API Key not found in Streamlit Secrets."}
-
-    genai.configure(api_key=api_key)
-    
-    prompt = f"""
-    You are an expert Senior AI Market Analysis Engine. Analyze the following Wingo live market data payload independently.
-    Perform deep technical reasoning regarding Market Structure, Pattern Recognition, Trend Continuation/Reversal, Risk, and Confidence.
-    
-    Payload Data:
-    {json.dumps(payload_data)}
-
-    Return ONLY valid JSON matching this exact schema, with no markdown formatting or extra text:
-    {{
-      "recommendation": "",
-      "confidence": "",
-      "risk": "",
-      "trend": "",
-      "probability": "",
-      "reasoning": "",
-      "top_reasons": [],
-      "pattern_summary": "",
-      "historical_similarity": "",
-      "dashboard_agreement": "",
-      "final_summary": ""
-    }}
-    """
-
-    model = genai.GenerativeModel(
-        model_name="gemini-1.5-flash",
-        generation_config={"temperature": 0.2, "response_mime_type": "application/json"}
-    )
-    
-    # 9. Add proper timeout (10 seconds maximum) & 12. Safely receive raw response
-    import concurrent.futures
-    with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
-      future = executor.submit(model.generate_content, prompt)
-      try:
-        response = future.result(timeout=10.0)
-      except concurrent.futures.TimeoutError:
-        return {"status": "Offline", "error": "Gemini API request timed out after 10 seconds."}
-
-    if response and response.text:
-      # 11. Do NOT parse or display the AI response yet (returning raw reference status for Step 3)
-      return {"status": "Online", "raw_response": response.text}
-    else:
-      return {"status": "Offline", "error": "Empty response from Gemini API."}
-
-  except Exception as e:
-    # 10. Handle API errors safely so the dashboard continues working if Gemini fails
-    return {"status": "Offline", "error": str(e)}
-
 
 # 2. Global AI Core Connection Status Panel
 st.markdown("### 🌐 Global AI Core Connection Status")
@@ -509,7 +401,7 @@ if len(st.session_state.result_history) >= 1 or (live_df is not None and not liv
     alt_size = "SMALL" if last_real_size == "BIG" else "BIG"
     vote_weights[alt_size] += 3.0
 
-  # Module 3: Imbalance Voting (Live 30 Results as Primary Decision Source)
+  # Module 3: Imbalance Voting (Live 30 Results as Primary Decision Source - Historical Baseline removed from direct voting condition)
   if big_counts_total >= imbalance_threshold:
     vote_weights["SMALL"] += 2.0
   if small_counts_total >= imbalance_threshold:
@@ -617,26 +509,6 @@ if len(st.session_state.result_history) >= 1 or (live_df is not None and not liv
 
   st.session_state.pending_prediction = next_shot
   st.session_state.pending_color_prediction = predicted_color_code
-
-  # Build Payload for Gemini Integration
-  current_payload_snapshot = build_gemini_payload(
-      res_30=active_30_res[-30:],
-      per_30=active_30_per[-30:],
-      active_30_sizes=active_30_sizes[-30:],
-      freq_dict=[res_hist.count(i) for i in range(10)],
-      big_counts=big_counts_total,
-      small_counts=small_counts_total,
-      session_name=session_name,
-      movement_mode_text=movement_mode_text,
-      next_shot=next_shot,
-      predicted_color_text=predicted_color_text,
-      dynamic_target_text=dynamic_target_text,
-      confidence_display=confidence_display,
-      history_records_slice=st.session_state.history_records[-30:]
-  )
-
-  # Call Gemini API and safely receive raw response (Do not parse/display yet per Step 3 requirements)
-  gemini_api_response_status = get_gemini_ai_analysis(current_payload_snapshot)
 
   st.markdown(
       f"### 🎯 STRATEGY SIGNAL: [ {next_shot} ] | CONFIDENCE: <span"
