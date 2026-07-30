@@ -153,9 +153,9 @@ def build_gemini_payload(
     return {"error": str(e)}
 
 
-# --- STEP 3: Gemini API Integration Layer (Updated Model) ---
+# --- STEP 3: Gemini API Integration Layer (Automatic Model Discovery) ---
 def get_gemini_ai_analysis(payload_data):
-  """Integrates Gemini API call using the JSON payload with Streamlit Secrets, supported model, 10s timeout, and safe error handling."""
+  """Integrates Gemini API call using dynamic model discovery with Streamlit Secrets, 10s timeout, and safe offline fallback."""
   try:
     if "GEMINI_API_KEY" in st.secrets:
       api_key = st.secrets["GEMINI_API_KEY"]
@@ -163,6 +163,19 @@ def get_gemini_ai_analysis(payload_data):
       return {"status": "Offline", "error": "API Key not found in Streamlit Secrets."}
 
     genai.configure(api_key=api_key)
+    
+    # Automatically list and find the first model supporting generateContent
+    selected_model_name = None
+    try:
+      for m in genai.list_models():
+        if "generateContent" in m.supported_generation_methods:
+          selected_model_name = m.name
+          break
+    except Exception:
+      pass
+
+    if not selected_model_name:
+      return {"status": "Offline", "error": "No compatible generateContent model found."}
     
     prompt = f"""
     You are an expert Senior AI Market Analysis Engine. Analyze the following Wingo live market data payload independently.
@@ -187,9 +200,8 @@ def get_gemini_ai_analysis(payload_data):
     }}
     """
 
-    # Updated model name to standard supported gemini-pro / gemini-1.5-pro for the SDK
     model = genai.GenerativeModel(
-        model_name="gemini-pro",
+        model_name=selected_model_name,
         generation_config={"temperature": 0.2}
     )
     
