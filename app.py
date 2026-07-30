@@ -153,11 +153,10 @@ def build_gemini_payload(
     return {"error": str(e)}
 
 
-# --- STEP 3: Gemini API Integration Layer (google-generativeai, Secrets Only, 10s Timeout, Safe Error Handling) ---
+# --- STEP 3: Gemini API Integration Layer ---
 def get_gemini_ai_analysis(payload_data):
   """Integrates Gemini API call using the JSON payload with Streamlit Secrets, 10s timeout, and safe error handling."""
   try:
-    # 8. Read the Gemini API key from Streamlit Secrets only
     if "GEMINI_API_KEY" in st.secrets:
       api_key = st.secrets["GEMINI_API_KEY"]
     else:
@@ -193,7 +192,6 @@ def get_gemini_ai_analysis(payload_data):
         generation_config={"temperature": 0.2, "response_mime_type": "application/json"}
     )
     
-    # 9. Add proper timeout (10 seconds maximum) & 12. Safely receive raw response
     import concurrent.futures
     with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
       future = executor.submit(model.generate_content, prompt)
@@ -203,14 +201,85 @@ def get_gemini_ai_analysis(payload_data):
         return {"status": "Offline", "error": "Gemini API request timed out after 10 seconds."}
 
     if response and response.text:
-      # 11. Do NOT parse or display the AI response yet (returning raw reference status for Step 3)
       return {"status": "Online", "raw_response": response.text}
     else:
       return {"status": "Offline", "error": "Empty response from Gemini API."}
 
   except Exception as e:
-    # 10. Handle API errors safely so the dashboard continues working if Gemini fails
     return {"status": "Offline", "error": str(e)}
+
+
+# --- STEP 4: Parse & Render Gemini Response UI ---
+def parse_and_render_gemini_response(api_result):
+  """Parses raw Gemini JSON response and renders the professional AI Insights UI panel."""
+  if not api_result or api_result.get("status") == "Offline":
+    error_msg = api_result.get("error", "Unknown error") if api_result else "Service unavailable"
+    st.markdown(
+        f"""
+        <div style='background-color:#1e1b18; padding:15px; border-left:6px solid #e74c3c; border-radius:6px; margin-top:15px; margin-bottom:15px;'>
+            <h4 style='color:#e74c3c; margin-top:0px; margin-bottom:5px;'>⚠️ Gemini AI Core Status: Offline / Fallback Active</h4>
+            <p style='color:#cbd5e1; font-size:14px; margin:0px;'>Reason: {error_msg}. Dashboard is operating normally on local matrix engines.</p>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+    return
+
+  try:
+    raw_text = api_result.get("raw_response", "{}")
+    cleaned_text = raw_text.strip()
+    if cleaned_text.startswith("```json"):
+      cleaned_text = cleaned_text[7:]
+    if cleaned_text.endswith("```"):
+      cleaned_text = cleaned_text[:-3]
+    
+    ai_data = json.loads(cleaned_text.strip())
+
+    rec = ai_data.get("recommendation", "N/A")
+    conf = ai_data.get("confidence", "N/A")
+    risk = ai_data.get("risk", "N/A")
+    trend = ai_data.get("trend", "N/A")
+    reasoning = ai_data.get("reasoning", "N/A")
+    top_reasons = ai_data.get("top_reasons", [])
+    final_summary = ai_data.get("final_summary", "N/A")
+
+    reasons_html = "".join([f"<li>{r}</li>" for r in top_reasons]) if top_reasons else "<li>No specific factors listed.</li>"
+
+    st.markdown("### 🤖 Gemini Advanced AI Institutional Insights")
+    st.markdown(
+        f"""
+        <div style='background-color:#0f172a; padding:18px; border:2px solid #38bdf8; border-radius:8px; margin-top:10px; margin-bottom:20px;'>
+            <div style='display:flex; justify-content:space-between; margin-bottom:12px;'>
+                <span style='color:#38bdf8; font-size:16px; font-weight:bold;'>📌 AI Recommendation: <span style='color:#2ecc71;'>{rec}</span></span>
+                <span style='color:#f1c40f; font-size:16px; font-weight:bold;'>⚡ AI Confidence: {conf}</span>
+            </div>
+            <div style='display:flex; justify-content:space-between; margin-bottom:12px;'>
+                <span style='color:#e2e8f0; font-size:14px;'>🛡️ Risk Assessment: <span style='color:#e74c3c; font-weight:bold;'>{risk}</span></span>
+                <span style='color:#e2e8f0; font-size:14px;'>📈 Market Trend: <span style='color:#3498db; font-weight:bold;'>{trend}</span></span>
+            </div>
+            <hr style='border-color:#1e293b; margin:10px 0px;'>
+            <p style='color:#f8fafc; font-size:15px; margin-bottom:10px;'><b>🧠 Institutional Reasoning:</b> {reasoning}</p>
+            <p style='color:#e2e8f0; font-size:14px; margin-bottom:5px;'><b>🔍 Key Core Factors:</b></p>
+            <ul style='color:#94a3b8; font-size:14px; margin-top:0px; margin-bottom:12px;'>
+                {reasons_html}
+            </ul>
+            <div style='background-color:#1e293b; padding:10px; border-radius:6px; border-left:4px solid #2ecc71;'>
+                <span style='color:#2ecc71; font-size:13px; font-weight:bold;'>💡 FINAL AI SYNTHESIS SUMMARY:</span>
+                <p style='color:#f8fafc; font-size:14px; margin:4px 0px 0px 0px;'>{final_summary}</p>
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+  except Exception as e:
+    st.markdown(
+        f"""
+        <div style='background-color:#1e1b18; padding:15px; border-left:6px solid #f1c40f; border-radius:6px;'>
+            <p style='color:#f1c40f; margin:0px;'>⚠️ AI Response Parsing Notice: Received response could not be fully parsed ({str(e)}). Dashboard operating normally.</p>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
 
 
 # 2. Global AI Core Connection Status Panel
@@ -402,22 +471,18 @@ if len(st.session_state.result_history) >= 1 or (live_df is not None and not liv
   new_num = res_hist[-1]
   diff = abs(old_num - new_num)
   
-  # Chronological Stack & Sliding 30-Round Pair Matrix Window
   active_30_res = res_hist[-30:] if len(res_hist) >= 30 else res_hist
   active_30_per = per_hist[-30:] if len(per_hist) >= 30 else per_hist
   
-  # Unify Pair Records (Period ID + Result Number) chronological stack validation
   pair_records_30 = list(zip(active_30_per, active_30_res))
   validated_res_30 = [num for _, num in pair_records_30]
   active_30_sizes = ["SMALL" if n <= 4 else "BIG" for n in validated_res_30]
 
   current_period_last_digit = per_hist[-1] % 10 if per_hist else 0
 
-  # Historical Reference Baseline Alignment (No Period Matching) - Reference Only
   global_sizes_chain = ["SMALL" if x <= 4 else "BIG" for x in sheet_nums_global]
   macro_baseline_big_freq = global_sizes_chain.count("BIG") / len(global_sizes_chain) if global_sizes_chain else 0.5
 
-  # 1. Time Session Volatility Engine
   current_hour = datetime.datetime.now().hour
   if 0 <= current_hour < 6:
     session_name = "NIGHT STABLE SESSION"
@@ -432,7 +497,6 @@ if len(st.session_state.result_history) >= 1 or (live_df is not None and not liv
     session_name = "EVENING PEAK SESSION"
     session_volatility_boost = 1.3
 
-  # 2. Independent Background Analytical Modules Computation
   last_3_sizes = active_30_sizes[-3:] if len(active_30_sizes) >= 3 else active_30_sizes
   last_5_sizes = active_30_sizes[-5:] if len(active_30_sizes) >= 5 else active_30_sizes
   last_4_sizes = active_30_sizes[-4:] if len(active_30_sizes) >= 4 else active_30_sizes
@@ -482,7 +546,6 @@ if len(st.session_state.result_history) >= 1 or (live_df is not None and not liv
     else:
       break
       
-  # Calibrate Momentum Decay Factor Mandate
   momentum_decay_factor = max(0.8, 1.0 - (streak_count * 0.03))
 
   period_digit_match_count = per_hist.count(per_hist[-1]) if per_hist else 1
@@ -494,44 +557,36 @@ if len(st.session_state.result_history) >= 1 or (live_df is not None and not liv
 
   last_real_size = active_30_sizes[-1]
 
-  # 3. Unified Voting Matrix & Parallel Analytical Evidence Weighting System
   vote_weights = {"BIG": 0.0, "SMALL": 0.0}
 
-  # Module 1: Dragon / Streak Voting
   if is_dragon_5 or is_dragon_3:
     vote_weights[last_real_size] += 3.5
   else:
     opp_size = "SMALL" if last_real_size == "BIG" else "BIG"
     vote_weights[opp_size] += 1.0
 
-  # Module 2: Zig-Zag / Alternation Voting
   if is_zigzag_3 or is_step_121 or is_double_chain_4 or is_mirror_6:
     alt_size = "SMALL" if last_real_size == "BIG" else "BIG"
     vote_weights[alt_size] += 3.0
 
-  # Module 3: Imbalance Voting (Live 30 Results as Primary Decision Source)
   if big_counts_total >= imbalance_threshold:
     vote_weights["SMALL"] += 2.0
   if small_counts_total >= imbalance_threshold:
     vote_weights["BIG"] += 2.0
 
-  # Module 4: Chaos / Trap / Repetition Safeguard Voting
   if is_choppy_trap or has_repeated_num_path:
     rev_size = "SMALL" if last_real_size == "BIG" else "BIG"
     vote_weights[rev_size] += 2.5
   if is_triple_num_3:
     vote_weights[last_real_size] += 4.0
 
-  # Fallback Mathematical Trajectory Weighting if votes tie
   if vote_weights["BIG"] == vote_weights["SMALL"]:
     omni_ai_weight = (old_num + new_num + current_period_last_digit + diff + (diff % 3)) % 2
     default_shot = "BIG" if omni_ai_weight == 0 else "SMALL"
     vote_weights[default_shot] += 0.5
 
-  # Determine final prediction output PURELY and strictly from the highest collective voting weight
   next_shot = max(vote_weights, key=vote_weights.get)
 
-  # 4. Color Trend Engine & Strict Cross-Balance Color Synergy Locking
   green_numbers = [1, 3, 5, 7, 9]
   red_numbers = [0, 2, 4, 6, 8]
 
@@ -545,7 +600,6 @@ if len(st.session_state.result_history) >= 1 or (live_df is not None and not liv
   else:
     predicted_color_code = "GREEN" if next_shot == "BIG" else "RED"
 
-  # Enforce strict Cross-Balance Color Synergy Locking
   if next_shot == "BIG" and predicted_color_code == "RED" and new_num not in [6, 8]:
     predicted_color_code = "GREEN"
   elif next_shot == "SMALL" and predicted_color_code == "GREEN" and new_num not in [1, 3]:
@@ -560,7 +614,6 @@ if len(st.session_state.result_history) >= 1 or (live_df is not None and not liv
 
   dynamic_target_text = ", ".join(map(str, target_nums_list))
 
-  # Normalized Confidence Index Formula Mandate
   base_calc = (
       96.20
       + (diff * 0.25)
@@ -577,7 +630,6 @@ if len(st.session_state.result_history) >= 1 or (live_df is not None and not liv
 
   confidence_display = f"{min(round(base_calc, 2), 99.99)}%"
 
-  # 5. Explanatory Status Generation (Executed strictly AFTER next_shot is frozen)
   if is_choppy_trap:
     movement_mode_text = "⚠️ WARNING: TRAP / CHOPPY MARKET DETECTED (BALANCED SAFETY MODE)"
     movement_desc = f"Erratic breakout pattern found. Unified voting matrix resolved to [{next_shot}] with collective weight analysis under [{session_name}]."
@@ -618,7 +670,6 @@ if len(st.session_state.result_history) >= 1 or (live_df is not None and not liv
   st.session_state.pending_prediction = next_shot
   st.session_state.pending_color_prediction = predicted_color_code
 
-  # Build Payload for Gemini Integration
   current_payload_snapshot = build_gemini_payload(
       res_30=active_30_res[-30:],
       per_30=active_30_per[-30:],
@@ -635,8 +686,9 @@ if len(st.session_state.result_history) >= 1 or (live_df is not None and not liv
       history_records_slice=st.session_state.history_records[-30:]
   )
 
-  # Call Gemini API and safely receive raw response (Do not parse/display yet per Step 3 requirements)
+  # Call Gemini API & Parse/Render Response (Step 4 Integration)
   gemini_api_response_status = get_gemini_ai_analysis(current_payload_snapshot)
+  parse_and_render_gemini_response(gemini_api_response_status)
 
   st.markdown(
       f"### 🎯 STRATEGY SIGNAL: [ {next_shot} ] | CONFIDENCE: <span"
