@@ -153,9 +153,9 @@ def build_gemini_payload(
     return {"error": str(e)}
 
 
-# --- STEP 3: Gemini API Integration Layer ---
+# --- STEP 3: Gemini API Integration Layer (Updated Model) ---
 def get_gemini_ai_analysis(payload_data):
-  """Integrates Gemini API call using the JSON payload with Streamlit Secrets, 10s timeout, and safe error handling."""
+  """Integrates Gemini API call using the JSON payload with Streamlit Secrets, supported model, 10s timeout, and safe error handling."""
   try:
     if "GEMINI_API_KEY" in st.secrets:
       api_key = st.secrets["GEMINI_API_KEY"]
@@ -187,9 +187,10 @@ def get_gemini_ai_analysis(payload_data):
     }}
     """
 
+    # Updated model name to standard supported gemini-pro / gemini-1.5-pro for the SDK
     model = genai.GenerativeModel(
-        model_name="gemini-1.5-flash",
-        generation_config={"temperature": 0.2, "response_mime_type": "application/json"}
+        model_name="gemini-pro",
+        generation_config={"temperature": 0.2}
     )
     
     import concurrent.futures
