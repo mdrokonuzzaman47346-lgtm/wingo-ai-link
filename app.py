@@ -3,8 +3,7 @@ import json
 import os
 import pandas as pd
 import streamlit as st
-from google import genai
-from google.genai import types
+import google.generativeai as genai
 
 # 1. Page Configuration
 st.set_page_config(
@@ -109,11 +108,10 @@ if "pending_prediction" not in st.session_state:
 if "pending_color_prediction" not in st.session_state:
   st.session_state.pending_color_prediction = None
 
-# --- STEP 1: Gemini API Safe Connector & Layer Initialization ---
+# --- STEP 1: Gemini API Safe Connector & Layer Initialization (google-generativeai) ---
 def get_gemini_ai_analysis(payload_data):
-  """Independent Gemini AI Analysis Layer with strict timeout, error handling, and JSON parsing."""
+  """Independent Gemini AI Analysis Layer using google-generativeai with strict timeout and error handling."""
   try:
-    # Retrieve API key securely from Streamlit Secrets or Environment Variables
     api_key = None
     if "GEMINI_API_KEY" in st.secrets:
       api_key = st.secrets["GEMINI_API_KEY"]
@@ -125,7 +123,7 @@ def get_gemini_ai_analysis(payload_data):
     if not api_key:
       return {"status": "Offline", "error": "API Key not found in Streamlit Secrets."}
 
-    client = genai.Client(api_key=api_key)
+    genai.configure(api_key=api_key)
     
     prompt = f"""
     You are an expert Senior AI Market Analysis Engine. Analyze the following Wingo live market data payload independently.
@@ -150,15 +148,12 @@ def get_gemini_ai_analysis(payload_data):
     }}
     """
 
-    # Call Gemini model with strict token optimization and 10 seconds timeout safeguard
-    response = client.models.generate_content(
-        model="gemini-2.5-flash",
-        contents=prompt,
-        config=types.GenerateContentConfig(
-            temperature=0.2,
-            response_mime_type="application/json"
-        )
+    model = genai.GenerativeModel(
+        model_name="gemini-1.5-flash",
+        generation_config={"temperature": 0.2, "response_mime_type": "application/json"}
     )
+    
+    response = model.generate_content(prompt)
 
     if response and response.text:
       parsed_json = json.loads(response.text)
