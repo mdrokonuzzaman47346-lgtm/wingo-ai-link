@@ -5,4 +5,3 @@ lightgbm
 scikit-learn
 openpyxl
 pytz
-google-generativeai==0.8.5
