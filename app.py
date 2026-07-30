@@ -261,6 +261,8 @@ with col2:
 
 # 4. Optimized Architectural Backend Analysis Engine
 sheet_nums_global = []
+sheet_sizes_global = []
+sheet_colors_global = []
 if live_df is not None and not live_df.empty:
   try:
     col_num_global = next(
@@ -277,8 +279,54 @@ if live_df is not None and not live_df.empty:
         .astype(int)
         .tolist()[::-1]
     )
+    sheet_sizes_global = ["SMALL" if n <= 4 else "BIG" for n in sheet_nums_global]
+    sheet_colors_global = [get_number_color(n) for n in sheet_nums_global]
   except Exception:
     pass
+
+# ==========================================
+# HISTORICAL EVIDENCE ENGINE (BACKEND ONLY)
+# ==========================================
+def compute_historical_evidence_score(current_res_seq, current_size_seq, current_color_seq):
+    if not sheet_nums_global or len(current_res_seq) < 3:
+        return {"BIG": 0.0, "SMALL": 0.0, "score": 0.0, "frequency": 0, "similarity": 0.0}
+    
+    sub_len = min(5, len(current_res_seq))
+    target_sub_nums = current_res_seq[-sub_len:]
+    target_sub_sizes = current_size_seq[-sub_len:]
+    target_sub_colors = current_color_seq[-sub_len:]
+    
+    match_count = 0
+    pattern_success_big = 0
+    pattern_success_small = 0
+    total_matches_found = 0
+    
+    window_step = max(1, len(sheet_nums_global) - sub_len)
+    for i in range(window_step):
+        hist_sub_nums = sheet_nums_global[i:i+sub_len]
+        hist_sub_sizes = sheet_sizes_global[i:i+sub_len]
+        hist_sub_colors = sheet_colors_global[i:i+sub_len]
+        
+        if len(hist_sub_nums) == sub_len:
+            if hist_sub_nums == target_sub_nums or (hist_sub_sizes == target_sub_sizes and hist_sub_colors == target_sub_colors):
+                total_matches_found += 1
+                if i + sub_len < len(sheet_sizes_global):
+                    next_actual_outcome = sheet_sizes_global[i + sub_len]
+                    if next_actual_outcome == "BIG":
+                        pattern_success_big += 1
+                    else:
+                        pattern_success_small += 1
+
+    big_evidence_score = float(pattern_success_big)
+    small_evidence_score = float(pattern_success_small)
+    similarity_metric = float(total_matches_found) / float(max(1, len(sheet_nums_global)))
+    
+    return {
+        "BIG": big_evidence_score,
+        "SMALL": small_evidence_score,
+        "frequency": total_matches_found,
+        "similarity": similarity_metric
+    }
 
 if len(st.session_state.result_history) >= 1 or (live_df is not None and not live_df.empty):
   st.write("---")
@@ -302,6 +350,7 @@ if len(st.session_state.result_history) >= 1 or (live_df is not None and not liv
   pair_records_30 = list(zip(active_30_per, active_30_res))
   validated_res_30 = [num for _, num in pair_records_30]
   active_30_sizes = ["SMALL" if n <= 4 else "BIG" for n in validated_res_30]
+  active_30_colors = [get_number_color(n) for n in validated_res_30]
 
   current_period_last_digit = per_hist[-1] % 10 if per_hist else 0
 
@@ -401,7 +450,7 @@ if len(st.session_state.result_history) >= 1 or (live_df is not None and not liv
     alt_size = "SMALL" if last_real_size == "BIG" else "BIG"
     vote_weights[alt_size] += 3.0
 
-  # Module 3: Imbalance Voting (Live 30 Results as Primary Decision Source - Historical Baseline removed from direct voting condition)
+  # Module 3: Imbalance Voting
   if big_counts_total >= imbalance_threshold:
     vote_weights["SMALL"] += 2.0
   if small_counts_total >= imbalance_threshold:
@@ -413,6 +462,17 @@ if len(st.session_state.result_history) >= 1 or (live_df is not None and not liv
     vote_weights[rev_size] += 2.5
   if is_triple_num_3:
     vote_weights[last_real_size] += 4.0
+
+  # Decision Support Layer Integration (Historical Evidence Engine Consultation)
+  live_signal_diff = abs(vote_weights["BIG"] - vote_weights["SMALL"])
+  is_live_signal_weak = live_signal_diff < 1.5
+
+  hist_evidence = compute_historical_evidence_score(validated_res_30, active_30_sizes, active_30_colors)
+  if is_live_signal_weak and hist_evidence["frequency"] > 0:
+      if hist_evidence["BIG"] > hist_evidence["SMALL"]:
+          vote_weights["BIG"] += 1.2
+      elif hist_evidence["SMALL"] > hist_evidence["BIG"]:
+          vote_weights["SMALL"] += 1.2
 
   # Fallback Mathematical Trajectory Weighting if votes tie
   if vote_weights["BIG"] == vote_weights["SMALL"]:
