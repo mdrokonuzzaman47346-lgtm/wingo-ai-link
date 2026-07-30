@@ -153,9 +153,9 @@ def build_gemini_payload(
     return {"error": str(e)}
 
 
-# --- STEP 3: Gemini API Integration Layer (Automatic Model Discovery) ---
+# --- STEP 3: Gemini API Integration Layer (Automatic Fallback Model Selection) ---
 def get_gemini_ai_analysis(payload_data):
-  """Integrates Gemini API call using dynamic model discovery with Streamlit Secrets, 10s timeout, and safe offline fallback."""
+  """Integrates Gemini API call with automatic dynamic model discovery, fallback iteration for 404s, timeout, and safe error handling."""
   try:
     if "GEMINI_API_KEY" in st.secrets:
       api_key = st.secrets["GEMINI_API_KEY"]
@@ -164,19 +164,17 @@ def get_gemini_ai_analysis(payload_data):
 
     genai.configure(api_key=api_key)
     
-    # Automatically list and find the first model supporting generateContent
-    selected_model_name = None
+    compatible_models = []
     try:
       for m in genai.list_models():
         if "generateContent" in m.supported_generation_methods:
-          selected_model_name = m.name
-          break
+          compatible_models.append(m.name)
     except Exception:
       pass
 
-    if not selected_model_name:
-      return {"status": "Offline", "error": "No compatible generateContent model found."}
-    
+    if not compatible_models:
+      return {"status": "Offline", "error": "No compatible generateContent models found."}
+
     prompt = f"""
     You are an expert Senior AI Market Analysis Engine. Analyze the following Wingo live market data payload independently.
     Perform deep technical reasoning regarding Market Structure, Pattern Recognition, Trend Continuation/Reversal, Risk, and Confidence.
@@ -200,23 +198,32 @@ def get_gemini_ai_analysis(payload_data):
     }}
     """
 
-    model = genai.GenerativeModel(
-        model_name=selected_model_name,
-        generation_config={"temperature": 0.2}
-    )
-    
-    import concurrent.futures
-    with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
-      future = executor.submit(model.generate_content, prompt)
-      try:
-        response = future.result(timeout=10.0)
-      except concurrent.futures.TimeoutError:
-        return {"status": "Offline", "error": "Gemini API request timed out after 10 seconds."}
+    response = None
+    last_error = None
 
-    if response and response.text:
-      return {"status": "Online", "raw_response": response.text}
-    else:
-      return {"status": "Offline", "error": "Empty response from Gemini API."}
+    for model_name in compatible_models:
+      try:
+        model = genai.GenerativeModel(
+            model_name=model_name,
+            generation_config={"temperature": 0.2}
+        )
+        
+        import concurrent.futures
+        with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
+          future = executor.submit(model.generate_content, prompt)
+          try:
+            response = future.result(timeout=10.0)
+          except concurrent.futures.TimeoutError:
+            last_error = "Gemini API request timed out after 10 seconds."
+            continue
+
+        if response and response.text:
+          return {"status": "Online", "raw_response": response.text}
+      except Exception as e:
+        last_error = str(e)
+        continue
+
+    return {"status": "Offline", "error": last_error or "All compatible models failed or returned 404."}
 
   except Exception as e:
     return {"status": "Offline", "error": str(e)}
