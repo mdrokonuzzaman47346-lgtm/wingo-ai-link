@@ -1,6 +1,10 @@
 import datetime
+import json
+import os
 import pandas as pd
 import streamlit as st
+from google import genai
+from google.genai import types
 
 # 1. Page Configuration
 st.set_page_config(
@@ -104,6 +108,68 @@ if "pending_prediction" not in st.session_state:
   st.session_state.pending_prediction = None
 if "pending_color_prediction" not in st.session_state:
   st.session_state.pending_color_prediction = None
+
+# --- STEP 1: Gemini API Safe Connector & Layer Initialization ---
+def get_gemini_ai_analysis(payload_data):
+  """Independent Gemini AI Analysis Layer with strict timeout, error handling, and JSON parsing."""
+  try:
+    # Retrieve API key securely from Streamlit Secrets or Environment Variables
+    api_key = None
+    if "GEMINI_API_KEY" in st.secrets:
+      api_key = st.secrets["GEMINI_API_KEY"]
+    elif "GOOGLE_API_KEY" in st.secrets:
+      api_key = st.secrets["GOOGLE_API_KEY"]
+    else:
+      api_key = os.environ.get("GEMINI_API_KEY") or os.environ.get("GOOGLE_API_KEY")
+
+    if not api_key:
+      return {"status": "Offline", "error": "API Key not found in Streamlit Secrets."}
+
+    client = genai.Client(api_key=api_key)
+    
+    prompt = f"""
+    You are an expert Senior AI Market Analysis Engine. Analyze the following Wingo live market data payload independently.
+    Perform deep technical reasoning regarding Market Structure, Pattern Recognition, Trend Continuation/Reversal, Risk, and Confidence.
+    
+    Payload Data:
+    {json.dumps(payload_data)}
+
+    Return ONLY valid JSON matching this exact schema, with no markdown formatting or extra text:
+    {{
+      "recommendation": "",
+      "confidence": "",
+      "risk": "",
+      "trend": "",
+      "probability": "",
+      "reasoning": "",
+      "top_reasons": [],
+      "pattern_summary": "",
+      "historical_similarity": "",
+      "dashboard_agreement": "",
+      "final_summary": ""
+    }}
+    """
+
+    # Call Gemini model with strict token optimization and 10 seconds timeout safeguard
+    response = client.models.generate_content(
+        model="gemini-2.5-flash",
+        contents=prompt,
+        config=types.GenerateContentConfig(
+            temperature=0.2,
+            response_mime_type="application/json"
+        )
+    )
+
+    if response and response.text:
+      parsed_json = json.loads(response.text)
+      parsed_json["status"] = "Online"
+      return parsed_json
+    else:
+      return {"status": "Offline", "error": "Empty response from Gemini API."}
+
+  except Exception as e:
+    return {"status": "Offline", "error": str(e)}
+
 
 # 2. Global AI Core Connection Status Panel
 st.markdown("### 🌐 Global AI Core Connection Status")
