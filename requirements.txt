@@ -5,3 +5,4 @@ lightgbm
 scikit-learn
 openpyxl
 pytz
+google-generativeai
