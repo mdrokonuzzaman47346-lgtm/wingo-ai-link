@@ -85,7 +85,7 @@ def load_google_sheet_data():
 
 live_df = load_google_sheet_data()
 total_records_count = (
-    len(live_df) if live_df is not None and not live_df.empty else 0
+    len(live_df) if use_google_sheet and live_df is not None and not live_df.empty else 0
 )
 
 
@@ -163,16 +163,28 @@ with c5:
   )
 
 # 2.1 HISTORICAL DATA & BACKEND STATUS
-st.markdown(
-    f"""
+if use_google_sheet:
+  st.markdown(
+      f"""
 <div style='background-color:#0f172a; padding:12px; border:1px solid #38bdf8; border-left:6px solid #a855f7; border-radius:6px; margin-top:8px; margin-bottom:12px;'>
     <span style='color:#e2e8f0; font-size:14px; font-weight:bold;'>📊 GOOGLE SHEET LIVE SYNC ({total_records_count:,} HISTORICAL PERIODS) + TRIPLE-LOCK ENGINE:</span> 
-    <span style='color:#4ade80; font-weight:bold;'> FULLY INTEGRATED & RUNNING IN BACKEND ⚡</span><br>
+    <span style='color:#4ade80; font-weight:bold;'> 🟢 GOOGLE SHEET ENABLED ⚡</span><br>
     <small style='color:#94a3b8;'>Time-Session Volatility, Color Synergy Loop & Dynamic Status-Signal Synchronization with Advanced Multi-Pattern & Strict Chronological Order Fix.</small>
 </div>
 """,
-    unsafe_allow_html=True,
-)
+      unsafe_allow_html=True,
+  )
+else:
+  st.markdown(
+      f"""
+<div style='background-color:#0f172a; padding:12px; border:1px solid #ef4444; border-left:6px solid #ef4444; border-radius:6px; margin-top:8px; margin-bottom:12px;'>
+    <span style='color:#e2e8f0; font-size:14px; font-weight:bold;'>📊 GOOGLE SHEET LIVE SYNC ({total_records_count:,} HISTORICAL PERIODS) + TRIPLE-LOCK ENGINE:</span> 
+    <span style='color:#ef4444; font-weight:bold;'> 🔴 GOOGLE SHEET DISABLED ❌</span><br>
+    <small style='color:#94a3b8;'>USING LOCAL / MANUAL DATA ONLY. Time-Session Volatility, Color Synergy Loop & Dynamic Status-Signal Synchronization with Advanced Multi-Pattern & Strict Chronological Order Fix.</small>
+</div>
+""",
+      unsafe_allow_html=True,
+  )
 
 st.write("---")
 col1, col2 = st.columns(2)
@@ -268,7 +280,7 @@ with col2:
 
 # 4. Strategy & Advanced Market Engine Core (Synchronized & Fixed)
 sheet_nums_global = []
-if live_df is not None and not live_df.empty:
+if use_google_sheet and live_df is not None and not live_df.empty:
   try:
     col_num_global = next(
         (
@@ -287,7 +299,7 @@ if live_df is not None and not live_df.empty:
   except Exception:
     pass
 
-if len(st.session_state.result_history) >= 1 or (live_df is not None and not live_df.empty):
+if len(st.session_state.result_history) >= 1 or (use_google_sheet and live_df is not None and not live_df.empty):
   st.write("---")
 
   global_analysis_chain = sheet_nums_global + st.session_state.result_history
