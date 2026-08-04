@@ -66,9 +66,16 @@ csv_url = (
     f"https://docs.google.com/spreadsheets/d/{sheet_id}/export?format=csv"
 )
 
+use_google_sheet = st.sidebar.toggle(
+    "Use Google Sheet Historical Data",
+    value=True
+)
+
 
 @st.cache_data(ttl=60)
 def load_google_sheet_data():
+  if not use_google_sheet:
+    return None
   try:
     df_live = pd.read_csv(csv_url, dtype=str)
     return df_live
