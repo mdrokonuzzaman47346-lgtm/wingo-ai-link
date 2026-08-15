@@ -300,7 +300,12 @@ if len(st.session_state.result_history) >= 1 or (live_df is not None and not liv
   active_30_res = res_hist[-30:] if len(res_hist) >= 30 else res_hist
   active_30_sizes = ["SMALL" if n <= 4 else "BIG" for n in active_30_res]
   
-  global_analysis_chain = sheet_nums_global + active_30_res
+  # Old results rolling backward into sheet baseline smoothly
+  if len(res_hist) > 30:
+    overflow_nums = res_hist[:-30]
+    global_analysis_chain = sheet_nums_global + overflow_nums + active_30_res
+  else:
+    global_analysis_chain = sheet_nums_global + active_30_res
 
   current_period_last_digit = per_hist[-1] % 10 if per_hist else 0
 
@@ -463,8 +468,10 @@ if len(st.session_state.result_history) >= 1 or (live_df is not None and not liv
         # Instantly break out of override loop, reset lockout, and fallback to normal active 30-round sequence scanning
         pass
       else:
+        # Apply signal inversion for exactly 1 round immediately following the 2 consecutive losses
+        next_shot = "SMALL" if next_shot == "BIG" else "BIG"
         movement_mode_text = "🛡️ FAIL-SAFE OVERRIDE: CONSECUTIVE LOSS CHAIN BREAK"
-        movement_desc = f"Detected 2 consecutive losses in history tracking."
+        movement_desc = f"Detected 2 consecutive losses in history tracking. Automatically inverted next signal to [{next_shot}] for 1 round to bypass market trap."
 
   # 4. Color Trend Engine (Updated with Conflicting Signal Guard / Cross-Balance Condition)
   green_numbers = [1, 3, 7, 9]
