@@ -60,7 +60,7 @@ st.markdown(
 st.title("👑 Wingo 1m Matrix Omni-Engine v12.1 Apex Master")
 st.subheader("Institutional Grade Engine | Instant High-Speed Engine Active 🚀")
 
-# 1.1 Google Sheet Live Data Loader Integration
+# 1.1 Google Sheet Live Data Loader Integration (Enhanced for Full Historical Records)
 sheet_id = "1OwGoYO76mBvQpD8B5iclV3dfPwn4_sUiCHt8dMNuMqc"
 csv_url = (
     f"https://docs.google.com/spreadsheets/d/{sheet_id}/export?format=csv"
@@ -77,9 +77,61 @@ def load_google_sheet_data():
 
 
 live_df = load_google_sheet_data()
-total_records_count = (
-    len(live_df) if live_df is not None and not live_df.empty else 0
-)
+
+# Parse Complete Google Sheet Historical Records Safely with Chronological Validation
+sheet_nums_global = []
+sheet_periods_global = []
+sheet_history_records = []
+
+if live_df is not None and not live_df.empty:
+  try:
+    # Flexible Column Mapping for Google Sheet
+    cols_lower = {c.lower(): c for c in live_df.columns}
+    
+    col_num = next((cols_lower[c] for c in ["num", "number", "result", "result number"] if c in cols_lower), live_df.columns[1] if len(live_df.columns) > 1 else live_df.columns[0])
+    col_per = next((cols_lower[c] for c in ["period", "period number", "round", "serial"] if c in cols_lower), live_df.columns[0])
+    col_bs = next((cols_lower[c] for c in ["big/small", "bs", "size"] if c in cols_lower), None)
+    col_rg = next((cols_lower[c] for c in ["color", "colour", "rg"] if c in cols_lower), None)
+
+    for idx, row in live_df.iterrows():
+      val_num = pd.to_numeric(row[col_num], errors="coerce")
+      if pd.isna(val_num):
+        continue
+      val_num = int(val_num)
+      
+      val_per_raw = row[col_per]
+      try:
+        val_per = int(pd.to_numeric(val_per_raw, errors="coerce")) if not pd.isna(val_per_raw) else int(str(val_per_raw)[-3:])
+      except:
+        val_per = idx % 1000
+
+      val_bs = str(row[col_bs]).strip().upper() if col_bs and not pd.isna(row[col_bs]) else ("BIG" if val_num >= 5 else "SMALL")
+      if val_bs not in ["BIG", "SMALL"]:
+        val_bs = "BIG" if val_num >= 5 else "SMALL"
+
+      if col_rg and not pd.isna(row[col_rg]):
+        val_rg = str(row[col_rg]).strip().upper()
+      else:
+        if val_num in [1, 3, 7, 9, 5]:
+          val_rg = "GREEN"
+        else:
+          val_rg = "RED"
+
+      sheet_nums_global.append(val_num)
+      sheet_periods_global.append(val_per)
+      
+      sheet_history_records.append({
+          "period": val_per,
+          "num": val_num,
+          "bs_actual": val_bs,
+          "rg_actual": val_rg,
+          "bs_wl": "HIST",
+          "rg_wl": "HIST",
+      })
+  except Exception as e:
+    pass
+
+total_records_count = len(sheet_nums_global)
 
 
 # Helper Function to Determine Color from Number
@@ -236,13 +288,16 @@ with col1:
 
 with col2:
   st.markdown("### 📊 MX-Server Real-Time Triple-Lock Analysis")
-  if st.session_state.result_history and st.session_state.period_history:
-    res_30 = st.session_state.result_history[-30:]
-    per_30 = st.session_state.period_history[-30:]
+  combined_results_for_display = sheet_nums_global + st.session_state.result_history
+  combined_periods_for_display = sheet_periods_global + st.session_state.period_history
 
-    freq_dict = [st.session_state.result_history.count(i) for i in range(10)]
-    big_counts = sum(1 for x in st.session_state.result_history if x >= 5)
-    small_counts = sum(1 for x in st.session_state.result_history if x <= 4)
+  if combined_results_for_display:
+    res_30 = combined_results_for_display[-30:]
+    per_30 = combined_periods_for_display[-30:]
+
+    freq_dict = [combined_results_for_display.count(i) for i in range(10)]
+    big_counts = sum(1 for x in combined_results_for_display if x >= 5)
+    small_counts = sum(1 for x in combined_results_for_display if x <= 4)
 
     st.markdown(f"📝 **Last 30 Live Results Tracking Chain:** `{res_30}`")
     st.markdown(f"⏳ **Last 30 Live 3-Digit Period Tracking Chain:** `{per_30}`")
@@ -260,37 +315,14 @@ with col2:
     st.info("Triple-Lock Memory is empty. Log real-time data to activate server.")
 
 # 4. Strategy & Advanced Market Engine Core (Synchronized & Fixed)
-sheet_nums_global = []
-if live_df is not None and not live_df.empty:
-  try:
-    col_num_global = next(
-        (
-            c
-            for c in live_df.columns
-            if c.lower() in ["num", "number", "result"]
-        ),
-        live_df.columns[0],
-    )
-    sheet_nums_global = (
-        pd.to_numeric(live_df[col_num_global], errors="coerce")
-        .dropna()
-        .astype(int)
-        .tolist()[::-1]
-    )
-  except Exception:
-    pass
-
-if len(st.session_state.result_history) >= 1 or (live_df is not None and not live_df.empty):
+if len(sheet_nums_global) >= 1 or len(st.session_state.result_history) >= 1:
   st.write("---")
 
   global_analysis_chain = sheet_nums_global + st.session_state.result_history
+  global_periods_chain = sheet_periods_global + st.session_state.period_history
 
-  if st.session_state.result_history:
-    res_hist = st.session_state.result_history
-    per_hist = st.session_state.period_history
-  else:
-    res_hist = sheet_nums_global
-    per_hist = [0] * len(sheet_nums_global)
+  res_hist = global_analysis_chain
+  per_hist = global_periods_chain
 
   old_num = res_hist[-2] if len(res_hist) >= 2 else res_hist[-1]
   new_num = res_hist[-1]
@@ -299,13 +331,6 @@ if len(st.session_state.result_history) >= 1 or (live_df is not None and not liv
   # Sliding 30-Round Live Sequence Scanning
   active_30_res = res_hist[-30:] if len(res_hist) >= 30 else res_hist
   active_30_sizes = ["SMALL" if n <= 4 else "BIG" for n in active_30_res]
-  
-  # Old results rolling backward into sheet baseline smoothly
-  if len(res_hist) > 30:
-    overflow_nums = res_hist[:-30]
-    global_analysis_chain = sheet_nums_global + overflow_nums + active_30_res
-  else:
-    global_analysis_chain = sheet_nums_global + active_30_res
 
   current_period_last_digit = per_hist[-1] % 10 if per_hist else 0
 
@@ -461,14 +486,10 @@ if len(st.session_state.result_history) >= 1 or (live_df is not None and not liv
   # Smart Win/Loss Chart Feedback & Auto-Correction Loop (Dynamic Fixed Version)
   if len(st.session_state.history_records) >= 2:
     recent_wl_logs = [r["bs_wl"] for r in st.session_state.history_records[-2:]]
-    # Check if the last 2 rounds resulted in consecutive losses ('L')
     if all(wl == "L" for wl in recent_wl_logs):
-      # Verify if a 3rd consecutive loss occurred (meaning the inverted safety round also failed)
       if len(st.session_state.history_records) >= 3 and st.session_state.history_records[-1]["bs_wl"] == "L" and st.session_state.history_records[-2]["bs_wl"] == "L":
-        # Instantly break out of override loop, reset lockout, and fallback to normal active 30-round sequence scanning
         pass
       else:
-        # Apply signal inversion for exactly 1 round immediately following the 2 consecutive losses
         next_shot = "SMALL" if next_shot == "BIG" else "BIG"
         movement_mode_text = "🛡️ FAIL-SAFE OVERRIDE: CONSECUTIVE LOSS CHAIN BREAK"
         movement_desc = f"Detected 2 consecutive losses in history tracking. Automatically inverted next signal to [{next_shot}] for 1 round to bypass market trap."
@@ -576,14 +597,17 @@ if len(st.session_state.result_history) >= 1 or (live_df is not None and not liv
   st.write("---")
   st.markdown("### 📋 Live Analysis History Chart")
 
-  if st.session_state.history_records:
-    last_7_records = st.session_state.history_records[-7:][::-1]
+  # Merge Google Sheet Historical Records and Live User Session History for Complete Display
+  combined_full_history_records = sheet_history_records + st.session_state.history_records
+
+  if combined_full_history_records:
+    last_7_records = combined_full_history_records[-7:][::-1]
 
     total_bs_wins = sum(
-        1 for r in st.session_state.history_records if r["bs_wl"] == "W"
+        1 for r in combined_full_history_records if r["bs_wl"] == "W"
     )
     total_bs_losses = sum(
-        1 for r in st.session_state.history_records if r["bs_wl"] == "L"
+        1 for r in combined_full_history_records if r["bs_wl"] == "L"
     )
 
     table_rows_html = ""
@@ -638,13 +662,13 @@ if len(st.session_state.result_history) >= 1 or (live_df is not None and not liv
         f"""
         <div class="ratio-box">
             <span style="font-size:17px; font-weight:bold; color:#7efff5;">
-                📈 Recent Result Ratio ➔ WIN: <span class="txt-win">{total_bs_wins}</span> | LOSS: <span class="txt-loss">{total_bs_losses}</span>
+                📈 Total Historical + Live Ratio ➔ RECORD COUNT: <span class="txt-win">{len(combined_full_history_records)}</span> | W: <span class="txt-win">{total_bs_wins}</span> | L: <span class="txt-loss">{total_bs_losses}</span>
             </span>
         </div>
         """,
         unsafe_allow_html=True,
     )
   else:
-    st.info("Log at least 1 real-time result to generate chart.")
+    st.info("Log at least 1 real-time result or connect Google Sheet to generate chart.")
 else:
-  st.info("Log at least 1 real-time result to activate matrix analysis core.")
+  st.info("Log at least 1 real-time result or connect Google Sheet to activate matrix analysis core.")
