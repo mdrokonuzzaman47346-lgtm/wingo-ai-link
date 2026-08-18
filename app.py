@@ -261,7 +261,6 @@ with col2:
 
 # 4. Strategy & Advanced Market Engine Core (Synchronized & Fixed)
 sheet_nums_global = []
-sheet_pers_global = []
 if live_df is not None and not live_df.empty:
   try:
     col_num_global = next(
@@ -272,43 +271,26 @@ if live_df is not None and not live_df.empty:
         ),
         live_df.columns[0],
     )
-    col_per_global = next(
-        (
-            c
-            for c in live_df.columns
-            if c.lower() in ["period", "period_id", "periodid"]
-        ),
-        None,
-    )
-    
     sheet_nums_global = (
         pd.to_numeric(live_df[col_num_global], errors="coerce")
         .dropna()
         .astype(int)
-        .tolist()
+        .tolist()[::-1]
     )
-    
-    if col_per_global is not None:
-      sheet_pers_global = (
-          pd.to_numeric(live_df[col_per_global], errors="coerce")
-          .dropna()
-          .astype(int)
-          .tolist()
-      )
-    else:
-      sheet_pers_global = [0] * len(sheet_nums_global)
   except Exception:
     pass
 
 if len(st.session_state.result_history) >= 1 or (live_df is not None and not live_df.empty):
   st.write("---")
 
+  global_analysis_chain = sheet_nums_global + st.session_state.result_history
+
   if st.session_state.result_history:
-    res_hist = sheet_nums_global + st.session_state.result_history
-    per_hist = sheet_pers_global + st.session_state.period_history
+    res_hist = st.session_state.result_history
+    per_hist = st.session_state.period_history
   else:
     res_hist = sheet_nums_global
-    per_hist = sheet_pers_global if sheet_pers_global else [0] * len(sheet_nums_global)
+    per_hist = [0] * len(sheet_nums_global)
 
   old_num = res_hist[-2] if len(res_hist) >= 2 else res_hist[-1]
   new_num = res_hist[-1]
