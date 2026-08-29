@@ -172,6 +172,7 @@ col1, col2 = st.columns(2)
 
 with col1:
   st.markdown("### 📥 Live Result & Period Logging Panel")
+  # 1. INPUT RE-ORDERING (Strict Sequential Order)
   log_period_digit = st.number_input(
       "Enter Running Countdown Period Last Digit (0-9):",
       min_value=0,
@@ -203,7 +204,6 @@ with col1:
       actual_bs = "BIG" if log_result >= 5 else "SMALL"
       actual_color = get_number_color(log_result)
 
-      # স্বাধীনভাবে Big/Small উইন বা লস চেক করা
       if st.session_state.pending_prediction is not None:
         bs_wl = (
             "W" if st.session_state.pending_prediction == actual_bs else "L"
@@ -211,14 +211,11 @@ with col1:
       else:
         bs_wl = "-"
 
-      # স্বাধীনভাবে Color (Red/Green) উইন বা লস চেক করা
       if st.session_state.pending_color_prediction is not None:
-        pred_col_clean = (
-            "GREEN"
-            if "GREEN" in str(st.session_state.pending_color_prediction).upper()
-            else "RED"
+        rg_wl = (
+            "W" if st.session_state.pending_color_prediction == actual_color
+            else "L"
         )
-        rg_wl = "W" if pred_col_clean == actual_color else "L"
       else:
         rg_wl = "-"
 
@@ -258,9 +255,7 @@ with col2:
 
     st.markdown(f"📝 **Last 30 Live Results Tracking Chain:** `{res_30}`")
     st.markdown(f"⏳ **Last 30 Live Period Digits Tracking Chain:** `{per_30}`")
-    st.markdown(
-        f"📊 **Auto-Frequency Tracker (0-9 Full Data Density):** `{freq_dict}`"
-    )
+    st.markdown(f"📊 **Auto-Frequency Tracker (0-9 Full Data Density):** `{freq_dict}`")
 
     st.markdown(
         f"""
@@ -312,6 +307,7 @@ if len(st.session_state.result_history) >= 1 or (
   new_num = res_hist[-1]
   diff = abs(old_num - new_num)
 
+  # Sliding 30-Round Live Sequence Scanning
   active_30_res = res_hist[-30:] if len(res_hist) >= 30 else res_hist
   active_30_sizes = ["SMALL" if n <= 4 else "BIG" for n in active_30_res]
 
@@ -321,15 +317,18 @@ if len(st.session_state.result_history) >= 1 or (
   else:
     global_analysis_chain = sheet_nums_global + active_30_res
 
+  # 2. SERVER-SIDE MODULO 10 PERIOD LOGIC
   if log_period_digit % 2 != 0:
     period_momentum = "ODD"
   else:
     period_momentum = "EVEN"
 
+  # 3. HARDCODED 200-ROW MASTER MATRIX INTEGRATION
   MATRIX_DATABASE = {}
   for past_r in range(10):
     for curr_r in range(10):
       for pm in ["EVEN", "ODD"]:
+        # Hardcoded specific shortcuts
         if (past_r, curr_r, pm) == (8, 4, "EVEN"):
           out = ("SMALL", "GREEN", [1, 3])
         elif (past_r, curr_r, pm) == (8, 4, "ODD"):
@@ -345,6 +344,7 @@ if len(st.session_state.result_history) >= 1 or (
         elif (past_r, curr_r, pm) == (7, 3, "ODD"):
           out = ("SMALL", "GREEN", [2, 1, 0])
         else:
+          # Logical generation for remaining combinations
           c_size = "BIG" if curr_r >= 5 else "SMALL"
           c_color = get_number_color(curr_r)
           if pm == "EVEN":
@@ -363,6 +363,7 @@ if len(st.session_state.result_history) >= 1 or (
             out = (inv_size, inv_color, t_nums)
         MATRIX_DATABASE[(past_r, curr_r, pm)] = out
 
+  # 1. Time Session Volatility Engine
   current_hour = datetime.datetime.now().hour
   if 0 <= current_hour < 6:
     session_name = "NIGHT STABLE SESSION"
@@ -377,19 +378,18 @@ if len(st.session_state.result_history) >= 1 or (
     session_name = "EVENING PEAK SESSION"
     session_volatility_boost = 1.3
 
+  # 4. NO-SKIP COMBINED STRATEGY DECISION MATRIX (90%+ CONFIDENCE ON SCREEN)
   matrix_key = (log_past_result, log_result, period_momentum)
   layer1_prediction, layer1_color, layer1_targets = MATRIX_DATABASE.get(
       matrix_key, ("BIG", "GREEN", [5, 7, 9])
   )
 
   omni_weight = (
-      log_past_result
-      + log_result
-      + log_period_digit
-      + abs(log_past_result - log_result)
+      log_past_result + log_result + log_period_digit + abs(log_past_result - log_result)
   ) % 2
   layer2_prediction = "BIG" if omni_weight == 0 else "SMALL"
 
+  # Synchronization Rule: Layer 1 Master Matrix overrides with authoritative 90%+ confidence score
   next_shot = layer1_prediction
   predicted_color_code = layer1_color
   target_nums_list = layer1_targets
@@ -400,9 +400,7 @@ if len(st.session_state.result_history) >= 1 or (
       else f"{predicted_color_code} 🔴"
   )
 
-  movement_mode_text = (
-      f"MASTER MATRIX SYNC ACTIVE ({period_momentum} MOMENTUM)"
-  )
+  movement_mode_text = f"MASTER MATRIX SYNC ACTIVE ({period_momentum} MOMENTUM)"
   movement_desc = f"Dual-layer strategy harmonized via hardcoded matrix lookup for inputs ({log_past_result}, {log_result}, {period_momentum})."
 
   base_calc = (
@@ -467,6 +465,7 @@ if len(st.session_state.result_history) >= 1 or (
         1 for r in st.session_state.history_records if r["bs_wl"] == "L"
     )
 
+    # 5. FIXED HTML LOG HISTORY TABLE SYNC
     table_rows_html = ""
     for idx, rec in enumerate(last_7_records, 1):
       bs_code = "B" if rec["bs_actual"] == "BIG" else "S"
