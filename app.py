@@ -220,8 +220,9 @@ with col1:
         rg_wl = "-"
 
       rec = {
-          "period": log_period_digit,
+          "period": f"*{log_period_digit}",
           "num": log_result,
+          "past_num": log_past_result,
           "bs_actual": actual_bs,
           "rg_actual": actual_color,
           "bs_wl": bs_wl,
@@ -289,9 +290,7 @@ if live_df is not None and not live_df.empty:
   except Exception:
     pass
 
-if len(st.session_state.result_history) >= 1 or (
-    live_df is not None and not live_df.empty
-):
+if len(st.session_state.result_history) >= 1 or (live_df is not None and not live_df.empty):
   st.write("---")
 
   global_analysis_chain = sheet_nums_global + st.session_state.result_history
@@ -306,11 +305,11 @@ if len(st.session_state.result_history) >= 1 or (
   old_num = res_hist[-2] if len(res_hist) >= 2 else res_hist[-1]
   new_num = res_hist[-1]
   diff = abs(old_num - new_num)
-
+  
   # Sliding 30-Round Live Sequence Scanning
   active_30_res = res_hist[-30:] if len(res_hist) >= 30 else res_hist
   active_30_sizes = ["SMALL" if n <= 4 else "BIG" for n in active_30_res]
-
+  
   if len(res_hist) > 30:
     overflow_nums = res_hist[:-30]
     global_analysis_chain = sheet_nums_global + overflow_nums + active_30_res
@@ -384,9 +383,7 @@ if len(st.session_state.result_history) >= 1 or (
       matrix_key, ("BIG", "GREEN", [5, 7, 9])
   )
 
-  omni_weight = (
-      log_past_result + log_result + log_period_digit + abs(log_past_result - log_result)
-  ) % 2
+  omni_weight = (log_past_result + log_result + log_period_digit + abs(log_past_result - log_result)) % 2
   layer2_prediction = "BIG" if omni_weight == 0 else "SMALL"
 
   # Synchronization Rule: Layer 1 Master Matrix overrides with authoritative 90%+ confidence score
@@ -394,20 +391,12 @@ if len(st.session_state.result_history) >= 1 or (
   predicted_color_code = layer1_color
   target_nums_list = layer1_targets
   dynamic_target_text = ", ".join(map(str, target_nums_list))
-  predicted_color_text = (
-      f"{predicted_color_code} 🟢"
-      if predicted_color_code == "GREEN"
-      else f"{predicted_color_code} 🔴"
-  )
+  predicted_color_text = f"{predicted_color_code} 🟢" if predicted_color_code == "GREEN" else f"{predicted_color_code} 🔴"
 
   movement_mode_text = f"MASTER MATRIX SYNC ACTIVE ({period_momentum} MOMENTUM)"
   movement_desc = f"Dual-layer strategy harmonized via hardcoded matrix lookup for inputs ({log_past_result}, {log_result}, {period_momentum})."
 
-  base_calc = (
-      92.50
-      + (abs(log_past_result - log_result) * 0.5)
-      + (session_volatility_boost * 0.4)
-  )
+  base_calc = 92.50 + (abs(log_past_result - log_result) * 0.5) + (session_volatility_boost * 0.4)
   confidence_display = f"{min(round(base_calc, 2), 99.99)}%"
 
   st.session_state.pending_prediction = next_shot
