@@ -201,28 +201,25 @@ with col1:
   b1, b2 = st.columns(2)
   with b1:
     if st.button("🚀 ➕ Add Data to History", use_container_width=True):
+      # Step A: Instantly lock the actual round outcome from the user input number
       actual_bs = "BIG" if log_result >= 5 else "SMALL"
       actual_color = get_number_color(log_result)
 
+      # Step B: Compare strictly with the actual active pending prediction from session memory
       if st.session_state.pending_prediction is not None:
-        bs_wl = (
-            "W" if st.session_state.pending_prediction == actual_bs else "L"
-        )
+        bs_wl = "W" if st.session_state.pending_prediction == actual_bs else "L"
       else:
         bs_wl = "-"
 
       if st.session_state.pending_color_prediction is not None:
-        rg_wl = (
-            "W" if st.session_state.pending_color_prediction == actual_color
-            else "L"
-        )
+        rg_wl = "W" if st.session_state.pending_color_prediction == actual_color else "L"
       else:
         rg_wl = "-"
 
+      # Step C: Save these independent verified tracking metrics into the history dataset
       rec = {
           "period": f"*{log_period_digit}",
           "num": log_result,
-          "past_num": log_past_result,
           "bs_actual": actual_bs,
           "rg_actual": actual_color,
           "bs_wl": bs_wl,
@@ -232,7 +229,6 @@ with col1:
       st.session_state.history_records.append(rec)
       st.session_state.result_history.append(log_result)
       st.session_state.period_history.append(log_period_digit)
-
       st.rerun()
 
   with b2:
