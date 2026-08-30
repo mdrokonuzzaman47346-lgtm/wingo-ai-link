@@ -104,6 +104,8 @@ if "active_size_lock" not in st.session_state:
     st.session_state.active_size_lock = None
 if "active_color_lock" not in st.session_state:
     st.session_state.active_color_lock = None
+if "active_target_lock" not in st.session_state:
+    st.session_state.active_target_lock = []
 
 # Initialize 200-Condition Matrix Database
 def build_matrix_database():
@@ -111,7 +113,6 @@ def build_matrix_database():
     for p in range(10):
         for c in range(10):
             for pt in ["EVEN", "ODD"]:
-                # Explicitly preset conditions incorporating period momentum (EVEN/ODD)
                 if (p, c, pt) == (8, 4, "EVEN"):
                     matrix[(p, c, pt)] = ("SMALL", "GREEN", [1, 3])
                 elif (p, c, pt) == (8, 4, "ODD"):
@@ -127,7 +128,6 @@ def build_matrix_database():
                 elif (p, c, pt) == (7, 3, "ODD"):
                     matrix[(p, c, pt)] = ("SMALL", "GREEN", [2, 1, 0])
                 else:
-                    # Deterministic fallback rules incorporating period_type (EVEN/ODD) explicitly
                     if pt == "EVEN":
                         bs = "BIG" if (p + c) % 2 == 0 else "SMALL"
                         col = "RED" if c in [0, 2, 4, 6, 8] else "GREEN"
@@ -140,7 +140,20 @@ def build_matrix_database():
                     else:
                         targets = [0, 2, 4] if col == "RED" else [1, 3]
                     matrix[(p, c, pt)] = (bs, col, targets)
-    return matrix
+                    
+    # Validate and normalize matrix rows to prevent any consistency rule violation
+    validated_matrix = {}
+    for k, (m_size, m_col, m_targets) in matrix.items():
+        if m_size == "BIG":
+            valid_targets = [t for t in m_targets if t >= 5]
+            if not valid_targets:
+                valid_targets = [5, 6, 7, 8, 9]
+        else:
+            valid_targets = [t for t in m_targets if t <= 4]
+            if not valid_targets:
+                valid_targets = [0, 1, 2, 3, 4]
+        validated_matrix[k] = (m_size, m_col, valid_targets)
+    return validated_matrix
 
 MATRIX_DATABASE = build_matrix_database()
 
@@ -149,30 +162,17 @@ st.markdown("### 🌐 Global AI Core Connection Status")
 c1, c2, c3 = st.columns(3)
 with c1:
     st.markdown(
-        "<div"
-        " style='background-color:#143d22; padding:12px; border-left:5px solid"
-        " #2ecc71; border-radius:5px; font-weight:bold; color:#f8fafc;'>🤖"
-        " 10,000,000 MEGA DATA BASE: ONLINE"
-        "<small"
-        " style='color:#a8e6cf;'>(FAST FLASH CACHE)</small></div>",
+        "<div style='background-color:#143d22; padding:12px; border-left:5px solid #2ecc71; border-radius:5px; font-weight:bold; color:#f8fafc;'>🤖 10,000,000 MEGA DATA BASE: ONLINE<small style='color:#a8e6cf;'>(FAST FLASH CACHE)</small></div>",
         unsafe_allow_html=True,
     )
 with c2:
     st.markdown(
-        "<div"
-        " style='background-color:#1c3144; padding:12px; border-left:5px solid"
-        " #3498db; border-radius:5px; font-weight:bold; color:#f8fafc;'>⚡"
-        " HIGH-QUALITY AI CORE SERVER v12.1:"
-        "<small"
-        " style='color:#7efff5;'>APEX ULTRA RUNNING</small></div>",
+        "<div style='background-color:#1c3144; padding:12px; border-left:5px solid #3498db; border-radius:5px; font-weight:bold; color:#f8fafc;'>⚡ HIGH-QUALITY AI CORE SERVER v12.1:<small style='color:#7efff5;'>APEX ULTRA RUNNING</small></div>",
         unsafe_allow_html=True,
     )
 with c3:
     st.markdown(
-        "<div"
-        " style='background-color:#3d3414; padding:12px; border-left:5px solid"
-        " #f1c40f; border-radius:5px; font-weight:bold; color:#f8fafc;'>🔥 AI"
-        " GLOBAL MOVEMENT DETECTOR & 5.0 BILLION QUANTUM CLOUD: LOCKED</div>",
+        "<div style='background-color:#3d3414; padding:12px; border-left:5px solid #f1c40f; border-radius:5px; font-weight:bold; color:#f8fafc;'>🔥 AI GLOBAL MOVEMENT DETECTOR & 5.0 BILLION QUANTUM CLOUD: LOCKED</div>",
         unsafe_allow_html=True,
     )
 
@@ -195,14 +195,11 @@ with c5:
         unsafe_allow_html=True,
     )
 
-# 2.1 HISTORICAL DATA & BACKEND STATUS
 st.markdown(
     f"""
 <div style='background-color:#0f172a; padding:12px; border:1px solid #38bdf8; border-left:6px solid #a855f7; border-radius:6px; margin-top:8px; margin-bottom:12px;'>
 <span style='color:#e2e8f0; font-size:14px; font-weight:bold;'>📊 GOOGLE SHEET LIVE SYNC ({total_records_count:,} HISTORICAL PERIODS) + TRIPLE-LOCK ENGINE:</span>
 <span style='color:#4ade80; font-weight:bold;'> FULLY INTEGRATED & RUNNING IN BACKEND ⚡</span>
-
-<small style='color:#94a3b8;'>Time-Session Volatility, Color Synergy Loop & Dynamic Status-Signal Synchronization with Advanced Multi-Pattern & Strict Chronological Order Fix.</small>
 </div>
 """,
     unsafe_allow_html=True,
@@ -214,27 +211,15 @@ with col1:
     st.markdown("### 📥 Live Result & Period Logging Panel")
     log_period_digit = st.number_input(
         "Enter Running Countdown Period Last Digit (0-9):",
-        min_value=0,
-        max_value=9,
-        value=0,
-        step=1,
-        key="per_digit_in",
+        min_value=0, max_value=9, value=0, step=1, key="per_digit_in",
     )
     log_result = st.number_input(
         "Enter This Minute Live Result Number (0-9):",
-        min_value=0,
-        max_value=9,
-        value=0,
-        step=1,
-        key="res_in",
+        min_value=0, max_value=9, value=0, step=1, key="res_in",
     )
     log_past_result = st.number_input(
         "Enter Previous Round Result Number (0-9):",
-        min_value=0,
-        max_value=9,
-        value=0,
-        step=1,
-        key="past_res_in",
+        min_value=0, max_value=9, value=0, step=1, key="past_res_in",
     )
     b1, b2 = st.columns(2)
     with b1:
@@ -242,19 +227,14 @@ with col1:
             actual_bs = "BIG" if log_result >= 5 else "SMALL"
             actual_color = get_number_color(log_result)
             
-            # Compare actual results against the frozen active locks before clearing them
+            # Evaluate against frozen active locks BEFORE clearing them
             if st.session_state.active_size_lock is not None:
-                bs_wl = (
-                    "W" if st.session_state.active_size_lock == actual_bs else "L"
-                )
+                bs_wl = "W" if st.session_state.active_size_lock == actual_bs else "L"
             else:
                 bs_wl = "-"
                 
             if st.session_state.active_color_lock is not None:
-                rg_wl = (
-                    "W" if st.session_state.active_color_lock == actual_color
-                    else "L"
-                )
+                rg_wl = "W" if st.session_state.active_color_lock == actual_color else "L"
             else:
                 rg_wl = "-"
                 
@@ -270,9 +250,10 @@ with col1:
             st.session_state.result_history.append(log_result)
             st.session_state.period_history.append(log_period_digit)
             
-            # Reset locks after evaluation so next round captures a fresh prediction
+            # Reset locks after evaluation
             st.session_state.active_size_lock = None
             st.session_state.active_color_lock = None
+            st.session_state.active_target_lock = []
             st.rerun()
     with b2:
         if st.button("🗑️ Clear All History Memory", use_container_width=True):
@@ -283,6 +264,7 @@ with col1:
             st.session_state.pending_color_prediction = None
             st.session_state.active_size_lock = None
             st.session_state.active_color_lock = None
+            st.session_state.active_target_lock = []
             st.rerun()
 
 with col2:
@@ -290,12 +272,10 @@ with col2:
     if st.session_state.result_history and st.session_state.period_history:
         res_30 = st.session_state.result_history[-30:]
         per_30 = st.session_state.period_history[-30:]
-        freq_dict = [st.session_state.result_history.count(i) for i in range(10)]
         big_counts = sum(1 for x in st.session_state.result_history if x >= 5)
         small_counts = sum(1 for x in st.session_state.result_history if x <= 4)
         st.markdown(f"📝 Last 30 Live Results Tracking Chain: {res_30}")
         st.markdown(f"⏳ Last 30 Live Period Last Digits: {per_30}")
-        st.markdown(f"📊 Auto-Frequency Tracker (0-9 Full Data Density): {freq_dict}")
         st.markdown(
             f"""
 <div style='background-color:#1c3144; padding:12px; border-radius:6px; border:1px solid #3498db; margin-top:10px; margin-bottom:10px;'>
@@ -307,19 +287,14 @@ with col2:
     else:
         st.info("Triple-Lock Memory is empty. Log real-time data to activate server.")
 
-# 4. Strategy & Advanced Market Engine Core (Synchronized & Fixed)
+# Strategy & Advanced Market Engine Core
 sheet_nums_global = []
 if live_df is not None and not live_df.empty:
     try:
         col_num_global = next(
-            (
-                c
-                for c in live_df.columns
-                if c.lower() in ["num", "number", "result"]
-            ),
+            (c for c in live_df.columns if c.lower() in ["num", "number", "result"]),
             live_df.columns[0],
         )
-        # Load ALL valid historical records from the Google Sheet without hardcoding to 100 rows
         sheet_nums_global = (
             pd.to_numeric(live_df[col_num_global], errors="coerce")
             .dropna()
@@ -342,7 +317,6 @@ if len(st.session_state.result_history) >= 1 or (live_df is not None and not liv
     new_num = res_hist[-1]
     diff = abs(old_num - new_num)
 
-    # Sliding 30-Round Live Sequence Scanning
     active_30_res = res_hist[-30:] if len(res_hist) >= 30 else res_hist
     active_30_sizes = ["SMALL" if n <= 4 else "BIG" for n in active_30_res]
     if len(res_hist) > 30:
@@ -353,20 +327,12 @@ if len(st.session_state.result_history) >= 1 or (live_df is not None and not liv
 
     current_period_last_digit = log_period_digit
     period_momentum = "ODD" if current_period_last_digit in [1, 3, 5, 7, 9] else "EVEN"
+    omni_weight = (log_past_result + log_result + log_period_digit + abs(log_past_result - log_result)) % 2
 
-    # Secondary Momentum Calculation
-    omni_weight = (
-        log_past_result
-        + log_result
-        + log_period_digit
-        + abs(log_past_result - log_result)
-    ) % 2
-
-    # Matrix Database Lookup Layer (Primary Layer)
+    # Primary Matrix Lookup
     matrix_key = (log_past_result, log_result, period_momentum)
     matrix_size, matrix_color, matrix_targets = MATRIX_DATABASE.get(matrix_key, ("BIG", "GREEN", [5, 7, 9]))
 
-    # 1. Time Session Volatility Engine
     current_hour = datetime.datetime.now().hour
     if 0 <= current_hour < 6:
         session_name = "NIGHT STABLE SESSION"
@@ -381,7 +347,6 @@ if len(st.session_state.result_history) >= 1 or (live_df is not None and not liv
         session_name = "EVENING PEAK SESSION"
         session_volatility_boost = 1.3
 
-    # 2. Advanced Dynamic Pattern Recognition Modules
     last_3_sizes = active_30_sizes[-3:] if len(active_30_sizes) >= 3 else active_30_sizes
     last_5_sizes = active_30_sizes[-5:] if len(active_30_sizes) >= 5 else active_30_sizes
     last_4_sizes = active_30_sizes[-4:] if len(active_30_sizes) >= 4 else active_30_sizes
@@ -392,36 +357,11 @@ if len(st.session_state.result_history) >= 1 or (live_df is not None and not liv
     is_triple_num_3 = len(set(last_3_nums)) == 1 and len(last_3_nums) >= 3
     is_dragon_5 = len(last_5_sizes) == 5 and len(set(last_5_sizes)) == 1
     is_dragon_3 = len(last_3_sizes) == 3 and len(set(last_3_sizes)) == 1
-    is_zigzag_3 = (
-        len(last_3_sizes) == 3
-        and last_3_sizes[-1] != last_3_sizes[-2]
-        and last_3_sizes[-2] != last_3_sizes[-3]
-    )
-    is_double_chain_4 = (
-        len(last_4_sizes) == 4
-        and last_4_sizes[-1] == last_4_sizes[-2]
-        and last_4_sizes[-3] == last_4_sizes[-4]
-        and last_4_sizes[-2] != last_4_sizes[-3]
-    )
-    is_step_121 = (
-        len(last_4_sizes) == 4
-        and last_4_sizes[0] != last_4_sizes[1]
-        and last_4_sizes[1] == last_4_sizes[2]
-        and last_4_sizes[2] != last_4_sizes[3]
-    )
-    is_mirror_6 = (
-        len(last_6_sizes) == 6
-        and last_6_sizes[0] == last_6_sizes[5]
-        and last_6_sizes[1] == last_6_sizes[4]
-        and last_6_sizes[2] == last_6_sizes[3]
-    )
-    is_choppy_trap = (
-        len(last_4_sizes) == 4
-        and last_4_sizes[0] != last_4_sizes[1]
-        and last_4_sizes[1] != last_4_sizes[2]
-        and last_4_sizes[2] != last_4_sizes[3]
-        and not is_zigzag_3
-    ) or (has_repeated_num_path and not is_dragon_5)
+    is_zigzag_3 = len(last_3_sizes) == 3 and last_3_sizes[-1] != last_3_sizes[-2] and last_3_sizes[-2] != last_3_sizes[-3]
+    is_double_chain_4 = len(last_4_sizes) == 4 and last_4_sizes[-1] == last_4_sizes[-2] and last_4_sizes[-3] == last_4_sizes[-4] and last_4_sizes[-2] != last_4_sizes[-3]
+    is_step_121 = len(last_4_sizes) == 4 and last_4_sizes[0] != last_4_sizes[1] and last_4_sizes[1] == last_4_sizes[2] and last_4_sizes[2] != last_4_sizes[3]
+    is_mirror_6 = len(last_6_sizes) == 6 and last_6_sizes[0] == last_6_sizes[5] and last_6_sizes[1] == last_6_sizes[4] and last_6_sizes[2] == last_6_sizes[3]
+    is_choppy_trap = (len(last_4_sizes) == 4 and last_4_sizes[0] != last_4_sizes[1] and last_4_sizes[1] != last_4_sizes[2] and last_4_sizes[2] != last_4_sizes[3] and not is_zigzag_3) or (has_repeated_num_path and not is_dragon_5)
 
     streak_count = 1
     for i in range(len(active_30_sizes) - 2, -1, -1):
@@ -434,15 +374,13 @@ if len(st.session_state.result_history) >= 1 or (live_df is not None and not liv
     period_digit_match_count = per_hist.count(per_hist[-1]) if per_hist else 1
     period_digit_weight = 1.0 + (period_digit_match_count * 0.05)
 
-    global_sizes_chain = [
-        "SMALL" if x <= 4 else "BIG" for x in global_analysis_chain
-    ]
+    global_sizes_chain = ["SMALL" if x <= 4 else "BIG" for x in global_analysis_chain]
     big_counts_total = sum(1 for x in global_sizes_chain if x == "BIG")
     small_counts_total = sum(1 for x in global_sizes_chain if x == "SMALL")
     imbalance_threshold = int(len(global_sizes_chain) * 0.55) if len(global_sizes_chain) > 40 else 20
     last_real_size = active_30_sizes[-1]
 
-    # 3. Two-Layer Decision Engine: Matrix has primary authority, resolved deterministically
+    # Determine Single Final Size Prediction
     if is_choppy_trap:
         next_shot = matrix_size
         movement_mode_text = "⚠️ WARNING: TRAP / CHOPPY MARKET DETECTED (MATRIX SAFETY MODE)"
@@ -450,11 +388,11 @@ if len(st.session_state.result_history) >= 1 or (live_df is not None and not liv
     elif is_triple_num_3:
         next_shot = last_real_size
         movement_mode_text = "🚨 EXTREME CHAOS: TRIPLE NUMBER DETECTED"
-        movement_desc = f"Powerful triple number logic triggered in trade sequence. Expected to continue current momentum size [{last_real_size}]."
+        movement_desc = f"Powerful triple number logic triggered. Expected to continue momentum size [{last_real_size}]."
     elif has_repeated_num_path:
         next_shot = "SMALL" if last_real_size == "BIG" else "BIG"
         movement_mode_text = "⚠️ BREAKOUT TRAP: DOUBLE NUMBER DETECTED"
-        movement_desc = f"Double or repeated digit path detected. Executing strict adaptive sequence reversal to prevent false breakout trap."
+        movement_desc = "Double or repeated digit path detected. Executing strict adaptive sequence reversal."
     elif is_dragon_5:
         next_shot = last_real_size
         movement_mode_text = f"5-ROUND DEEP DRAGON DETECTED 🔥 ({last_real_size})"
@@ -486,24 +424,25 @@ if len(st.session_state.result_history) >= 1 or (live_df is not None and not liv
     elif is_double_chain_4:
         next_shot = "SMALL" if last_real_size == "BIG" else "BIG"
         movement_mode_text = "DOUBLE-CHAIN LOOP (2-2 PATTERN)"
-        movement_desc = "Twin alternation pattern (2-2 loop) detected in last 4 rounds. Executing structural sequence reversal."
+        movement_desc = "Twin alternation pattern detected. Executing structural sequence reversal."
     else:
-        # Matrix is primary authority layer combined deterministically with secondary omni-weight evidence
         next_shot = matrix_size if omni_weight == (diff % 2) else ("BIG" if omni_weight == 0 else "SMALL")
         movement_mode_text = "BALANCED MATRIX-OMNI SYNERGY TREND"
         movement_desc = f"Live cycles synced with 200-Condition Matrix & Omni-Weight under [{session_name}]."
 
-    # 4. Color Trend Engine & Matrix Color Integration
-    green_numbers = [1, 3, 7, 9]
-    red_numbers = [0, 2, 4, 6, 8]
-    green_count_total = sum(
-        1 for n in global_analysis_chain if n in green_numbers or n == 5
-    )
-    red_count_total = sum(1 for n in global_analysis_chain if n in red_numbers)
-
+    # Strict Target Number Normalization to Prevent Contradictions
     predicted_color_code = matrix_color
     predicted_color_text = "GREEN 🟢" if predicted_color_code == "GREEN" else "RED 🔴"
-    target_nums_list = matrix_targets
+    
+    if next_shot == "BIG":
+        target_nums_list = [t for t in matrix_targets if t >= 5]
+        if not target_nums_list:
+            target_nums_list = [5, 6, 7, 8, 9]
+    else:
+        target_nums_list = [t for t in matrix_targets if t <= 4]
+        if not target_nums_list:
+            target_nums_list = [0, 1, 2, 3, 4]
+
     dynamic_target_text = ", ".join(map(str, target_nums_list))
 
     base_calc = (
@@ -521,18 +460,28 @@ if len(st.session_state.result_history) >= 1 or (live_df is not None and not liv
 
     confidence_display = f"{min(round(base_calc, 2), 99.99)}%"
 
-    st.session_state.pending_prediction = next_shot
-    st.session_state.pending_color_prediction = predicted_color_code
+    # Construct Single Final Prediction Object
+    final_prediction = {
+        "size": next_shot,
+        "color": predicted_color_code,
+        "targets": target_nums_list,
+        "confidence": confidence_display,
+        "source": movement_mode_text
+    }
 
-    # Freeze prediction locks only when they are None to prevent premature overwriting before evaluation
+    st.session_state.pending_prediction = final_prediction["size"]
+    st.session_state.pending_color_prediction = final_prediction["color"]
+
+    # Lock session states if not already locked
     if st.session_state.active_size_lock is None:
-        st.session_state.active_size_lock = next_shot
+        st.session_state.active_size_lock = final_prediction["size"]
     if st.session_state.active_color_lock is None:
-        st.session_state.active_color_lock = predicted_color_code
+        st.session_state.active_color_lock = final_prediction["color"]
+    if not st.session_state.active_target_lock:
+        st.session_state.active_target_lock = final_prediction["targets"].copy()
 
     st.markdown(
-        f"### 🎯 STRATEGY SIGNAL: [ {next_shot} ] | CONFIDENCE: <span"
-        f" style='color:#2ecc71; font-weight:bold;'>{confidence_display}</span>",
+        f"### 🎯 STRATEGY SIGNAL: [ {final_prediction['size']} ] | CONFIDENCE: <span style='color:#2ecc71; font-weight:bold;'>{final_prediction['confidence']}</span>",
         unsafe_allow_html=True,
     )
 
@@ -542,7 +491,6 @@ if len(st.session_state.result_history) >= 1 or (live_df is not None and not liv
             f"""
 <div style='background-color:#0f172a; padding:12px; border-radius:6px; border-left:5px solid #2ecc71;'>
 <span style='color:#94a3b8; font-size:13px; font-weight:bold;'>🎨 PREDICTED COLOR SYNERGY:</span>
-
 <span style='color:#ffffff; font-size:18px; font-weight:bold;'>{predicted_color_text}</span>
 </div>
 """,
@@ -553,7 +501,6 @@ if len(st.session_state.result_history) >= 1 or (live_df is not None and not liv
             f"""
 <div style='background-color:#0f172a; padding:12px; border-radius:6px; border-left:5px solid #f1c40f;'>
 <span style='color:#94a3b8; font-size:13px; font-weight:bold;'>🎯 HOT TARGET NUMBERS:</span>
-
 <span style='color:#f1c40f; font-size:18px; font-weight:bold;'>{dynamic_target_text}</span>
 </div>
 """,
@@ -564,7 +511,7 @@ if len(st.session_state.result_history) >= 1 or (live_df is not None and not liv
     st.markdown(
         f"""
 <div style='background-color:#1e293b; padding:16px; border-left:6px solid #38bdf8; border-radius:6px; margin-bottom:15px;'>
-<h4 style='color:#f1c40f; margin-top:0px; margin-bottom:5px;'>💡 STATUS: {movement_mode_text}</h4>
+<h4 style='color:#f1c40f; margin-top:0px; margin-bottom:5px;'>💡 STATUS: {final_prediction['source']}</h4>
 <p style='color:#ecf0f1; font-size:15px; margin:0px; line-height:1.5;'>{movement_desc}</p>
 </div>
 """,
@@ -575,12 +522,8 @@ if len(st.session_state.result_history) >= 1 or (live_df is not None and not liv
     st.markdown("### 📋 Live Analysis History Chart")
     if st.session_state.history_records:
         last_7_records = st.session_state.history_records[-7:][::-1]
-        total_bs_wins = sum(
-            1 for r in st.session_state.history_records if r["bs_wl"] == "W"
-        )
-        total_bs_losses = sum(
-            1 for r in st.session_state.history_records if r["bs_wl"] == "L"
-        )
+        total_bs_wins = sum(1 for r in st.session_state.history_records if r["bs_wl"] == "W")
+        total_bs_losses = sum(1 for r in st.session_state.history_records if r["bs_wl"] == "L")
 
         table_rows_html = ""
         for idx, rec in enumerate(last_7_records, 1):
@@ -588,22 +531,12 @@ if len(st.session_state.result_history) >= 1 or (live_df is not None and not liv
             bs_class = "txt-big" if rec["bs_actual"] == "BIG" else "txt-small"
             rg_code = "G" if rec["rg_actual"] == "GREEN" else "R"
             rg_class = "txt-green" if rec["rg_actual"] == "GREEN" else "txt-red"
-            bs_wl_class = (
-                "txt-win"
-                if rec["bs_wl"] == "W"
-                else ("txt-loss" if rec["bs_wl"] == "L" else "")
-            )
-            rg_wl_class = (
-                "txt-win"
-                if rec["rg_wl"] == "W"
-                else ("txt-loss" if rec["rg_wl"] == "L" else "")
-            )
+            bs_wl_class = "txt-win" if rec["bs_wl"] == "W" else ("txt-loss" if rec["bs_wl"] == "L" else "")
+            rg_wl_class = "txt-win" if rec["rg_wl"] == "W" else ("txt-loss" if rec["rg_wl"] == "L" else "")
             table_rows_html += (
-                f"<tr><td>{idx}</td><td>{rec['period']}</td><td>{rec['num']}</td><td"
-                f" class='{bs_class}'>{bs_code}</td><td"
-                f" class='{rg_class}'>{rg_code}</td><td"
-                f" class='{bs_wl_class}'>{rec['bs_wl']}</td><td"
-                f" class='{rg_wl_class}'>{rec['rg_wl']}</td></tr>"
+                f"<tr><td>{idx}</td><td>{rec['period']}</td><td>{rec['num']}</td>"
+                f"<td class='{bs_class}'>{bs_code}</td><td class='{rg_class}'>{rg_code}</td>"
+                f"<td class='{bs_wl_class}'>{rec['bs_wl']}</td><td class='{rg_wl_class}'>{rec['rg_wl']}</td></tr>"
             )
 
         full_table_code = f"""
