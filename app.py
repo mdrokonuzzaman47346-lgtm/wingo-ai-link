@@ -111,7 +111,7 @@ def build_matrix_database():
     for p in range(10):
         for c in range(10):
             for pt in ["EVEN", "ODD"]:
-                # Explicitly preset conditions
+                # Explicitly preset conditions incorporating period momentum (EVEN/ODD)
                 if (p, c, pt) == (8, 4, "EVEN"):
                     matrix[(p, c, pt)] = ("SMALL", "GREEN", [1, 3])
                 elif (p, c, pt) == (8, 4, "ODD"):
@@ -127,9 +127,14 @@ def build_matrix_database():
                 elif (p, c, pt) == (7, 3, "ODD"):
                     matrix[(p, c, pt)] = ("SMALL", "GREEN", [2, 1, 0])
                 else:
-                    # Deterministic fallback rules for remaining conditions
-                    bs = "BIG" if (p + c) % 2 == 0 else "SMALL"
-                    col = "GREEN" if c in [1, 3, 5, 7, 9] else "RED"
+                    # Deterministic fallback rules incorporating period_type (EVEN/ODD) explicitly
+                    if pt == "EVEN":
+                        bs = "BIG" if (p + c) % 2 == 0 else "SMALL"
+                        col = "RED" if c in [0, 2, 4, 6, 8] else "GREEN"
+                    else:
+                        bs = "SMALL" if (p + c) % 2 == 0 else "BIG"
+                        col = "GREEN" if c in [1, 3, 5, 7, 9] else "RED"
+
                     if bs == "BIG":
                         targets = [6, 8] if col == "RED" else [5, 7, 9]
                     else:
@@ -236,13 +241,15 @@ with col1:
         if st.button("🚀 ➕ Add Data to History", use_container_width=True):
             actual_bs = "BIG" if log_result >= 5 else "SMALL"
             actual_color = get_number_color(log_result)
-            # Use frozen prediction locks for evaluation
+            
+            # Compare actual results against the frozen active locks before clearing them
             if st.session_state.active_size_lock is not None:
                 bs_wl = (
                     "W" if st.session_state.active_size_lock == actual_bs else "L"
                 )
             else:
                 bs_wl = "-"
+                
             if st.session_state.active_color_lock is not None:
                 rg_wl = (
                     "W" if st.session_state.active_color_lock == actual_color
@@ -250,6 +257,7 @@ with col1:
                 )
             else:
                 rg_wl = "-"
+                
             rec = {
                 "period": f"*{log_period_digit}",
                 "num": log_result,
@@ -261,7 +269,8 @@ with col1:
             st.session_state.history_records.append(rec)
             st.session_state.result_history.append(log_result)
             st.session_state.period_history.append(log_period_digit)
-            # Reset locks after evaluation
+            
+            # Reset locks after evaluation so next round captures a fresh prediction
             st.session_state.active_size_lock = None
             st.session_state.active_color_lock = None
             st.rerun()
@@ -310,6 +319,7 @@ if live_df is not None and not live_df.empty:
             ),
             live_df.columns[0],
         )
+        # Load ALL valid historical records from the Google Sheet without hardcoding to 100 rows
         sheet_nums_global = (
             pd.to_numeric(live_df[col_num_global], errors="coerce")
             .dropna()
@@ -321,7 +331,6 @@ if live_df is not None and not live_df.empty:
 
 if len(st.session_state.result_history) >= 1 or (live_df is not None and not live_df.empty):
     st.write("---")
-    global_analysis_chain = sheet_nums_global + st.session_state.result_history
     if st.session_state.result_history:
         res_hist = st.session_state.result_history
         per_hist = st.session_state.period_history
@@ -353,7 +362,7 @@ if len(st.session_state.result_history) >= 1 or (live_df is not None and not liv
         + abs(log_past_result - log_result)
     ) % 2
 
-    # Matrix Database Lookup Layer
+    # Matrix Database Lookup Layer (Primary Layer)
     matrix_key = (log_past_result, log_result, period_momentum)
     matrix_size, matrix_color, matrix_targets = MATRIX_DATABASE.get(matrix_key, ("BIG", "GREEN", [5, 7, 9]))
 
@@ -372,7 +381,7 @@ if len(st.session_state.result_history) >= 1 or (live_df is not None and not liv
         session_name = "EVENING PEAK SESSION"
         session_volatility_boost = 1.3
 
-    # 2. Advanced Dynamic Pattern Recognition
+    # 2. Advanced Dynamic Pattern Recognition Modules
     last_3_sizes = active_30_sizes[-3:] if len(active_30_sizes) >= 3 else active_30_sizes
     last_5_sizes = active_30_sizes[-5:] if len(active_30_sizes) >= 5 else active_30_sizes
     last_4_sizes = active_30_sizes[-4:] if len(active_30_sizes) >= 4 else active_30_sizes
@@ -433,7 +442,7 @@ if len(st.session_state.result_history) >= 1 or (live_df is not None and not liv
     imbalance_threshold = int(len(global_sizes_chain) * 0.55) if len(global_sizes_chain) > 40 else 20
     last_real_size = active_30_sizes[-1]
 
-    # 3. Synchronized Decision Engine combining Matrix Layer & Existing Analytics
+    # 3. Two-Layer Decision Engine: Matrix has primary authority, resolved deterministically
     if is_choppy_trap:
         next_shot = matrix_size
         movement_mode_text = "⚠️ WARNING: TRAP / CHOPPY MARKET DETECTED (MATRIX SAFETY MODE)"
@@ -479,7 +488,7 @@ if len(st.session_state.result_history) >= 1 or (live_df is not None and not liv
         movement_mode_text = "DOUBLE-CHAIN LOOP (2-2 PATTERN)"
         movement_desc = "Twin alternation pattern (2-2 loop) detected in last 4 rounds. Executing structural sequence reversal."
     else:
-        # Blend Matrix signal with secondary omni_weight & existing analysis
+        # Matrix is primary authority layer combined deterministically with secondary omni-weight evidence
         next_shot = matrix_size if omni_weight == (diff % 2) else ("BIG" if omni_weight == 0 else "SMALL")
         movement_mode_text = "BALANCED MATRIX-OMNI SYNERGY TREND"
         movement_desc = f"Live cycles synced with 200-Condition Matrix & Omni-Weight under [{session_name}]."
@@ -515,7 +524,7 @@ if len(st.session_state.result_history) >= 1 or (live_df is not None and not liv
     st.session_state.pending_prediction = next_shot
     st.session_state.pending_color_prediction = predicted_color_code
 
-    # Freeze prediction locks if not already locked
+    # Freeze prediction locks only when they are None to prevent premature overwriting before evaluation
     if st.session_state.active_size_lock is None:
         st.session_state.active_size_lock = next_shot
     if st.session_state.active_color_lock is None:
